@@ -1,0 +1,25 @@
+# =================================================================
+# ⚙️ PROMETHEUS-1.5B LOCAL GPU TRAINING & INFERENCE DEPENDENCIES
+# =================================================================
+# Optimized for Windows PCs with NVIDIA GPUs (RTX 4050 / CUDA 12.x or 13.x)
+
+# 1. Base Machine Learning Library (Directs to CUDA 12.1 Wheel)
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch>=2.1.2
+torchvision
+torchaudio
+
+# 2. Hugging Face Ecosystem & Datasets
+transformers>=4.38.0
+peft>=0.8.2
+trl>=0.7.11
+accelerate>=0.27.2
+datasets>=2.17.0
+
+# 3. VRAM Optimization & Quantization
+bitsandbytes>=0.42.0
+
+# 4. Standard Python Helpers
+numpy<2.0.0
+tqdm
+fsspec

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Marketplace — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            display: none;
+            overflow-y: auto;
+        }
+        .main-content {
+            flex: 1;
+            padding: 2.5rem;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .market-filters {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        .market-filter-btn {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 0.5rem 1.25rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+        .market-filter-btn.active, .market-filter-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .template-card {
+            background: rgba(26, 26, 46, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+        }
+        .template-card:hover {
+            border-color: var(--accent-light);
+            background: rgba(108, 99, 255, 0.04);
+            transform: translateY(-2px);
+        }
+        .star-rating {
+            color: #fbbf24;
+            display: flex;
+            gap: 2px;
+            align-items: center;
+        }
+    </style>
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+                loadMarketplace();
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+    <div class="starfield-bg"></div>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workbench" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Prompt Builder
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/history" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Saved Ledger
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workflows" class="sidebar-link">
+                            <span class="sidebar-icon">⛓️</span> Workflows & DAGs
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/agents" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="bot" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> AI Agent Library
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/marketplace" class="sidebar-link active">
+                            <span class="sidebar-icon"><i data-lucide="store" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Marketplace
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/organization" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="building" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Organization Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-monogram">FP</div>
+                    <div class="user-info">
+                        <span class="user-name" id="profile-name">Creator User</span>
+                        <span class="user-email" id="profile-email">name@example.com</span>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button class="btn-logout-sidebar" onclick="localStorage.clear(); window.location.href='/auth';">
+                        <span><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div>
+                <h1 style="font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800;">Template Marketplace <i data-lucide="store" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                <p style="color: var(--text-secondary); margin-top: 0.25rem;">Discover, clone, and publish verified prompt workflows and AI pipelines.</p>
+            </div>
+
+            <!-- Category Filters -->
+            <div class="market-filters">
+                <button class="market-filter-btn active" onclick="filterMarketCategory(this, '')">All Pipelines</button>
+                <button class="market-filter-btn" onclick="filterMarketCategory(this, 'AI Writing')">AI Writing</button>
+                <button class="market-filter-btn" onclick="filterMarketCategory(this, 'Coding')">Coding</button>
+                <button class="market-filter-btn" onclick="filterMarketCategory(this, 'Research')">Research</button>
+                <button class="market-filter-btn" onclick="filterMarketCategory(this, 'Automation')">Automation</button>
+                <button class="market-filter-btn" onclick="filterMarketCategory(this, 'Business')">Business</button>
+            </div>
+
+            <!-- Templates Grid -->
+            <div class="templates-grid" id="market-grid-container">
+                <!-- dynamic items -->
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Set user profile sidebar details
+        document.getElementById("profile-name").innerText = localStorage.getItem("forge_user_name") || "Creator User";
+        document.getElementById("profile-email").innerText = localStorage.getItem("forge_user_email") || "name@example.com";
+        const parts = (localStorage.getItem("forge_user_name") || "FP").split(" ");
+        document.getElementById("user-monogram").innerText = parts.map(p => p[0]).join("").toUpperCase().substring(0, 2);
+
+        let activeCategory = "";
+
+        function filterMarketCategory(btn, cat) {
+            document.querySelectorAll(".market-filter-btn").forEach(el => el.classList.remove("active"));
+            btn.classList.add("active");
+            activeCategory = cat;
+            loadMarketplace();
+        }
+
+        async function loadMarketplace() {
+            try {
+                let url = "/api/marketplace";
+                if (activeCategory) url += `?category=${encodeURIComponent(activeCategory)}`;
+                
+                const res = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
+                const data = await res.json();
+                
+                const container = document.getElementById("market-grid-container");
+                container.innerHTML = "";
+
+                if (data.success && data.workflows.length > 0) {
+                    data.workflows.forEach(w => {
+                        const stars = Math.round(w.avg_rating || 5);
+                        const stars_html = '★'.repeat(stars) + '☆'.repeat(5 - stars);
+                        
+                        const card = document.createElement("div");
+                        card.className = "template-card";
+                        card.innerHTML = `
+                            <div>
+                                <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                                    <h4 style="font-size:1.15rem; font-weight:800;">${w.title}</h4>
+                                    <span style="font-size:0.7rem; color:var(--text-secondary); background:rgba(255,255,255,0.05); padding:0.2rem 0.5rem; border-radius:10px;">${w.category}</span>
+                                </div>
+                                <p style="font-size:0.8rem; color:var(--text-muted); margin-top:0.5rem; line-height:1.4;">${w.description || 'No description provided.'}</p>
+                                
+                                <div style="display:flex; gap: 1rem; align-items:center; margin-top: 1rem; font-size:0.75rem; color:var(--text-secondary);">
+                                    <span class="star-rating">${stars_html} (${w.reviews_count || 0})</span>
+                                    <span>Clones: ${w.clone_count || 0}</span>
+                                </div>
+                            </div>
+                            
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 1.5rem; border-top:1px solid rgba(255,255,255,0.05); padding-top:1rem;">
+                                <span style="font-size:0.7rem; color:var(--text-muted);">Creator: @${w.creator_username || 'anonymous'}</span>
+                                <button onclick="cloneTemplate(${w.id})" class="btn-cta" style="padding:0.5rem 1rem; font-size:0.8rem;">Clone Template <i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+                } else {
+                    container.innerHTML = `<div class="glass-panel" style="grid-column: 1/-1; padding: 4rem; text-align: center; color: var(--text-muted); border-radius: 16px;">No published templates found. Be the first to share one!</div>`;
+                }
+            } catch(e) {}
+        }
+
+        async function cloneTemplate(id) {
+            try {
+                const res = await fetch(`/api/workflows/${id}/clone`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Pipeline cloned successfully to your personal space!");
+                    window.location.href = `/workflows/builder/${data.workflow_id}`;
+                } else {
+                    alert("Cloning failed: " + data.error);
+                }
+            } catch(e) {}
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

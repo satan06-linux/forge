@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent Library & Playground — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            display: none;
+            overflow-y: auto;
+        }
+        .main-content {
+            flex: 1;
+            padding: 2.5rem;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        .agent-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        @media (max-width: 900px) {
+            .agent-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .agent-card {
+            background: rgba(26, 26, 46, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+        .agent-card:hover {
+            border-color: var(--accent-light);
+            background: rgba(108, 99, 255, 0.04);
+        }
+        .chat-console {
+            background: rgba(10, 10, 15, 0.6);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            height: 480px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        .chat-history {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        .chat-bubble {
+            max-width: 80%;
+            padding: 0.85rem 1.25rem;
+            border-radius: 14px;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .bubble-user {
+            background: var(--accent);
+            color: #fff;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
+        }
+        .bubble-agent {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border: 1px solid var(--border-color);
+        }
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+    </style>
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+                loadAgents();
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+    <div class="starfield-bg"></div>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workbench" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Prompt Builder
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/history" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Saved Ledger
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workflows" class="sidebar-link">
+                            <span class="sidebar-icon">⛓️</span> Workflows & DAGs
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/agents" class="sidebar-link active">
+                            <span class="sidebar-icon"><i data-lucide="bot" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> AI Agent Library
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/marketplace" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="store" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Marketplace
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/organization" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="building" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Organization Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-monogram">FP</div>
+                    <div class="user-info">
+                        <span class="user-name" id="profile-name">Creator User</span>
+                        <span class="user-email" id="profile-email">name@example.com</span>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button class="btn-logout-sidebar" onclick="localStorage.clear(); window.location.href='/auth';">
+                        <span><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800;">Reusable Agent Library <i data-lucide="bot" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                    <p style="color: var(--text-secondary); margin-top: 0.25rem;">Assemble custom agents with distinct identities, roles, memory contexts, and tool capabilities.</p>
+                </div>
+                <button class="btn-cta" onclick="openCreateModal()"><i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Assemble Agent</button>
+            </div>
+
+            <div class="agent-grid">
+                <!-- Agents List -->
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem;">Available Agents</h3>
+                    <div id="agents-list-container">
+                        <!-- Dynamic items -->
+                    </div>
+                </div>
+
+                <!-- Agent Playground Chat Console -->
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem;">Agent Playground</h3>
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px;">
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <select id="play-agent-selector" style="flex: 1; padding: 0.6rem; border-radius: 8px; background: rgba(0,0,0,0.3); border:1px solid var(--border-color); color:#fff;">
+                                <option value="">-- Choose Agent --</option>
+                            </select>
+                            <button class="btn-cta" onclick="startPlaygroundSession()" style="padding: 0.6rem 1.25rem;">Start Session</button>
+                        </div>
+
+                        <!-- Chat Console -->
+                        <div class="chat-console">
+                            <div class="chat-history" id="playground-chat-history">
+                                <div style="margin: auto; text-align: center; color: var(--text-muted);">
+                                    Select an agent and start a session to test prompts live.
+                                </div>
+                            </div>
+                            <div style="padding: 1rem; border-top: 1px solid var(--border-color); display: flex; gap: 0.75rem; background: rgba(20,20,30,0.4);">
+                                <input type="text" id="playground-input" disabled placeholder="Type message to agent..." class="form-input" style="flex: 1;" onkeydown="if(event.key === 'Enter') sendPlaygroundMessage()">
+                                <button class="btn-cta" id="playground-send-btn" disabled onclick="sendPlaygroundMessage()" style="padding: 0.65rem 1.5rem;">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Modal -->
+    <div id="create-modal" class="modal">
+        <div class="glass-panel" style="width: 500px; padding: 2rem; border-radius: 20px; border: 1px solid var(--accent-light); max-height: 90vh; overflow-y: auto;">
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;">Assemble New Agent</h3>
+            <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Agent Name</label>
+                    <input type="text" id="create-name" class="form-input" placeholder="e.g. Code Reviewer Bot">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Agent Role/Personality</label>
+                    <input type="text" id="create-role" class="form-input" placeholder="e.g. Senior Staff Engineer specializing in Python.">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Goals & Objectives</label>
+                    <textarea id="create-goals" class="form-input" placeholder="What is this agent's primary task?" style="height: 60px; resize: none;"></textarea>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">System Instructions</label>
+                    <textarea id="create-instructions" class="form-input" placeholder="System directives and output constraints..." style="height: 80px; resize: none;"></textarea>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Preferred Model</label>
+                    <select id="create-model" style="padding: 0.75rem; border-radius: 12px; background: rgba(18,18,29,0.8); border: 1px solid rgba(167,139,250,0.15); color: #fff;">
+                        <option value="llama3-8b-8192">Llama3 8B (Fast)</option>
+                        <option value="llama-3.3-70b-versatile">Llama 3.3 70B (Smart)</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Tools Configuration</label>
+                    <div style="display: flex; gap: 1.5rem; margin-top: 0.2rem;">
+                        <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.85rem;"><input type="checkbox" id="tool-search" value="Search"> Web Search</label>
+                        <label style="display:flex; align-items:center; gap:0.4rem; font-size:0.85rem;"><input type="checkbox" id="tool-memory" value="Memory"> Long-term Memory</label>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: flex-end;">
+                    <button class="btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                    <button class="btn-cta" onclick="submitCreateAgent()">Assemble Bot <i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set user profile sidebar details
+        document.getElementById("profile-name").innerText = localStorage.getItem("forge_user_name") || "Creator User";
+        document.getElementById("profile-email").innerText = localStorage.getItem("forge_user_email") || "name@example.com";
+        const parts = (localStorage.getItem("forge_user_name") || "FP").split(" ");
+        document.getElementById("user-monogram").innerText = parts.map(p => p[0]).join("").toUpperCase().substring(0, 2);
+
+        function openCreateModal() { document.getElementById("create-modal").style.display = "flex"; }
+        function closeCreateModal() { document.getElementById("create-modal").style.display = "none"; }
+
+        let activeSessionId = null;
+
+        async function loadAgents() {
+            try {
+                const res = await fetch("/api/agents", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                
+                const container = document.getElementById("agents-list-container");
+                const selector = document.getElementById("play-agent-selector");
+                container.innerHTML = "";
+                
+                // Clear options keeping first placeholder
+                selector.innerHTML = '<option value="">-- Choose Agent --</option>';
+
+                if (data.success && data.agents.length > 0) {
+                    data.agents.forEach(a => {
+                        // Append list
+                        const div = document.createElement("div");
+                        div.className = "agent-card";
+                        div.innerHTML = `
+                            <h4 style="font-size: 1.15rem; font-weight: 800;">${a.name}</h4>
+                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.15rem; font-style: italic;">Role: ${a.role}</p>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.5rem;">Instructions: ${a.instructions ? a.instructions.substring(0, 100) + '...' : 'None.'}</p>
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-top: 0.75rem;">
+                                <span style="font-size:0.7rem; background:rgba(108, 99, 255, 0.1); border:1px solid rgba(108,99,255,0.2); padding:0.25rem 0.6rem; border-radius:10px;">${a.preferred_model}</span>
+                                <button onclick="deleteAgent(${a.id})" style="background:transparent; border:none; color:#ef4444; font-size:0.75rem; cursor:pointer;">Delete</button>
+                            </div>
+                        `;
+                        container.appendChild(div);
+
+                        // Append selector
+                        const opt = document.createElement("option");
+                        opt.value = a.id;
+                        opt.innerText = a.name;
+                        selector.appendChild(opt);
+                    });
+                } else {
+                    container.innerHTML = `<div class="glass-panel" style="padding: 3rem; text-align: center; color: var(--text-muted); border-radius: 16px;">No agents assembled yet.</div>`;
+                }
+            } catch(e) {}
+        }
+
+        async function submitCreateAgent() {
+            const name = document.getElementById("create-name").value.trim();
+            const role = document.getElementById("create-role").value.trim();
+            const goals = document.getElementById("create-goals").value.trim();
+            const instructions = document.getElementById("create-instructions").value.trim();
+            const preferred_model = document.getElementById("create-model").value;
+            const tools = [];
+            if (document.getElementById("tool-search").checked) tools.push("Search");
+            if (document.getElementById("tool-memory").checked) tools.push("Memory");
+
+            if (!name || !role) {
+                alert("Name and Role are required fields!");
+                return;
+            }
+
+            try {
+                const res = await fetch("/api/agents", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, role, goals, instructions, preferred_model, tools })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeCreateModal();
+                    loadAgents();
+                }
+            } catch (e) {}
+        }
+
+        async function deleteAgent(id) {
+            if (!confirm("Are you sure you want to delete this agent?")) return;
+            try {
+                const res = await fetch(`/api/agents/${id}`, {
+                    method: "DELETE",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) loadAgents();
+            } catch(e) {}
+        }
+
+        async function startPlaygroundSession() {
+            const agentId = document.getElementById("play-agent-selector").value;
+            if (!agentId) {
+                alert("Please select an agent first!");
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/agents/${agentId}/chat/start`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    activeSessionId = data.session_id;
+                    
+                    const history = document.getElementById("playground-chat-history");
+                    history.innerHTML = `<div style="text-align: center; color: var(--success); font-size: 0.8rem;">✓ Playground Session Started (Session ID: ${activeSessionId})</div>`;
+                    
+                    document.getElementById("playground-input").disabled = false;
+                    document.getElementById("playground-send-btn").disabled = false;
+                }
+            } catch(e) {}
+        }
+
+        async function sendPlaygroundMessage() {
+            const inp = document.getElementById("playground-input");
+            const text = inp.value.trim();
+            if (!text || !activeSessionId) return;
+            
+            inp.value = "";
+            const history = document.getElementById("playground-chat-history");
+            
+            // Append user bubble
+            const uBub = document.createElement("div");
+            uBub.className = "chat-bubble bubble-user";
+            uBub.innerText = text;
+            history.appendChild(uBub);
+            history.scrollTop = history.scrollHeight;
+
+            // Loading indicator
+            const loadEl = document.createElement("div");
+            loadEl.className = "chat-bubble bubble-agent";
+            loadEl.innerText = "...";
+            history.appendChild(loadEl);
+            history.scrollTop = history.scrollHeight;
+
+            try {
+                const res = await fetch(`/api/agents/sessions/${activeSessionId}/message`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ message: text })
+                });
+                const data = await res.json();
+                loadEl.remove();
+                if (data.success) {
+                    const aBub = document.createElement("div");
+                    aBub.className = "chat-bubble bubble-agent";
+                    aBub.innerHTML = `
+                        <div>${data.response}</div>
+                        <div style="font-size:0.6rem; color:var(--text-muted); margin-top:0.4rem; text-align:right;">
+                            Inference: ${data.tokens} tokens ($${parseFloat(data.cost || 0).toFixed(6)})
+                        </div>
+                    `;
+                    history.appendChild(aBub);
+                } else {
+                    const errBub = document.createElement("div");
+                    errBub.className = "chat-bubble bubble-agent";
+                    errBub.style.color = "red";
+                    errBub.innerText = "Error: " + data.error;
+                    history.appendChild(errBub);
+                }
+                history.scrollTop = history.scrollHeight;
+            } catch(e) {
+                loadEl.innerText = "Network error connection failed.";
+            }
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

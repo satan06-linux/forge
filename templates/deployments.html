@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Pipeline - ForgePrompt</title>
+    <style>
+        :root {
+            --bg-dark: #0a0f1c;
+            --glass-bg: rgba(20, 27, 45, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+        body {
+            margin: 0; padding: 2rem;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, sans-serif;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(52, 211, 153, 0.08), transparent 25%);
+            min-height: 100vh;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        h1 { font-size: 1.875rem; font-weight: 600; margin: 0; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; color: transparent; }
+        h2 { font-size: 1.25rem; font-weight: 500; margin: 0 0 1rem 0; color: var(--text-main); }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 24px -1px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .glass-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px -4px rgba(0,0,0,0.3);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .grid { display: grid; gap: 1.5rem; }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); }
+        .grid-3 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+        
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--glass-border); }
+        th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--glass-border); }
+        tr:last-child td { border-bottom: none; }
+        tr { transition: background-color 0.2s ease; }
+        tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
+        
+        .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .badge.success { background: rgba(52, 211, 153, 0.1); color: var(--success); border: 1px solid rgba(52, 211, 153, 0.2); }
+        .badge.warning { background: rgba(251, 191, 36, 0.1); color: var(--warning); border: 1px solid rgba(251, 191, 36, 0.2); }
+        .badge.danger { background: rgba(248, 113, 113, 0.1); color: var(--danger); border: 1px solid rgba(248, 113, 113, 0.2); }
+        
+        .btn { background: var(--accent); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+        .btn:hover { background: var(--accent-hover); box-shadow: 0 0 15px rgba(14, 165, 233, 0.5); transform: scale(1.02); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Deployment Pipeline</h1>
+        <button class="btn">Trigger Deployment</button>
+    </header>
+
+    <div class="grid grid-3" style="margin-bottom: 2rem;">
+        {% for env in environments|default([{'name':'Development', 'version':'v2.1.0', 'status':'Stable', 'color':'success'}, {'name':'Staging', 'version':'v2.1.0-rc1', 'status':'Testing', 'color':'warning'}, {'name':'Production', 'version':'v2.0.5', 'status':'Stable', 'color':'success'}]) %}
+        <div class="glass-panel" style="text-align: center; position: relative; overflow: hidden; padding-top: 2rem;">
+            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: var(--{{ env.color }});"></div>
+            <h2 style="margin-top: 0.5rem;">{{ env.name }}</h2>
+            <div style="font-size: 2.25rem; font-weight: 700; color: var(--accent); margin: 1rem 0;">{{ env.version }}</div>
+            <span class="badge {{ env.color }}">{{ env.status }}</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="grid grid-2">
+        <div class="glass-panel">
+            <h2>Recent Deployments</h2>
+            <table>
+                <thead><tr><th>ID</th><th>Environment</th><th>Status</th><th>Time</th></tr></thead>
+                <tbody>
+                    {% for dep in deployments|default([{'id':'DEP-102', 'env':'Staging', 'status':'Success', 'time':'10 mins ago'}, {'id':'DEP-101', 'env':'Production', 'status':'Rollback', 'time':'2 hours ago'}]) %}
+                    <tr>
+                        <td style="font-family: monospace; font-size: 0.875rem;">{{ dep.id }}</td>
+                        <td style="font-weight: 500;">{{ dep.env }}</td>
+                        <td><span class="badge {{ 'success' if dep.status == 'Success' else 'danger' }}">{{ dep.status }}</span></td>
+                        <td style="color: var(--text-muted); font-size: 0.875rem;">{{ dep.time }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="glass-panel">
+            <h2>Config Snapshots</h2>
+            <table>
+                <thead><tr><th>Snapshot ID</th><th>Created By</th><th>Hash</th></tr></thead>
+                <tbody>
+                    {% for snap in snapshots|default([{'id':'SNAP-881', 'author':'System', 'hash':'a1b2c3d9f'}, {'id':'SNAP-880', 'author':'Admin', 'hash':'f9e8d7c4a'}]) %}
+                    <tr>
+                        <td style="font-weight: 500;">{{ snap.id }}</td>
+                        <td>{{ snap.author }}</td>
+                        <td style="font-family: monospace; color: var(--text-muted); font-size: 0.875rem;">{{ snap.hash }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

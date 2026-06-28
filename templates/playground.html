@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Multi-Model Playground — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { display: none; overflow-y: auto; }
+        .main-content { flex: 1; padding: 2.5rem; overflow-y: auto; height: 100vh; }
+        .playground-panels { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 2rem; }
+        .panel {
+            background: rgba(26, 26, 46, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            backdrop-filter: blur(10px);
+        }
+        .output-box {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.25rem;
+            height: 250px;
+            overflow-y: auto;
+            font-family: monospace;
+            color: #e5e7eb;
+            font-size: 0.9rem;
+            white-space: pre-wrap;
+        }
+        .metrics-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.75rem;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .metric-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        .metric-label { color: var(--text-muted); display: block; margin-bottom: 0.2rem; }
+        .metric-val { font-weight: 800; font-size: 0.95rem; }
+    </style>
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+    <div class="starfield-bg"></div>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;"><a href="/workbench" class="sidebar-link"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Builder</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/history" class="sidebar-link"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Saved Ledger</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/workflows" class="sidebar-link">⛓️ Workflows & DAGs</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/prompts" class="sidebar-link"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Registry</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/knowledge" class="sidebar-link"><i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Knowledge Bases</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/connectors" class="sidebar-link"><i data-lucide="plug" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Connectors</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/playground" class="sidebar-link active"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Playgrounds</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/analytics" class="sidebar-link"><i data-lucide="bar-chart-2" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Analytics</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn-logout-sidebar" onclick="localStorage.clear(); window.location.href='/auth';"><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800;">Model Routing Playground <i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                    <p style="color: var(--text-secondary); margin-top: 0.25rem;">Compare prompt executions across different LLMs side-by-side.</p>
+                </div>
+                <button class="btn-cta" onclick="executeComparison()"><i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Run Evaluation</button>
+            </div>
+
+            <!-- Input prompt area -->
+            <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; margin-top: 1.5rem;">
+                <label style="font-weight: 700; font-size: 0.95rem;">Prompt Prompt Template</label>
+                <textarea id="prompt-input" placeholder="Type prompt here... e.g. Write a quick poem about local vector search databases." style="width: 100%; height: 80px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; color: #fff; padding: 1rem; margin-top: 0.5rem; resize: none; outline: none;"></textarea>
+            </div>
+
+            <div class="playground-panels">
+                <!-- Panel A -->
+                <div class="panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="font-weight: 800; font-size: 1.1rem; color: var(--accent-light);">Model Configuration A</h4>
+                        <select id="model-a-selector" style="padding: 0.3rem 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; outline: none;">
+                            <option value="llama-3.3-70b-versatile">Groq Llama 3.3 70B</option>
+                            <option value="llama3-8b-8192">Groq Llama3 8B</option>
+                            <option value="prometheus-local">Local Prometheus (CPU Fallback)</option>
+                        </select>
+                    </div>
+                    <div class="output-box" id="output-a">Output A will compile here...</div>
+                    <div class="metrics-bar">
+                        <div class="metric-item">
+                            <span class="metric-label">Latency</span>
+                            <span class="metric-val" id="metric-latency-a">0ms</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Tokens</span>
+                            <span class="metric-val" id="metric-tokens-a">0</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Cost</span>
+                            <span class="metric-val" id="metric-cost-a">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Panel B -->
+                <div class="panel">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="font-weight: 800; font-size: 1.1rem; color: var(--accent-light);">Model Configuration B</h4>
+                        <select id="model-b-selector" style="padding: 0.3rem 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; outline: none;">
+                            <option value="prometheus-local">Local Prometheus (CPU Fallback)</option>
+                            <option value="llama-3.3-70b-versatile">Groq Llama 3.3 70B</option>
+                            <option value="llama3-8b-8192">Groq Llama3 8B</option>
+                        </select>
+                    </div>
+                    <div class="output-box" id="output-b">Output B will compile here...</div>
+                    <div class="metrics-bar">
+                        <div class="metric-item">
+                            <span class="metric-label">Latency</span>
+                            <span class="metric-val" id="metric-latency-b">0ms</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Tokens</span>
+                            <span class="metric-val" id="metric-tokens-b">0</span>
+                        </div>
+                        <div class="metric-item">
+                            <span class="metric-label">Cost</span>
+                            <span class="metric-val" id="metric-cost-b">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function executeComparison() {
+            const prompt = document.getElementById("prompt-input").value;
+            const modelA = document.getElementById("model-a-selector").value;
+            const modelB = document.getElementById("model-b-selector").value;
+
+            if (!prompt) {
+                alert("Please enter a prompt template first!");
+                return;
+            }
+
+            document.getElementById("output-a").innerText = "Generating Model A completions...";
+            document.getElementById("output-b").innerText = "Generating Model B completions...";
+
+            // Trigger Model A call
+            runModelCall("a", modelA, prompt);
+            // Trigger Model B call
+            runModelCall("b", modelB, prompt);
+        }
+
+        async function runModelCall(panelKey, model, prompt) {
+            const tStart = Date.now();
+            try {
+                // We run using api/forge-prompt endpoint or similar mock LLM tester
+                const res = await fetch("/api/forge-prompt", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt,
+                        category: "general",
+                        mcq_questions: [],
+                        mcq_answers: []
+                    })
+                });
+                const duration = Date.now() - tStart;
+                const data = await res.json();
+                
+                if (data.success) {
+                    // Inject model specifics mock
+                    document.getElementById(`output-${panelKey}`).innerText = `[Executed Model: ${model}]\n\n` + data.generated_prompt;
+                    document.getElementById(`metric-latency-${panelKey}`).innerText = duration + "ms";
+                    document.getElementById(`metric-tokens-${panelKey}`).innerText = Math.round(data.generated_prompt.length / 4);
+                    // Mock cost calculation
+                    const cost = model.includes("70b") ? 0.00002 : 0.000001;
+                    document.getElementById(`metric-cost-${panelKey}`).innerText = "$" + cost.toFixed(6);
+                } else {
+                    document.getElementById(`output-${panelKey}`).innerText = "Generation failed: " + data.error;
+                }
+            } catch (e) {
+                document.getElementById(`output-${panelKey}`).innerText = "Request failed: " + e;
+            }
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

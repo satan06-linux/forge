@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Execution Log — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            display: none;
+            overflow-y: auto;
+        }
+        .main-content {
+            flex: 1;
+            padding: 2.5rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .stats-banner {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            padding: 1.25rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .step-log-card {
+            background: rgba(26, 26, 46, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            transition: all 0.2s;
+        }
+        .step-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .step-body {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            display: none;
+        }
+        .status-queued { color: #f59e0b; }
+        .status-running { color: #3b82f6; }
+        .status-completed { color: #10b981; }
+        .status-failed { color: #ef4444; }
+        .status-skipped { color: var(--text-muted); }
+        .status-paused { color: #8b5cf6; }
+
+        .terminal-block {
+            background: #050508;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #39ff14;
+            max-height: 250px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+    </style>
+    <script>
+        const token = localStorage.getItem("forge_token");
+        const runId = "{{ run_id }}";
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+                startExecutionTracking();
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+    <div class="starfield-bg"></div>
+    <div class="app-layout">
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <a href="/workflows" style="text-decoration: none; color: var(--text-muted); font-size: 0.9rem;">← Back to Workspace</a>
+                    <h1 style="font-family: 'Outfit'; font-size: 2rem; font-weight: 800; margin-top: 0.5rem;">Pipeline Execution Log <i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                    <p style="color: var(--text-secondary); margin-top: 0.25rem;" id="wf-subtitle">Loading execution graph logs...</p>
+                </div>
+                <div>
+                    <button class="btn-secondary" id="btn-cancel" onclick="cancelRun()" style="display:none; background:rgba(239, 68, 68, 0.1); border-color:#ef4444; color:#fca5a5;">Cancel Run</button>
+                    <button class="btn-cta" id="btn-approve" onclick="approveRun()" style="display:none; background:#8b5cf6; border-color:#8b5cf6;">Approve Node Execution</button>
+                </div>
+            </div>
+
+            <!-- Stats Header -->
+            <div class="stats-banner">
+                <div class="stat-item">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Run Status</span>
+                    <h3 id="stat-status" style="font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; margin-top: 0.25rem;">Queued</h3>
+                </div>
+                <div class="stat-item">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Tokens Consumed</span>
+                    <h3 id="stat-tokens" style="font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; margin-top: 0.25rem;">0</h3>
+                </div>
+                <div class="stat-item">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Accumulated Cost</span>
+                    <h3 id="stat-cost" style="font-family: 'Outfit'; font-size: 1.3rem; font-weight: 800; margin-top: 0.25rem;">$0.00</h3>
+                </div>
+                <div class="stat-item">
+                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Created At</span>
+                    <h3 id="stat-time" style="font-family: 'Outfit'; font-size: 0.95rem; font-weight: 800; margin-top: 0.45rem;">--:--:--</h3>
+                </div>
+            </div>
+
+            <!-- Execution Steps Logs -->
+            <div style="margin-top: 2.5rem;">
+                <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem;">Execution Graph Nodes Progress</h3>
+                <div id="steps-container">
+                    <!-- Dynamic logs -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let intervalId = null;
+
+        function startExecutionTracking() {
+            trackProgress();
+            intervalId = setInterval(trackProgress, 2000);
+        }
+
+        async function trackProgress() {
+            try {
+                const res = await fetch(`/api/workflow_runs/${runId}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const run = data.run;
+                    
+                    document.getElementById("wf-subtitle").innerText = `Tracking pipeline run for Workflow #${run.workflow_id}`;
+                    document.getElementById("stat-status").innerText = run.status.toUpperCase();
+                    document.getElementById("stat-status").className = `status-${run.status}`;
+                    document.getElementById("stat-tokens").innerText = run.total_tokens || 0;
+                    document.getElementById("stat-cost").innerText = `$${parseFloat(run.total_cost || 0).toFixed(4)}`;
+                    document.getElementById("stat-time").innerText = run.created_at || '';
+                    
+                    // Show buttons depending on state
+                    document.getElementById("btn-cancel").style.display = (run.status === 'queued' || run.status === 'running') ? 'block' : 'none';
+                    document.getElementById("btn-approve").style.display = (run.status === 'paused') ? 'block' : 'none';
+
+                    const container = document.getElementById("steps-container");
+                    container.innerHTML = "";
+
+                    data.steps.forEach(step => {
+                        const card = document.createElement("div");
+                        card.className = "step-log-card";
+                        
+                        let header_info = "";
+                        if (step.status === 'completed') {
+                            header_info = `<span style="font-size:0.75rem; color:var(--text-muted); margin-right:1rem;">Cost: $${parseFloat(step.cost).toFixed(4)} (${step.tokens_used} tokens)</span>`;
+                        }
+
+                        card.innerHTML = `
+                            <div class="step-header" onclick="toggleStepDetails('${step.node_id}')">
+                                <div style="display:flex; align-items:center; gap: 1rem;">
+                                    <span class="status-${step.status}" style="font-weight:900;">●</span>
+                                    <span style="font-weight:800; font-size:1.05rem;">${step.node_id}</span>
+                                </div>
+                                <div style="display:flex; align-items:center;">
+                                    ${header_info}
+                                    <span class="status-${step.status}" style="font-size:0.8rem; font-weight:700; text-transform:uppercase;">${step.status}</span>
+                                </div>
+                            </div>
+                            <div class="step-body" id="details-${step.node_id}">
+                                ${step.input_used ? `
+                                    <div style="margin-bottom:0.75rem;">
+                                        <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:0.2rem;">Node Inputs Context</span>
+                                        <div class="terminal-block" style="color:#a78bfa;">${step.input_used}</div>
+                                    </div>
+                                ` : ''}
+                                ${step.output_generated ? `
+                                    <div>
+                                        <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:var(--text-muted); display:block; margin-bottom:0.2rem;">Node Output Generated</span>
+                                        <div class="terminal-block">${step.output_generated}</div>
+                                    </div>
+                                ` : ''}
+                                ${step.error_message ? `
+                                    <div>
+                                        <span style="font-size:0.7rem; font-weight:800; text-transform:uppercase; color:#f87171; display:block; margin-bottom:0.2rem;">Node Execution Failure</span>
+                                        <div class="terminal-block" style="color:#fca5a5; border-color:#b91c1c; background:rgba(239,68,68,0.05);">${step.error_message}</div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+
+                    // Stop interval if run terminates
+                    if (run.status === 'completed' || run.status === 'failed' || run.status === 'cancelled') {
+                        clearInterval(intervalId);
+                    }
+                }
+            } catch(e) {
+                console.error("Progress fetch error", e);
+            }
+        }
+
+        function toggleStepDetails(nodeId) {
+            const body = document.getElementById(`details-${nodeId}`);
+            if (body) {
+                body.style.display = body.style.display === "block" ? "none" : "block";
+            }
+        }
+
+        async function approveRun() {
+            try {
+                const res = await fetch(`/api/workflow_runs/${runId}/approve`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Execution approval processed successfully. Pipeline resumed.");
+                    trackProgress();
+                }
+            } catch(e) {}
+        }
+
+        async function cancelRun() {
+            if (!confirm("Are you sure you want to terminate this run execution?")) return;
+            try {
+                const res = await fetch(`/api/workflow_runs/${runId}/cancel`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Run cancelled.");
+                    trackProgress();
+                }
+            } catch(e) {}
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

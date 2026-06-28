@@ -1,0 +1,1852 @@
+[
+  {
+    "input": "e-commerce store for handmade jewelry",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "Preferred backend language?",
+        "options": [
+          "Node.js",
+          "Python",
+          "Ruby",
+          "Go"
+        ],
+        "answer": "Node.js"
+      },
+      {
+        "question": "Design style preference?",
+        "options": [
+          "Minimalist & elegant",
+          "Vibrant & colorful",
+          "Industrial & raw",
+          "Retro & quirky"
+        ],
+        "answer": "Minimalist & elegant"
+      },
+      {
+        "question": "Payment gateway option?",
+        "options": [
+          "Stripe",
+          "PayPal",
+          "Square",
+          "Braintree"
+        ],
+        "answer": "Stripe"
+      }
+    ],
+    "output": "# Project Goal\nCreate an elegant online storefront for custom handmade jewelry.\n\n# Project Type\nWeb Application\n\n# Functional Requirements\n- User registration and login\n- Jewelry product list and detail pages\n- Secure checkout flow\n\n# Core Features\n- Stripe credit card checkout flow\n- Image galleries with high-zoom details\n\n# Tech Stack\n- Frontend: React\n- Backend: Node.js\n- Database: MongoDB\n\n# Constraints\n- Fully responsive layouts optimized for mobile and desktop screens\n\n# Optional Enhancements\n- Automated email newsletter registration\n- Live chat customer assistance widget"
+  },
+  {
+    "input": "portfolio website for a photographer",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "Primary framework preference?",
+        "options": [
+          "React",
+          "Vue",
+          "Angular",
+          "Vanilla JS"
+        ],
+        "answer": "React"
+      },
+      {
+        "question": "CMS backend option?",
+        "options": [
+          "Headless WordPress",
+          "Strapi",
+          "Sanity.io",
+          "No CMS"
+        ],
+        "answer": "Strapi"
+      },
+      {
+        "question": "Primary device optimization?",
+        "options": [
+          "Desktop",
+          "Mobile",
+          "Tablet",
+          "All devices"
+        ],
+        "answer": "All devices"
+      }
+    ],
+    "output": "# Project Goal\nBuild a modern, sleek photography portfolio to attract premium clients.\n\n# Project Type\nWeb Application\n\n# Functional Requirements\n- Dynamic photo galleries\n- Contact submission forms\n- About the photographer biography page\n\n# Core Features\n- High-resolution media loading optimization\n- Client testimonial sections\n\n# Tech Stack\n- Frontend: React\n- CMS Backend: Strapi\n- Database: PostgreSQL\n\n# Constraints\n- Optimized layouts for desktop, mobile, and tablet screens\n\n# Optional Enhancements\n- Direct digital print sales e-commerce flow\n- Photo booking scheduler calendar integration"
+  },
+  {
+    "input": "SaaS dashboard for project management",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "Backend framework choice?",
+        "options": [
+          "FastAPI",
+          "Express",
+          "Django",
+          "Flask"
+        ],
+        "answer": "FastAPI"
+      },
+      {
+        "question": "Preferred database engine?",
+        "options": [
+          "PostgreSQL",
+          "MongoDB",
+          "MySQL",
+          "DynamoDB"
+        ],
+        "answer": "PostgreSQL"
+      },
+      {
+        "question": "Primary user device?",
+        "options": [
+          "Laptop",
+          "Mobile",
+          "Tablet",
+          "Smart TV"
+        ],
+        "answer": "Laptop"
+      }
+    ],
+    "output": "# Project Goal\nDesign a multi-tenant project tracking board for Agile engineering teams.\n\n# Project Type\nWeb Application\n\n# Functional Requirements\n- Team task assignment and kanban tracking\n- User account setup and role management\n- Activity logging dashboard\n\n# Core Features\n- Real-time drag-and-drop kanban columns\n- Custom Gantt chart timelines\n\n# Tech Stack\n- Frontend: Vue.js\n- Backend: FastAPI\n- Database: PostgreSQL\n\n# Constraints\n- Grid layout optimized primarily for Laptop screens\n\n# Optional Enhancements\n- GitHub webhook commit tracker\n- Automated Slack notifications bot integration"
+  },
+  {
+    "input": "landing page for a fitness app",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "Preferred styling library?",
+        "options": [
+          "Tailwind CSS",
+          "Bootstrap",
+          "Styled Components",
+          "Sass"
+        ],
+        "answer": "Tailwind CSS"
+      },
+      {
+        "question": "Email capturing backend?",
+        "options": [
+          "Mailchimp",
+          "SendGrid",
+          "ConvertKit",
+          "Custom API"
+        ],
+        "answer": "Mailchimp"
+      },
+      {
+        "question": "Deployment host choice?",
+        "options": [
+          "Vercel",
+          "Netlify",
+          "AWS S3",
+          "GitHub Pages"
+        ],
+        "answer": "Vercel"
+      }
+    ],
+    "output": "# Project Goal\nCreate a high-converting promotional landing page to drive fitness app installs.\n\n# Project Type\nLanding Page\n\n# Functional Requirements\n- Call-to-action app store links\n- Newsletter email collection input\n- Pricing tiers overview\n\n# Core Features\n- Mailchimp email capturing input forms\n- Animated app UI preview slideshows\n\n# Tech Stack\n- Frontend: Next.js & Tailwind CSS\n- Host: Vercel\n\n# Constraints\n- Blazing fast page speed optimization\n- Mobile and desktop responsiveness\n\n# Optional Enhancements\n- Video walkthrough modal popup\n- Dark mode theme toggle switcher"
+  },
+  {
+    "input": "blog website for a travel writer",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "CMS choice?",
+        "options": [
+          "WordPress",
+          "Ghost",
+          "Hugo",
+          "Sanity.io"
+        ],
+        "answer": "Ghost"
+      },
+      {
+        "question": "Search integration preference?",
+        "options": [
+          "Algolia",
+          "Simple database search",
+          "Elasticsearch",
+          "No search"
+        ],
+        "answer": "Simple database search"
+      },
+      {
+        "question": "Social sharing requirements?",
+        "options": [
+          "All platforms",
+          "Twitter/Facebook only",
+          "Instagram link only",
+          "None"
+        ],
+        "answer": "All platforms"
+      }
+    ],
+    "output": "# Project Goal\nCreate a beautiful story-driven travel blog website to share writing and photo journals.\n\n# Project Type\nBlog Website\n\n# Functional Requirements\n- Travel article list and reading layouts\n- Categorization by location maps\n- Search functionality\n\n# Core Features\n- Global interactive travel location maps\n- Social media direct sharing buttons\n\n# Tech Stack\n- Backend Engine: Ghost CMS\n- Database: SQLite (default Ghost)\n\n# Constraints\n- Lightweight pages for fast mobile reading in low-signal areas\n\n# Optional Enhancements\n- Direct email subscription gating for premium essays\n- Instagram sidebar gallery widget integration"
+  },
+  {
+    "input": "website to sell online courses",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "Technology stack preference?",
+        "options": [
+          "MERN Stack",
+          "LAMP Stack",
+          "Django & SQLite",
+          "Ruby on Rails"
+        ],
+        "answer": "MERN Stack"
+      },
+      {
+        "question": "Primary e-commerce requirement?",
+        "options": [
+          "Course purchases only",
+          "Recurring memberships",
+          "Both",
+          "None"
+        ],
+        "answer": "Both"
+      },
+      {
+        "question": "Video hosting platform?",
+        "options": [
+          "Vimeo",
+          "YouTube Private",
+          "AWS S3",
+          "Wistia"
+        ],
+        "answer": "Vimeo"
+      }
+    ],
+    "output": "# Project Goal\nBuild a robust digital learning platform with video course access gates.\n\n# Project Type\nWeb Application\n\n# Functional Requirements\n- Student profiles and progress dashboards\n- Video player with bookmark capabilities\n- Membership billing checkout\n\n# Core Features\n- Vimeo private embedded video player integration\n- Subscription billing systems\n\n# Tech Stack\n- Frontend: React\n- Backend: Node.js (MERN)\n- Database: MongoDB\n\n# Constraints\n- Responsive UI supporting mobile and tablet video learning\n\n# Optional Enhancements\n- Course completion certificate generator\n- Lesson review community discussion forums"
+  },
+  {
+    "input": "customer support bot for an airline",
+    "category": "chatbot",
+    "mcqs": [
+      {
+        "question": "Primary customer function?",
+        "options": [
+          "Flight status updates",
+          "Ticket bookings",
+          "Baggage claim inquiries",
+          "All of the above"
+        ],
+        "answer": "Flight status updates"
+      },
+      {
+        "question": "Backend database access?",
+        "options": [
+          "Flight History",
+          "Personal Details",
+          "Loyalty Program",
+          "All database tables"
+        ],
+        "answer": "Flight History"
+      },
+      {
+        "question": "Default deployment channel?",
+        "options": [
+          "Web window only",
+          "WhatsApp API",
+          "Facebook Messenger",
+          "Telegram bot"
+        ],
+        "answer": "Web window only"
+      }
+    ],
+    "output": "# Project Goal\nDesign a friendly airline assistant bot focused on real-time travel flight tracking.\n\n# Project Type\nChatbot\n\n# Functional Requirements\n- Flight status lookup requests\n- Retrieval of historical itinerary data\n- Standard baggage policy FAQs answering\n\n# Core Features\n- Web chat window conversational interface\n- Dynamic flight status query API hooks\n\n# Tech Stack\n- Framework: Dialogflow\n- Integration: Web SDK\n\n# Constraints\n- 99.9% uptime deployment requirement\n\n# Optional Enhancements\n- WhatsApp business API notification messaging fallback"
+  },
+  {
+    "input": "personal finance advisor bot",
+    "category": "chatbot",
+    "mcqs": [
+      {
+        "question": "Primary advisor feature?",
+        "options": [
+          "Budget tracking",
+          "Expense categorizing",
+          "Bill reminders",
+          "Investment analysis"
+        ],
+        "answer": "Budget tracking"
+      },
+      {
+        "question": "Database encryption choice?",
+        "options": [
+          "AES-256",
+          "Standard TLS",
+          "None",
+          "SHA-256 hash"
+        ],
+        "answer": "AES-256"
+      },
+      {
+        "question": "Main UX layout design?",
+        "options": [
+          "Text conversation only",
+          "Hybrid text/charts interface",
+          "Voice enabled interface",
+          "Interactive buttons list"
+        ],
+        "answer": "Hybrid text/charts interface"
+      }
+    ],
+    "output": "# Project Goal\nCreate an AI finance chatbot guiding users to manage monthly budgets and savings.\n\n# Project Type\nChatbot\n\n# Functional Requirements\n- Expense logging and budget goals entry\n- Automated summary generations\n- Database security compliance\n\n# Core Features\n- AES-256 secure user data storage\n- Hybrid visual graph cards within chat cards\n\n# Tech Stack\n- Framework: Rasa Open Source\n- Database: PostgreSQL\n\n# Constraints\n- Empathetic and conversational response tones\n\n# Optional Enhancements\n- Bank accounts sync API integrations"
+  },
+  {
+    "input": "AI tutor for high school physics students",
+    "category": "chatbot",
+    "mcqs": [
+      {
+        "question": "Primary target curriculum?",
+        "options": [
+          "Mechanics & kinematics",
+          "Electromagnetism",
+          "Thermodynamics",
+          "All physics topics"
+        ],
+        "answer": "Mechanics & kinematics"
+      },
+      {
+        "question": "Linguistic chat format?",
+        "options": [
+          "Socratic questioning",
+          "Direct lecture summaries",
+          "Equation solving step-by-step",
+          "Multiple choice quizzes"
+        ],
+        "answer": "Socratic questioning"
+      },
+      {
+        "question": "Deployment platform choice?",
+        "options": [
+          "Discord server bot",
+          "Web chat widget",
+          "Mobile app SDK",
+          "Slack app"
+        ],
+        "answer": "Discord server bot"
+      }
+    ],
+    "output": "# Project Goal\nDevelop a physics mentoring bot that helps students master mechanical equations using guided questions.\n\n# Project Type\nChatbot\n\n# Functional Requirements\n- Physics mechanics concepts tutoring\n- Step-by-step math solver check\n- Interactive equation templates\n\n# Core Features\n- Socratic dialogue logic loop execution\n- Discord API integration hooks\n\n# Tech Stack\n- Engine: LangChain / Python\n- Platform: Discord Bot SDK\n\n# Constraints\n- Strict formatting for equations utilizing LaTeX syntax\n\n# Optional Enhancements\n- Dynamic customized physics quiz score tracking databases"
+  },
+  {
+    "input": "mental health support chatbot for anxiety relief",
+    "category": "chatbot",
+    "mcqs": [
+      {
+        "question": "Primary counseling method?",
+        "options": [
+          "CBT exercises",
+          "Mindfulness breathing guide",
+          "General vent listening",
+          "Emergency referral guide"
+        ],
+        "answer": "CBT exercises"
+      },
+      {
+        "question": "User personalization criteria?",
+        "options": [
+          "Based on stated emotions",
+          "Based on history logs",
+          "Anonymous session tracking",
+          "Demographics details"
+        ],
+        "answer": "Based on stated emotions"
+      },
+      {
+        "question": "Response formatting rules?",
+        "options": [
+          "Empathetic text cards",
+          "Dynamic audio guides",
+          "General quotes prints",
+          "Emergency buttons only"
+        ],
+        "answer": "Empathetic text cards"
+      }
+    ],
+    "output": "# Project Goal\nBuild a safe, supportive chatbot offering daily stress relief and cognitive behavioral therapy guidelines.\n\n# Project Type\nChatbot\n\n# Functional Requirements\n- Emotion recognition inputs check\n- Interactive CBT journal worksheets\n- Crisis hotlines directory list\n\n# Core Features\n- Emotion-based counseling responses\n- Empathetic formatting layouts\n\n# Tech Stack\n- Engine: Rasa Open Source\n- Host: AWS\n\n# Constraints\n- Standard HIPAA privacy configurations and anonymous tracking\n\n# Optional Enhancements\n- Audio guided breathing relaxation controls"
+  },
+  {
+    "input": "sales assistant bot for real estate deals",
+    "category": "chatbot",
+    "mcqs": [
+      {
+        "question": "Primary chatbot function?",
+        "options": [
+          "To assist properties matching",
+          "To book house viewings",
+          "To calculate mortgage options",
+          "To screen leads"
+        ],
+        "answer": "To assist properties matching"
+      },
+      {
+        "question": "Target interaction tone?",
+        "options": [
+          "Friendly and conversational",
+          "Highly professional & technical",
+          "Brief & direct",
+          "Sales-driven & assertive"
+        ],
+        "answer": "Friendly and conversational"
+      },
+      {
+        "question": "Primary deployment channel?",
+        "options": [
+          "Website chat window",
+          "WhatsApp Business",
+          "Facebook Messenger",
+          "SMS gateways"
+        ],
+        "answer": "Website chat window"
+      }
+    ],
+    "output": "# Project Goal\nDesign a friendly, helpful chatbot to help prospective buyers find their dream homes.\n\n# Project Type\nChatbot\n\n# Functional Requirements\n- Property listings metadata search\n- Contact collection lead capture form\n- Friendly answering interface\n\n# Core Features\n- Web widget chat window interface\n- Conversational search algorithms\n\n# Tech Stack\n- Engine: Python / Flask\n- Database: SQLite\n\n# Constraints\n- Responsive styling supporting all mobile browsers\n\n# Optional Enhancements\n- Automated agent calendars viewing scheduler"
+  },
+  {
+    "input": "hotel room service order bot",
+    "category": "chatbot",
+    "mcqs": [
+      {
+        "question": "Primary client interface?",
+        "options": [
+          "In-room tablet app",
+          "WhatsApp API",
+          "Web QR code menu",
+          "Telegram bot"
+        ],
+        "answer": "In-room tablet app"
+      },
+      {
+        "question": "CRM system personalization?",
+        "options": [
+          "Remember guest previous orders",
+          "Basic room details lookup",
+          "Loyalty status checking",
+          "No CRM integration"
+        ],
+        "answer": "Remember guest previous orders"
+      },
+      {
+        "question": "Order billing checkout options?",
+        "options": [
+          "Post to room bill",
+          "Mobile card pay",
+          "Cash on delivery",
+          "All checkout modes"
+        ],
+        "answer": "Post to room bill"
+      }
+    ],
+    "output": "# Project Goal\nDevelop a streamlined service ordering assistant bot for high-end boutique hotel rooms.\n\n# Project Type\nChatbot\n\n# Functional Requirements\n- Menu catalog parsing and item selection\n- Room number billing confirmation\n- Answering room service FAQs\n\n# Core Features\n- Previous order recommendation algorithms\n- Direct room billing payment gateways\n\n# Tech Stack\n- Engine: Node.js\n- Integration: In-room Tablet Webview SDK\n\n# Constraints\n- Synchronized database connection with internal PMS systems\n\n# Optional Enhancements\n- Multi-language translation support options"
+  },
+  {
+    "input": "autonomous research agent that scrapes papers and writes summaries",
+    "category": "agents",
+    "mcqs": [
+      {
+        "question": "Primary document source?",
+        "options": [
+          "ArXiv API",
+          "Google Scholar",
+          "Local PDFs directory",
+          "Wikipedia pages"
+        ],
+        "answer": "ArXiv API"
+      },
+      {
+        "question": "Summary formatting output?",
+        "options": [
+          "Structured Markdown list",
+          "Bullet points outlines",
+          "Single paragraph summary",
+          "Latex draft files"
+        ],
+        "answer": "Structured Markdown list"
+      },
+      {
+        "question": "Scrape execution triggers?",
+        "options": [
+          "Scheduled cron task",
+          "User command terminal",
+          "Webhook alerts",
+          "Continuous looping"
+        ],
+        "answer": "User command terminal"
+      }
+    ],
+    "output": "# Project Goal\nCreate an autonomous research worker script fetching papers and writing detailed reviews.\n\n# Project Type\nAutonomous AI Agent\n\n# Functional Requirements\n- ArXiv API query matching search\n- Raw text parsing extraction\n- File writing markdown saves\n\n# Core Features\n- Markdown summarizer report formatting\n- Command Line Interface query controls\n\n# Tech Stack\n- Framework: LangChain & Python\n- LLM Engine: OpenAI API\n\n# Constraints\n- Rate limits handling for target paper APIs\n\n# Optional Enhancements\n- Automated email report dispatcher integration"
+  },
+  {
+    "input": "agentic software developer that writes, tests and debugs python",
+    "category": "agents",
+    "mcqs": [
+      {
+        "question": "Execution environment sandbox?",
+        "options": [
+          "Docker container",
+          "Local environment virtualenv",
+          "AWS Lambda sandbox",
+          "No sandbox"
+        ],
+        "answer": "Docker container"
+      },
+      {
+        "question": "Test framework choice?",
+        "options": [
+          "PyTest",
+          "Unittest",
+          "Behave BDD",
+          "Manual outputs checks"
+        ],
+        "answer": "PyTest"
+      },
+      {
+        "question": "Error correction looping limit?",
+        "options": [
+          "Max 3 retries",
+          "Max 5 retries",
+          "Max 10 retries",
+          "Unlimited retry loop"
+        ],
+        "answer": "Max 5 retries"
+      }
+    ],
+    "output": "# Project Goal\nDevelop a self-correcting agent program that writes, tests, and repairs Python modules.\n\n# Project Type\nAutonomous AI Agent\n\n# Functional Requirements\n- Raw code file writing\n- Automatic execution testing script loops\n- Parse error logs recursively\n\n# Core Features\n- Docker containerized code execution environment\n- PyTest execution report parsing\n\n# Tech Stack\n- Framework: CrewAI / Python\n- Sandbox: Docker Engine\n\n# Constraints\n- Loop execution limit capped strictly at 5 error resolution attempts\n\n# Optional Enhancements\n- GitHub repository commits push script integration"
+  },
+  {
+    "input": "AI agent for social media content creation and scheduling",
+    "category": "agents",
+    "mcqs": [
+      {
+        "question": "Primary target network?",
+        "options": [
+          "LinkedIn",
+          "Twitter/X",
+          "Instagram",
+          "Facebook Pages"
+        ],
+        "answer": "Twitter/X"
+      },
+      {
+        "question": "Content generation input format?",
+        "options": [
+          "Text news article links",
+          "Topic themes prompts",
+          "Image files description",
+          "CSV files list"
+        ],
+        "answer": "Topic themes prompts"
+      },
+      {
+        "question": "API scheduler scheduler integration?",
+        "options": [
+          "Buffer API",
+          "Direct Twitter API",
+          "Hootsuite webhooks",
+          "None"
+        ],
+        "answer": "Direct Twitter API"
+      }
+    ],
+    "output": "# Project Goal\nCreate an automation agent that drafts tech microblogs and schedules them to Twitter.\n\n# Project Type\nAI Agent\n\n# Functional Requirements\n- Microblog text drafting generation\n- Media attachments validation checking\n- Scheduled post queue operations\n\n# Core Features\n- Direct Twitter post API scheduling\n- Theme-based prompt writing loops\n\n# Tech Stack\n- Engine: Python & Tweepy\n- LLM: Groq API\n\n# Constraints\n- Characters limit checking adhering strictly to Twitter criteria\n\n# Optional Enhancements\n- Analytics follower dashboard metrics scraper"
+  },
+  {
+    "input": "market analysis agent tracking crypto price feeds",
+    "category": "agents",
+    "mcqs": [
+      {
+        "question": "Crypto exchange API target?",
+        "options": [
+          "CoinGecko API",
+          "Binance API",
+          "CoinMarketCap API",
+          "Coinbase API"
+        ],
+        "answer": "CoinGecko API"
+      },
+      {
+        "question": "Alert trigger update frequency?",
+        "options": [
+          "Every 1 minute",
+          "Every 5 minutes",
+          "Every 1 hour",
+          "Daily report"
+        ],
+        "answer": "Every 1 minute"
+      },
+      {
+        "question": "Anomalies alert output channels?",
+        "options": [
+          "Telegram message alert",
+          "Terminal print only",
+          "Slack webhook webhook",
+          "Email alert"
+        ],
+        "answer": "Telegram message alert"
+      }
+    ],
+    "output": "# Project Goal\nCreate an automated monitor agent tracking crypto tickers for quick price spikes.\n\n# Project Type\nAI Agent\n\n# Functional Requirements\n- API tickers data collection\n- Price deviation calculation\n- Alert dispatching systems\n\n# Core Features\n- CoinGecko price tracking query\n- Telegram instant message alert dispatcher\n\n# Tech Stack\n- Engine: Python & Asyncio\n- Platform: Telegram Bot API\n\n# Constraints\n- Check execution loops precisely every 1 minute\n\n# Optional Enhancements\n- SQLite dashboard logging metrics"
+  },
+  {
+    "input": "personal calendar scheduling autonomous assistant",
+    "category": "agents",
+    "mcqs": [
+      {
+        "question": "Primary calendar API integration?",
+        "options": [
+          "Google Calendar",
+          "Outlook Calendar",
+          "iCal format files",
+          "Local SQL DB database"
+        ],
+        "answer": "Google Calendar"
+      },
+      {
+        "question": "Conflict resolution booking rule?",
+        "options": [
+          "Propose alternative slots",
+          "Auto reject conflicts",
+          "Force overwrite bookings",
+          "Email user options"
+        ],
+        "answer": "Propose alternative slots"
+      },
+      {
+        "question": "Scheduling input source?",
+        "options": [
+          "Unstructured email texts",
+          "Web form inputs",
+          "Slack direct chats",
+          "SMS messages"
+        ],
+        "answer": "Unstructured email texts"
+      }
+    ],
+    "output": "# Project Goal\nDesign a smart scheduler bot that reads user emails and updates calendar bookings.\n\n# Project Type\nAI Agent\n\n# Functional Requirements\n- Email text parsing extraction\n- Calendar availability check queries\n- Automated meeting invites dispatcher\n\n# Core Features\n- Google Calendar API schedule booking\n- Smart alternative slot selector algorithms\n\n# Tech Stack\n- Engine: Python & Gmail API\n- Integration: Google Workspace SDK\n\n# Constraints\n- Explicit timezone normalization across all inputs\n\n# Optional Enhancements\n- Video call Zoom link generator API"
+  },
+  {
+    "input": "RAG-driven knowledge base search assistant",
+    "category": "agents",
+    "mcqs": [
+      {
+        "question": "Vector database preference?",
+        "options": [
+          "ChromaDB",
+          "Pinecone",
+          "Milvus",
+          "PGVector"
+        ],
+        "answer": "ChromaDB"
+      },
+      {
+        "question": "Primary text indexing files?",
+        "options": [
+          "PDF manuals",
+          "Word documentation docs",
+          "HTML website files",
+          "JSON logs list"
+        ],
+        "answer": "PDF manuals"
+      },
+      {
+        "question": "User query input platform?",
+        "options": [
+          "Command terminal script",
+          "React web layout window",
+          "Slack workspace channel",
+          "API endpoints only"
+        ],
+        "answer": "Command terminal script"
+      }
+    ],
+    "output": "# Project Goal\nBuild a CLI assistant querying user manuals database utilizing vector semantic searches.\n\n# Project Type\nAI Agent / RAG\n\n# Functional Requirements\n- Document text chunks splitting\n- Vector search query execution\n- Conversational report writing answers\n\n# Core Features\n- ChromaDB vector store embeddings lookup\n- Command line terminal query inputs\n\n# Tech Stack\n- Framework: LangChain & Python\n- Vector DB: ChromaDB\n\n# Constraints\n- Strict citation details output listing target page numbers\n\n# Optional Enhancements\n- Web UI layout user dashboard"
+  },
+  {
+    "input": "cross-platform language learning mobile app",
+    "category": "mobile",
+    "mcqs": [
+      {
+        "question": "Framework ecosystem choice?",
+        "options": [
+          "Flutter",
+          "React Native",
+          "SwiftUI native",
+          "Kotlin Multiplatform"
+        ],
+        "answer": "Flutter"
+      },
+      {
+        "question": "Local progress database storage?",
+        "options": [
+          "SQLite / SQFlite",
+          "Hive binary store",
+          "Shared Preferences",
+          "Realm DB database"
+        ],
+        "answer": "Hive binary store"
+      },
+      {
+        "question": "Gamification score system format?",
+        "options": [
+          "Daily streak calendar count",
+          "Experience points charts",
+          "Unlockable badges checklist",
+          "No score tracking"
+        ],
+        "answer": "Daily streak calendar count"
+      }
+    ],
+    "output": "# Project Goal\nDevelop a language application for vocab quizzes with streaks tracker metrics.\n\n# Project Type\nMobile Application\n\n# Functional Requirements\n- User vocabulary learning pages\n- Daily login validation count tracker\n- Quiz evaluation scoring layouts\n\n# Core Features\n- Hive high-speed local data storage\n- Daily calendar streak tracking logic\n\n# Tech Stack\n- Framework: Flutter\n- Language: Dart\n\n# Constraints\n- Optimized compile configurations supporting iOS and Android platforms\n\n# Optional Enhancements\n- Text-to-speech audio pronouncers integration"
+  },
+  {
+    "input": "native iOS camera filter and editor app",
+    "category": "mobile",
+    "mcqs": [
+      {
+        "question": "UI layout choice?",
+        "options": [
+          "Intuitive with tutorials and guides",
+          "Pro controls lists",
+          "Minimal slide view",
+          "Filters thumbnail list"
+        ],
+        "answer": "Intuitive with tutorials and guides"
+      },
+      {
+        "question": "Image rendering engine API?",
+        "options": [
+          "CoreImage Apple Framework",
+          "Metal API custom shaders",
+          "OpenCV graphics library",
+          "Standard UIKit rendering"
+        ],
+        "answer": "CoreImage Apple Framework"
+      },
+      {
+        "question": "Export photo formats option?",
+        "options": [
+          "HEIC and JPEG options",
+          "JPEG output only",
+          "RAW files support",
+          "PNG files output"
+        ],
+        "answer": "HEIC and JPEG options"
+      }
+    ],
+    "output": "# Project Goal\nDesign a native iOS camera application offering real-time vintage image filters.\n\n# Project Type\nMobile Application\n\n# Functional Requirements\n- Viewfinder camera capture controls\n- HEIC photo saves export flow\n- Vintage image filters overlay logic\n\n# Core Features\n- Apple CoreImage graphics filter library integration\n- Onscreen walkthrough layout overlays\n\n# Tech Stack\n- Language: Swift\n- Framework: SwiftUI & CoreImage\n\n# Constraints\n- Apple iOS SDK 16+ compile target criteria\n\n# Optional Enhancements\n- iCloud Photo Library auto sync backups"
+  },
+  {
+    "input": "budget tracker mobile app with receipt scanner",
+    "category": "mobile",
+    "mcqs": [
+      {
+        "question": "Receipt OCR scanning framework?",
+        "options": [
+          "Google ML Kit Vision SDK",
+          "Tesseract OCR engine",
+          "Custom python backend API",
+          "No OCR scanning"
+        ],
+        "answer": "Google ML Kit Vision SDK"
+      },
+      {
+        "question": "Investment tracker metrics option?",
+        "options": [
+          "No",
+          "Yes",
+          "Simple stock watch list",
+          "Crypto tracking only"
+        ],
+        "answer": "No"
+      },
+      {
+        "question": "Platform target deployment options?",
+        "options": [
+          "React Native",
+          "Flutter",
+          "Swift native",
+          "Kotlin native"
+        ],
+        "answer": "React Native"
+      }
+    ],
+    "output": "# Project Goal\nBuild a React Native budget log app capturing transactions through camera scans.\n\n# Project Type\nMobile Application\n\n# Functional Requirements\n- Receipt document photo capture\n- Text scanner information extraction\n- Expense logs records entry\n\n# Core Features\n- Google ML Kit OCR text reading integration\n\n# Tech Stack\n- Framework: React Native\n- Language: TypeScript\n\n# Constraints\n- No investment tracking calculations\n\n# Optional Enhancements\n- Automatic monthly PDF spend report generator"
+  },
+  {
+    "input": "meditation timer mobile app with audio streaming",
+    "category": "mobile",
+    "mcqs": [
+      {
+        "question": "Audio player package choice?",
+        "options": [
+          "Just Audio (Flutter)",
+          "React Native Track Player",
+          "AVPlayer (iOS Native)",
+          "ExoPlayer (Android Native)"
+        ],
+        "answer": "Just Audio (Flutter)"
+      },
+      {
+        "question": "Offline download listening capability?",
+        "options": [
+          "No offline play",
+          "Local storage download",
+          "Cache network files",
+          "Optional local files"
+        ],
+        "answer": "No offline play"
+      },
+      {
+        "question": "Default background play mode?",
+        "options": [
+          "Support lock screen play",
+          "App must stay active",
+          "Stop play on lock screen",
+          "None"
+        ],
+        "answer": "Support lock screen play"
+      }
+    ],
+    "output": "# Project Goal\nDevelop a meditation application offering guided music play during lock screen modes.\n\n# Project Type\nMobile Application\n\n# Functional Requirements\n- Audio list browsing selector\n- Timer countdown screen widget\n- Playback controllers display\n\n# Core Features\n- Just Audio Flutter media player integration\n- iOS/Android lock screen audio control widgets\n\n# Tech Stack\n- Framework: Flutter\n- Audio API: Just Audio Package\n\n# Constraints\n- Streaming active internet connection requirement (no local audio caching)\n\n# Optional Enhancements\n- Daily stress relaxation reminders alerts"
+  },
+  {
+    "input": "delivery driver route tracking app",
+    "category": "mobile",
+    "mcqs": [
+      {
+        "question": "Primary location tracking API?",
+        "options": [
+          "Google Maps Platform",
+          "Mapbox Maps API",
+          "Apple Maps API",
+          "OpenStreetMap widgets"
+        ],
+        "answer": "Google Maps Platform"
+      },
+      {
+        "question": "GPS tracking update frequency?",
+        "options": [
+          "Real-time stream updates",
+          "Every 10 seconds check",
+          "Every 30 seconds check",
+          "Every 1 minute check"
+        ],
+        "answer": "Real-time stream updates"
+      },
+      {
+        "question": "Primary target runtime environment?",
+        "options": [
+          "Android OS only",
+          "iOS Native app",
+          "Both Android and iOS",
+          "Web browsers only"
+        ],
+        "answer": "Android OS only"
+      }
+    ],
+    "output": "# Project Goal\nBuild a native Android delivery app updating live GPS coords on map views.\n\n# Project Type\nMobile Application\n\n# Functional Requirements\n- Active navigation map display\n- Real-time location coordinate streaming\n- Package delivery status update toggle\n\n# Core Features\n- Google Maps route navigation SDK integration\n- Real-time coordinate GPS updates stream\n\n# Tech Stack\n- Language: Kotlin\n- SDK: Android Google Maps Platform\n\n# Constraints\n- Target compile configuration limited to Android devices\n\n# Optional Enhancements\n- Offline delivery address database cache"
+  },
+  {
+    "input": "smart home device controller mobile application",
+    "category": "mobile",
+    "mcqs": [
+      {
+        "question": "Default communication protocol option?",
+        "options": [
+          "Local Wi-Fi Network",
+          "Bluetooth LE link",
+          "Zigbee gateways API",
+          "MQTT broker API"
+        ],
+        "answer": "MQTT broker API"
+      },
+      {
+        "question": "Primary user login authentication?",
+        "options": [
+          "Google Firebase Auth",
+          "Local app pin code",
+          "Auth0 integration",
+          "No authentication required"
+        ],
+        "answer": "Google Firebase Auth"
+      },
+      {
+        "question": "Mobile development framework choice?",
+        "options": [
+          "React Native",
+          "Flutter",
+          "Swift Native",
+          "Kotlin Native"
+        ],
+        "answer": "React Native"
+      }
+    ],
+    "output": "# Project Goal\nCreate a smart home app allowing users to switch lights and check sensor feeds.\n\n# Project Type\nMobile Application\n\n# Functional Requirements\n- Device discovery scan layout\n- On/Off state toggle switches\n- Secure user account login flow\n\n# Core Features\n- MQTT broker networking integration\n- Google Firebase user authentication systems\n\n# Tech Stack\n- Framework: React Native\n- Protocol: MQTT client library\n\n# Constraints\n- Optimized layouts for mobile viewports only\n\n# Optional Enhancements\n- Apple HomeKit SDK bridge integration"
+  },
+  {
+    "input": "PostgreSQL relational schema design for HR systems",
+    "category": "databases",
+    "mcqs": [
+      {
+        "question": "Relational table database structure?",
+        "options": [
+          "HR database design",
+          "Finance schema design",
+          "Ecommerce tables model",
+          "CRM data model"
+        ],
+        "answer": "HR database design"
+      },
+      {
+        "question": "Database engine target?",
+        "options": [
+          "PostgreSQL",
+          "MySQL",
+          "Oracle SQL",
+          "MariaDB"
+        ],
+        "answer": "PostgreSQL"
+      },
+      {
+        "question": "Primary security policy configuration?",
+        "options": [
+          "Row-Level Security (RLS)",
+          "Column encryption only",
+          "TLS network filters",
+          "No encryption"
+        ],
+        "answer": "Row-Level Security (RLS)"
+      }
+    ],
+    "output": "# Project Goal\nDesign a clean PostgreSQL relational database layout for worker records and manager profiles.\n\n# Project Type\nDatabase Schema Design\n\n# Functional Requirements\n- Employees and departments tables definition\n- Job history tracking tables design\n- Row-level access policies configuration\n\n# Core Features\n- PostgreSQL Row-Level Security (RLS) policies\n- Department manager hierarchy constraints\n\n# Tech Stack\n- Database Engine: PostgreSQL 15\n\n# Constraints\n- Normalization up to 3NF standards\n\n# Optional Enhancements\n- Auto audit logger triggers database function"
+  },
+  {
+    "input": "MongoDB NoSQL database design for blog platforms",
+    "category": "databases",
+    "mcqs": [
+      {
+        "question": "Document relational modeling choice?",
+        "options": [
+          "Embedded comments documents",
+          "Referenced articles lists",
+          "Separate database collections",
+          "No modeling needed"
+        ],
+        "answer": "Embedded comments documents"
+      },
+      {
+        "question": "High-speed text query option?",
+        "options": [
+          "MongoDB Atlas Search",
+          "Standard database indexing",
+          "Elasticsearch bridge link",
+          "None"
+        ],
+        "answer": "MongoDB Atlas Search"
+      },
+      {
+        "question": "Target database engine choice?",
+        "options": [
+          "MongoDB",
+          "DynamoDB",
+          "CouchDB",
+          "Firestore"
+        ],
+        "answer": "MongoDB"
+      }
+    ],
+    "output": "# Project Goal\nDevelop a document schema model for article collections with active search indexes.\n\n# Project Type\nDatabase Schema Design\n\n# Functional Requirements\n- Article collections structure specification\n- Embedded user comments document model\n- Full-text search engine integration\n\n# Core Features\n- MongoDB Atlas full-text index definitions\n- Embedded sub-document data architecture\n\n# Tech Stack\n- Database Engine: MongoDB 6.0\n\n# Constraints\n- Document size limit capped strictly at 16MB\n\n# Optional Enhancements\n- Redis database cache layer integration"
+  },
+  {
+    "input": "Redis cache setup for high-traffic session store",
+    "category": "databases",
+    "mcqs": [
+      {
+        "question": "Default cache expiration policy?",
+        "options": [
+          "Allkeys-LRU policy",
+          "Volatile-LFU policy",
+          "No eviction rules",
+          "Random key eviction"
+        ],
+        "answer": "Allkeys-LRU policy"
+      },
+      {
+        "question": "Database data persistence setup?",
+        "options": [
+          "RDB snapshots only",
+          "AOF logging enabled",
+          "No database persistence",
+          "RDB & AOF hybrid"
+        ],
+        "answer": "No database persistence"
+      },
+      {
+        "question": "Clustering deployment mode choice?",
+        "options": [
+          "Redis Sentinel mode",
+          "Single node instance",
+          "Redis Cluster mode",
+          "ElastiCache setup"
+        ],
+        "answer": "Redis Sentinel mode"
+      }
+    ],
+    "output": "# Project Goal\nDesign a highly available in-memory session cache configuration for web logins.\n\n# Project Type\nDatabase Configuration\n\n# Functional Requirements\n- Session keys timeout policy setup\n- Replication master-replica configuration\n- Cache eviction metrics tracking\n\n# Core Features\n- Redis Sentinel failover automation setup\n- Allkeys-LRU key eviction rules implementation\n\n# Tech Stack\n- Database Engine: Redis 7.0\n\n# Constraints\n- In-memory data store setup with no hard drive persistence\n\n# Optional Enhancements\n- TLS encryption setup for Redis network nodes"
+  },
+  {
+    "input": "Elasticsearch cluster indexing for ecommerce product catalog",
+    "category": "databases",
+    "mcqs": [
+      {
+        "question": "Query mapping analyzer choice?",
+        "options": [
+          "N-gram text tokenizer",
+          "Standard analyzer only",
+          "Custom phonetic analyzer",
+          "No analyzers used"
+        ],
+        "answer": "N-gram text tokenizer"
+      },
+      {
+        "question": "Index clustering replication count?",
+        "options": [
+          "1 primary 2 replica shards",
+          "Single index shard only",
+          "3 primary 3 replica shards",
+          "None"
+        ],
+        "answer": "1 primary 2 replica shards"
+      },
+      {
+        "question": "Primary indexing database choice?",
+        "options": [
+          "Elasticsearch",
+          "Algolia Search Engine",
+          "Solr Search Engine",
+          "OpenSearch Engine"
+        ],
+        "answer": "Elasticsearch"
+      }
+    ],
+    "output": "# Project Goal\nDesign an autocomplete indexing schema in Elasticsearch for rapid product search.\n\n# Project Type\nDatabase Schema Design\n\n# Functional Requirements\n- Product metadata indexes mapping\n- Search-as-you-type autocomplete configuration\n- Sharding configurations specification\n\n# Core Features\n- Elasticsearch N-gram autocomplete tokenizer mapping\n- Multi-shard index replication architecture\n\n# Tech Stack\n- Database Engine: Elasticsearch 8.0\n\n# Constraints\n- Index replication configuration using 1 primary and 2 replica shards\n\n# Optional Enhancements\n- Logstash pipeline indexing config"
+  },
+  {
+    "input": "Neo4j graph database modeling for social connections",
+    "category": "databases",
+    "mcqs": [
+      {
+        "question": "Graph database engine choice?",
+        "options": [
+          "Neo4j Graph Database",
+          "Amazon Neptune Database",
+          "ArangoDB multi-model",
+          "RedisGraph Engine"
+        ],
+        "answer": "Neo4j Graph Database"
+      },
+      {
+        "question": "Core query language target?",
+        "options": [
+          "Cypher Query Language",
+          "Gremlin Graph Language",
+          "Standard SQL queries",
+          "SPARQL graph queries"
+        ],
+        "answer": "Cypher Query Language"
+      },
+      {
+        "question": "Node relationship database setup?",
+        "options": [
+          "User follow user node links",
+          "User liked article logs",
+          "User purchases order list",
+          "All of the above"
+        ],
+        "answer": "User follow user node links"
+      }
+    ],
+    "output": "# Project Goal\nCreate a clean graph database structure representing a network of social followers.\n\n# Project Type\nDatabase Schema Design\n\n# Functional Requirements\n- Users nodes definition templates\n- Follow relationship query designs\n- User search query indexing\n\n# Core Features\n- Neo4j Cypher query optimization indexes\n- Direct user-to-user directional connection designs\n\n# Tech Stack\n- Database Engine: Neo4j Graph DB\n\n# Constraints\n- Graph queries target using Cypher language specifications\n\n# Optional Enhancements\n- APOC library triggers setup"
+  },
+  {
+    "input": "Docker containerization setup for Python flask app",
+    "category": "devops",
+    "mcqs": [
+      {
+        "question": "Base Docker image choice?",
+        "options": [
+          "python:3.10-slim",
+          "ubuntu:latest base image",
+          "alpine:latest base image",
+          "python:3.10-alpine"
+        ],
+        "answer": "python:3.10-slim"
+      },
+      {
+        "question": "Container serving port option?",
+        "options": [
+          "Port 5000",
+          "Port 8000",
+          "Port 80",
+          "Port 443"
+        ],
+        "answer": "Port 5000"
+      },
+      {
+        "question": "Multi-stage building deployment?",
+        "options": [
+          "No",
+          "Yes",
+          "Only for JS assets",
+          "Optional configuration"
+        ],
+        "answer": "No"
+      }
+    ],
+    "output": "# Project Goal\nWrite a secure, lightweight Dockerfile to package and containerize a Flask application.\n\n# Project Type\nDevOps Configuration\n\n# Functional Requirements\n- Base OS image declaration\n- Application folder copy command\n- Server start command definition\n\n# Core Features\n- Slim OS packaging using python:3.10-slim\n\n# Tech Stack\n- Engine: Docker\n- Target: Python Flask App\n\n# Constraints\n- Internal server network exposure limited to Port 5000 (no multi-stage builds)\n\n# Optional Enhancements\n- Docker Compose multi-service database linker"
+  },
+  {
+    "input": "Kubernetes cluster configuration deployment for web apps",
+    "category": "devops",
+    "mcqs": [
+      {
+        "question": "Deployment service type choice?",
+        "options": [
+          "LoadBalancer service",
+          "NodePort service",
+          "ClusterIP service only",
+          "Ingress Controller link"
+        ],
+        "answer": "LoadBalancer service"
+      },
+      {
+        "question": "Replication deployment count?",
+        "options": [
+          "3 pod replicas",
+          "1 pod replica only",
+          "5 pod replicas",
+          "Auto scaling pod rules"
+        ],
+        "answer": "3 pod replicas"
+      },
+      {
+        "question": "Cluster management platform options?",
+        "options": [
+          "Kubernetes Native yaml",
+          "Helm Chart package",
+          "Kustomize configurations",
+          "Terraform provision scripts"
+        ],
+        "answer": "Kubernetes Native yaml"
+      }
+    ],
+    "output": "# Project Goal\nWrite deployment YAML configs to run a resilient web application cluster.\n\n# Project Type\nDevOps Configuration\n\n# Functional Requirements\n- Deployment pod controller config\n- Network service exposure mapping\n- Replica scaling parameter declaration\n\n# Core Features\n- LoadBalancer external IP routing configurations\n\n# Tech Stack\n- Platform: Kubernetes Engine\n- Config: Native K8s YAML\n\n# Constraints\n- Cluster configuration deployment using exactly 3 pod replicas\n\n# Optional Enhancements\n- Horizontal Pod Autoscaler auto config script"
+  },
+  {
+    "input": "CI/CD pipeline yaml config for GitHub Actions",
+    "category": "devops",
+    "mcqs": [
+      {
+        "question": "Workflow trigger git action?",
+        "options": [
+          "Push to main branch",
+          "Create release tag",
+          "Pull request open only",
+          "Scheduled weekly cron"
+        ],
+        "answer": "Push to main branch"
+      },
+      {
+        "question": "Code analysis task pipeline?",
+        "options": [
+          "Flake8 linting checks",
+          "Black code formatting",
+          "SonarQube scanner",
+          "No code checking"
+        ],
+        "answer": "Flake8 linting checks"
+      },
+      {
+        "question": "Continuous deployment target options?",
+        "options": [
+          "Heroku API deploy",
+          "AWS S3 file deploy",
+          "Docker Hub image push",
+          "No auto deployment"
+        ],
+        "answer": "Heroku API deploy"
+      }
+    ],
+    "output": "# Project Goal\nWrite a GitHub Actions yaml workflow executing tests and auto-deploying to Heroku.\n\n# Project Type\nDevOps Configuration\n\n# Functional Requirements\n- Code lint check task setup\n- Test suite running script pipeline\n- Heroku git deployment triggers\n\n# Core Features\n- Flake8 Python linting check automation\n- Heroku deployment webhook automation\n\n# Tech Stack\n- Runner: GitHub Actions YAML\n- Deploy: Heroku API\n\n# Constraints\n- Trigger workflow push events limited to main branch commits\n\n# Optional Enhancements\n- Slack alert messenger channel integration"
+  },
+  {
+    "input": "AWS EC2 instance provisioning terraform config script",
+    "category": "devops",
+    "mcqs": [
+      {
+        "question": "Virtual machine instance size?",
+        "options": [
+          "t3.micro VM type",
+          "t3.medium VM type",
+          "m5.large VM type",
+          "t2.nano VM type"
+        ],
+        "answer": "t3.micro VM type"
+      },
+      {
+        "question": "Network security setup configuration?",
+        "options": [
+          "Port 22 SSH & Port 80 HTTP",
+          "Port 22 SSH only",
+          "Port 80 HTTP only",
+          "All ports open"
+        ],
+        "answer": "Port 22 SSH & Port 80 HTTP"
+      },
+      {
+        "question": "IaC infrastructure framework choice?",
+        "options": [
+          "Terraform configuration",
+          "AWS CloudFormation",
+          "Ansible provisioning",
+          "Pulumi script files"
+        ],
+        "answer": "Terraform configuration"
+      }
+    ],
+    "output": "# Project Goal\nWrite a Terraform infrastructure script provisioning a standard virtual server in AWS.\n\n# Project Type\nDevOps Configuration\n\n# Functional Requirements\n- Cloud provider definition blocks\n- Security group network rules mapping\n- VM resource blocks declarations\n\n# Core Features\n- AWS EC2 instance type t3.micro provisioning\n- Security group opening Port 22 and Port 80 inputs\n\n# Tech Stack\n- Tool: Terraform IaC\n- Cloud Provider: AWS\n\n# Constraints\n- Infrastructure provisioning target VM set to t3.micro specifications\n\n# Optional Enhancements\n- Elastic IP allocation association configuration"
+  },
+  {
+    "input": "Nginx reverse proxy and SSL configuration template",
+    "category": "devops",
+    "mcqs": [
+      {
+        "question": "Nginx config proxy target?",
+        "options": [
+          "Upstream Node.js server",
+          "Local static file folders",
+          "Docker container address",
+          "Python WSGI socket"
+        ],
+        "answer": "Upstream Node.js server"
+      },
+      {
+        "question": "Security SSL cert helper choice?",
+        "options": [
+          "Let's Encrypt Certbot",
+          "Self-signed certificate",
+          "AWS Certificate Manager",
+          "Commercial SSL cert"
+        ],
+        "answer": "Let's Encrypt Certbot"
+      },
+      {
+        "question": "Default HTTP to HTTPS redirect?",
+        "options": [
+          "Yes",
+          "No",
+          "Optional redirect",
+          "None"
+        ],
+        "answer": "Yes"
+      }
+    ],
+    "output": "# Project Goal\nCreate an Nginx configuration file forwarding web traffic securely to an application backend.\n\n# Project Type\nDevOps Configuration\n\n# Functional Requirements\n- Proxy pass location blocks routing\n- Port 80 HTTP to Port 443 HTTPS redirect rules\n- SSL cert paths definitions\n\n# Core Features\n- Let's Encrypt Certbot configurations inclusion\n- Upstream Node.js routing configurations\n\n# Tech Stack\n- Server Engine: Nginx\n- SSL: Let's Encrypt certbot\n\n# Constraints\n- Mandatory HTTP to HTTPS automatic rerouting\n\n# Optional Enhancements\n- Gzip compression optimization parameters"
+  },
+  {
+    "input": "Stripe payment gateway webhook integrations script",
+    "category": "apis",
+    "mcqs": [
+      {
+        "question": "Stripe transaction event target?",
+        "options": [
+          "invoice.payment_succeeded",
+          "checkout.session_completed",
+          "customer.subscription_updated",
+          "charge.failed"
+        ],
+        "answer": "checkout.session_completed"
+      },
+      {
+        "question": "Programming language script choice?",
+        "options": [
+          "Node.js JavaScript",
+          "Python scripts",
+          "PHP script files",
+          "Ruby codebase"
+        ],
+        "answer": "Node.js JavaScript"
+      },
+      {
+        "question": "Internal DB webhook database actions?",
+        "options": [
+          "Update user sub status",
+          "Create checkout record",
+          "Dispatch purchase emails",
+          "None"
+        ],
+        "answer": "Update user sub status"
+      }
+    ],
+    "output": "# Project Goal\nWrite a Node.js express route capturing Stripe checkout events and updating status in databases.\n\n# Project Type\nAPI Integration\n\n# Functional Requirements\n- Stripe webhook signature validation\n- Route handler listening path\n- Local database user update execution\n\n# Core Features\n- Stripe checkout.session_completed event catcher\n- User subscription database updates flow\n\n# Tech Stack\n- Language: Node.js (Express)\n- Gateway: Stripe API SDK\n\n# Constraints\n- Stripe webhook signature verification is mandatory\n\n# Optional Enhancements\n- Slack checkout alerts webhook logger"
+  },
+  {
+    "input": "OAuth2.0 user authentication flow integration",
+    "category": "apis",
+    "mcqs": [
+      {
+        "question": "Primary identity provider choice?",
+        "options": [
+          "Google OAuth",
+          "GitHub OAuth",
+          "Facebook Login",
+          "Apple Auth API"
+        ],
+        "answer": "Google OAuth"
+      },
+      {
+        "question": "Callback routing backend language?",
+        "options": [
+          "Python / FastAPI",
+          "Node.js / Express",
+          "Ruby on Rails",
+          "Java Spring Boot"
+        ],
+        "answer": "Python / FastAPI"
+      },
+      {
+        "question": "User session tokens store?",
+        "options": [
+          "JWT token inside cookies",
+          "Server side database sessions",
+          "Memory cache sessions",
+          "Localstorage token keys"
+        ],
+        "answer": "JWT token inside cookies"
+      }
+    ],
+    "output": "# Project Goal\nBuild a FastAPI auth backend logging users in using Google authentication credentials.\n\n# Project Type\nAPI Integration\n\n# Functional Requirements\n- Redirect user Google consent screen route\n- Google Auth token callback verifier\n- JWT token cookie session generator\n\n# Core Features\n- Google Identity OAuth 2.0 API integration\n- Secure HttpOnly JWT cookies generator\n\n# Tech Stack\n- Backend: FastAPI (Python)\n- Identity Provider: Google OAuth\n\n# Constraints\n- Secure cookie configurations limited to HttpOnly scopes\n\n# Optional Enhancements\n- Profile avatar image downloader utility"
+  },
+  {
+    "input": "SendGrid automated transactional email sender",
+    "category": "apis",
+    "mcqs": [
+      {
+        "question": "Target email script language?",
+        "options": [
+          "Python scripts",
+          "Node.js JavaScript",
+          "PHP backend code",
+          "Go executable tool"
+        ],
+        "answer": "Python scripts"
+      },
+      {
+        "question": "Transactional email triggers?",
+        "options": [
+          "Welcome sign-up email",
+          "Invoice checkout attachment",
+          "Reset password link email",
+          "Weekly newsletters email"
+        ],
+        "answer": "Welcome sign-up email"
+      },
+      {
+        "question": "Dynamic email content parameters?",
+        "options": [
+          "User name and dynamic URL link",
+          "Invoice breakdown detail lists",
+          "Random marketing quotes",
+          "None"
+        ],
+        "answer": "User name and dynamic URL link"
+      }
+    ],
+    "output": "# Project Goal\nWrite a Python module dispatching customized registration greeting messages through SendGrid.\n\n# Project Type\nAPI Integration\n\n# Functional Requirements\n- SendGrid API client setups\n- Recipient validation checks\n- Dynamic HTML template parsing variables\n\n# Core Features\n- Dynamic username registration email template variable insertion\n- SendGrid client dispatching code\n\n# Tech Stack\n- Language: Python 3\n- Service: SendGrid Web API SDK\n\n# Constraints\n- Standard SMTP web API connection mode (no direct server relay)\n\n# Optional Enhancements\n- SendGrid bounce event callback listener hooks"
+  },
+  {
+    "input": "Twilio SMS notification automated alerts integration",
+    "category": "apis",
+    "mcqs": [
+      {
+        "question": "SMS notification script language?",
+        "options": [
+          "Python scripts",
+          "Node.js JavaScript",
+          "Ruby script files",
+          "Go CLI utility"
+        ],
+        "answer": "Python scripts"
+      },
+      {
+        "question": "Twilio messaging alerts triggers?",
+        "options": [
+          "Server offline notifications",
+          "Order delivery status check",
+          "New worker signup alerts",
+          "All of the above"
+        ],
+        "answer": "Server offline notifications"
+      },
+      {
+        "question": "Mobile alerts number target?",
+        "options": [
+          "System admin number only",
+          "Dynamic customer numbers list",
+          "Marketing group numbers list",
+          "None"
+        ],
+        "answer": "System admin number only"
+      }
+    ],
+    "output": "# Project Goal\nCreate a server health script that pages administrators via SMS when systems crash.\n\n# Project Type\nAPI Integration\n\n# Functional Requirements\n- Twilio Client initialization keys\n- Server status checker logic\n- SMS alert dispatcher executions\n\n# Core Features\n- Twilio SMS alert routing function\n- Server ping failure alert checker\n\n# Tech Stack\n- Language: Python\n- Gateway: Twilio API SDK\n\n# Constraints\n- Text messages target restricted strictly to designated administrator numbers\n\n# Optional Enhancements\n- Twilio voice call notification fallback"
+  },
+  {
+    "input": "Salesforce CRM API lead syncing integration program",
+    "category": "apis",
+    "mcqs": [
+      {
+        "question": "Lead syncing direction flow?",
+        "options": [
+          "Local SQL database to Salesforce",
+          "Salesforce CRM to local database",
+          "Bi-directional database sync",
+          "One-time setup imports"
+        ],
+        "answer": "Local SQL database to Salesforce"
+      },
+      {
+        "question": "Integration synchronization frequency?",
+        "options": [
+          "Hourly batch cron schedule",
+          "Real-time webhook sync",
+          "Daily backup script",
+          "Manual triggers only"
+        ],
+        "answer": "Hourly batch cron schedule"
+      },
+      {
+        "question": "Lead syncing payload format?",
+        "options": [
+          "JSON payload structures",
+          "XML bulk payload files",
+          "CSV raw data dumps",
+          "None"
+        ],
+        "answer": "JSON payload structures"
+      }
+    ],
+    "output": "# Project Goal\nWrite a synchronization cron script pushing new contacts database records to Salesforce CRM.\n\n# Project Type\nAPI Integration\n\n# Functional Requirements\n- Salesforce OAuth API authenticator\n- Database contacts delta record collector\n- Bulk Salesforce REST API records creators\n\n# Core Features\n- Hourly batched scheduler integration cron loops\n- JSON REST API Salesforce synchronization blocks\n\n# Tech Stack\n- Language: Node.js\n- API: Salesforce REST API\n\n# Constraints\n- Sync operations executed strictly on an hourly batch schedule\n\n# Optional Enhancements\n- Sync success log report generator"
+  },
+  {
+    "input": "Google Sheets API spreadsheet reading program",
+    "category": "apis",
+    "mcqs": [
+      {
+        "question": "Preferred reading scripting language?",
+        "options": [
+          "Python scripts",
+          "Node.js JavaScript",
+          "Google Apps Script",
+          "Java backend code"
+        ],
+        "answer": "Python scripts"
+      },
+      {
+        "question": "Google Cloud authentication method?",
+        "options": [
+          "Service Account JSON key",
+          "OAuth2.0 user credentials",
+          "API Public Key key",
+          "No authentication required"
+        ],
+        "answer": "Service Account JSON key"
+      },
+      {
+        "question": "Data reading operation output?",
+        "options": [
+          "Print to console",
+          "Save to local CSV",
+          "Import to SQL database",
+          "Render on React webview"
+        ],
+        "answer": "Save to local CSV"
+      }
+    ],
+    "output": "# Project Goal\nWrite a Python script downloading Google Sheets columns data to local CSV spreadsheets.\n\n# Project Type\nAPI Integration\n\n# Functional Requirements\n- Google Cloud service account authentication\n- Specific Spreadsheet ID cell range queries\n- File writing local directory CSV output exporter\n\n# Core Features\n- Service account authentication configuration blocks\n- CSV file exporting code modules\n\n# Tech Stack\n- Language: Python\n- API: Google Sheets API v4\n\n# Constraints\n- Service account credentials JSON authentication requirement\n\n# Optional Enhancements\n- Automated email report attachment dispatcher"
+  },
+  {
+    "input": "cross-platform markdown editor desktop application",
+    "category": "desktop",
+    "mcqs": [
+      {
+        "question": "Desktop app framework choice?",
+        "options": [
+          "Electron JS",
+          "Tauri / Rust",
+          "PyQt / Python",
+          "Flutter Desktop"
+        ],
+        "answer": "Electron JS"
+      },
+      {
+        "question": "Markdown preview rendering mode?",
+        "options": [
+          "Real-time side-by-side view",
+          "Toggle view modes",
+          "HTML export preview only",
+          "No preview options"
+        ],
+        "answer": "Real-time side-by-side view"
+      },
+      {
+        "question": "Local file operations capability?",
+        "options": [
+          "Read & write local files",
+          "Read local files only",
+          "Save cloud files only",
+          "None"
+        ],
+        "answer": "Read & write local files"
+      }
+    ],
+    "output": "# Project Goal\nBuild a desktop markdown writer app displaying rich parsed HTML previews side-by-side.\n\n# Project Type\nDesktop Application\n\n# Functional Requirements\n- Local file open/save dialog controls\n- Markdown syntax parsing translator modules\n- Double view layout windows configuration\n\n# Core Features\n- Side-by-side split screen real-time editor preview\n- Local filesystem read/write access API modules\n\n# Tech Stack\n- Framework: Electron\n- Frontend: HTML/CSS/JavaScript\n\n# Constraints\n- Cross-platform runtime targeting Windows and macOS systems\n\n# Optional Enhancements\n- Custom CSS layout theme settings configuration"
+  },
+  {
+    "input": "native Windows system status tray utility dashboard",
+    "category": "desktop",
+    "mcqs": [
+      {
+        "question": "Windows development runtime language?",
+        "options": [
+          "C# / .NET",
+          "C++ Win32 API",
+          "Python script tool",
+          "Rust custom scripts"
+        ],
+        "answer": "C# / .NET"
+      },
+      {
+        "question": "System telemetry metrics monitored?",
+        "options": [
+          "CPU and RAM usage",
+          "Disk speed monitoring",
+          "Network network speed",
+          "All system stats"
+        ],
+        "answer": "CPU and RAM usage"
+      },
+      {
+        "question": "User menu toggle choice?",
+        "options": [
+          "System Tray Context Menu",
+          "Floating widgets GUI",
+          "Full window dashboard dashboard",
+          "Console logs only"
+        ],
+        "answer": "System Tray Context Menu"
+      }
+    ],
+    "output": "# Project Goal\nWrite a lightweight Windows tray utility showing CPU and Memory loads on click.\n\n# Project Type\nDesktop Application\n\n# Functional Requirements\n- Windows system tray icon setup\n- CPU/RAM usage system DLL requests\n- Tray click context menu popup builder\n\n# Core Features\n- Windows tray context menu layout controller\n- CPU/RAM live telemetry dashboard cards\n\n# Tech Stack\n- Language: C#\n- Framework: .NET WPF / Windows Forms\n\n# Constraints\n- Target execution environment limited to Windows OS platforms\n\n# Optional Enhancements\n- High temperature thermal alarm email alert checks"
+  },
+  {
+    "input": "macOS files backup configuration manager app",
+    "category": "desktop",
+    "mcqs": [
+      {
+        "question": "Native macOS framework choice?",
+        "options": [
+          "SwiftUI Apple Framework",
+          "Electron JS framework",
+          "PyQt Desktop package",
+          "Java Swing desktop"
+        ],
+        "answer": "SwiftUI Apple Framework"
+      },
+      {
+        "question": "File backup destination target?",
+        "options": [
+          "External USB drive",
+          "AWS S3 cloud bucket",
+          "Network NAS server",
+          "iCloud Drive folder"
+        ],
+        "answer": "External USB drive"
+      },
+      {
+        "question": "Backup triggers scheduler choice?",
+        "options": [
+          "Scheduled hourly background check",
+          "Manual run buttons",
+          "Real-time folder watchers",
+          "None"
+        ],
+        "answer": "Scheduled hourly background check"
+      }
+    ],
+    "output": "# Project Goal\nDevelop a macOS application managing backup runs to external storage devices.\n\n# Project Type\nDesktop Application\n\n# Functional Requirements\n- Folder selection catalog manager\n- File copy cron scheduler automation\n- Backup running state tracking dashboard\n\n# Core Features\n- Hourly background scheduled directory copy automation\n- Apple macOS external USB drive path targeting\n\n# Tech Stack\n- Language: Swift\n- Framework: SwiftUI\n\n# Constraints\n- Target runtime restricted to Apple macOS platforms\n\n# Optional Enhancements\n- Slack notification backup run completion success reporter"
+  },
+  {
+    "input": "cross-platform media player desktop software",
+    "category": "desktop",
+    "mcqs": [
+      {
+        "question": "Desktop GUI library choice?",
+        "options": [
+          "PyQt / Python",
+          "Electron JS framework",
+          "JavaFX desktop toolkit",
+          "wxWidgets C++"
+        ],
+        "answer": "PyQt / Python"
+      },
+      {
+        "question": "Media playback decoding engine?",
+        "options": [
+          "VLC backend engine",
+          "FFmpeg CLI custom wrappers",
+          "Native OS media decoders",
+          "None"
+        ],
+        "answer": "VLC backend engine"
+      },
+      {
+        "question": "Playlist customization options?",
+        "options": [
+          "Custom local playlists",
+          "Online folder streaming",
+          "No playlist option",
+          "YouTube playlist sync"
+        ],
+        "answer": "Custom local playlists"
+      }
+    ],
+    "output": "# Project Goal\nWrite a desktop video player utilizing VLC decoders for high format compatibility.\n\n# Project Type\nDesktop Application\n\n# Functional Requirements\n- Video file open dialog scanner\n- Player timeline play controllers\n- Playlists creation metadata organizer\n\n# Core Features\n- VLC Media Player wrapper engine integration\n- Custom local playlist manager libraries\n\n# Tech Stack\n- Language: Python\n- UI: PyQt\n\n# Constraints\n- Cross-platform support for Windows, macOS, and Linux\n\n# Optional Enhancements\n- Subtitles auto downloader API tool"
+  },
+  {
+    "input": "sqlite database manager GUI desktop tool",
+    "category": "desktop",
+    "mcqs": [
+      {
+        "question": "Desktop app framework choice?",
+        "options": [
+          "Tauri / Rust",
+          "Electron JS framework",
+          "PyQt / Python",
+          "Flutter Desktop"
+        ],
+        "answer": "Tauri / Rust"
+      },
+      {
+        "question": "Database viewing UI layout?",
+        "options": [
+          "SQL editor & data grid",
+          "Data grid tables view only",
+          "SQL command shell console only",
+          "Visual relational graph graphs"
+        ],
+        "answer": "SQL editor & data grid"
+      },
+      {
+        "question": "SQL query executor capabilities?",
+        "options": [
+          "Read query execution only",
+          "Write/Alter query execution",
+          "Bulk import csv file operations",
+          "None"
+        ],
+        "answer": "Write/Alter query execution"
+      }
+    ],
+    "output": "# Project Goal\nBuild a lightweight desktop app to open SQLite database files and run Cypher-like SQL updates.\n\n# Project Type\nDesktop Application\n\n# Functional Requirements\n- SQLite file select dialog module\n- Interactive data table grids view\n- SQL query execution text console\n\n# Core Features\n- SQLite database query execution engine integration\n- Interactive data grid table preview blocks\n\n# Tech Stack\n- Framework: Tauri\n- Frontend: React / Rust\n\n# Constraints\n- Target execution file access limited to SQLite DB formats\n\n# Optional Enhancements\n- Table schema diagram visualization maps"
+  },
+  {
+    "input": "Python automated file backup script to AWS S3 bucket",
+    "category": "automation",
+    "mcqs": [
+      {
+        "question": "File compression zip format?",
+        "options": [
+          "ZIP archive format",
+          "TAR.GZ compressed files",
+          "GZIP compression only",
+          "No file compression"
+        ],
+        "answer": "ZIP archive format"
+      },
+      {
+        "question": "AWS cloud connection SDK?",
+        "options": [
+          "Boto3 SDK Python",
+          "AWS CLI shell commands",
+          "REST API custom integrations",
+          "None"
+        ],
+        "answer": "Boto3 SDK Python"
+      },
+      {
+        "question": "Backup fail notification method?",
+        "options": [
+          "Admin SMS alert",
+          "Local log file only",
+          "Slack webhook webhook",
+          "Email alert"
+        ],
+        "answer": "Local log file only"
+      }
+    ],
+    "output": "# Project Goal\nWrite a Python automation script zipping folders and exporting them to AWS S3 storage.\n\n# Project Type\nAutomation Script\n\n# Functional Requirements\n- Directory zip compression modules\n- AWS S3 bucket file upload execution\n- Local log files tracking outcomes\n\n# Core Features\n- Python Boto3 AWS SDK client integration\n- ZIP archive directory compression modules\n\n# Tech Stack\n- Language: Python 3\n- Cloud SDK: Boto3\n\n# Constraints\n- Error logging output limited to local log file directories\n\n# Optional Enhancements\n- Automated backup success email dispatchers"
+  },
+  {
+    "input": "automated script to clean up temp folders on server hosting",
+    "category": "automation",
+    "mcqs": [
+      {
+        "question": "Script execution runtime shell?",
+        "options": [
+          "Bash scripting shell",
+          "Python scripting runner",
+          "PowerShell Windows script",
+          "Node.js scripting environment"
+        ],
+        "answer": "Bash scripting shell"
+      },
+      {
+        "question": "Target folders cleanup path?",
+        "options": [
+          "/tmp folders directory",
+          "User cache folders directory",
+          "System logs directory",
+          "All temp logs"
+        ],
+        "answer": "/tmp folders directory"
+      },
+      {
+        "question": "Folder files retention days criteria?",
+        "options": [
+          "Delete older than 7 days",
+          "Delete older than 30 days",
+          "Delete all files instantly",
+          "None"
+        ],
+        "answer": "Delete older than 7 days"
+      }
+    ],
+    "output": "# Project Goal\nWrite a Cron-ready Bash cleanup script wiping old files out of temp server storage.\n\n# Project Type\nAutomation Script\n\n# Functional Requirements\n- Target path directory scanner\n- File age checking loops\n- File deletion execution modules\n\n# Core Features\n- Bash find command with age rules implementation\n\n# Tech Stack\n- Script Engine: Bash Shell Script\n- OS environment: Linux / Unix\n\n# Constraints\n- Deletion targets restricted strictly to files older than 7 days in /tmp directories\n\n# Optional Enhancements\n- Disk space usage alert email dispatcher"
+  },
+  {
+    "input": "automated CSV log parser and summary email script",
+    "category": "automation",
+    "mcqs": [
+      {
+        "question": "Preferred CSV parsing library?",
+        "options": [
+          "Pandas DataFrames",
+          "Python csv parser module",
+          "Custom regex parse module",
+          "None"
+        ],
+        "answer": "Pandas DataFrames"
+      },
+      {
+        "question": "Email dispatcher gateway helper?",
+        "options": [
+          "SendGrid Web API",
+          "SMTP Local Server",
+          "Gmail SMTP relay",
+          "Mailchimp transactional"
+        ],
+        "answer": "SendGrid Web API"
+      },
+      {
+        "question": "Parsed statistics summary parameters?",
+        "options": [
+          "Errors count lists",
+          "Daily active user counts",
+          "Top requested URLs lists",
+          "None"
+        ],
+        "answer": "Errors count lists"
+      }
+    ],
+    "output": "# Project Goal\nWrite a Python parser tracking errors in CSV spreadsheets and sending reports to managers.\n\n# Project Type\nAutomation Script\n\n# Functional Requirements\n- CSV file import scanner\n- Error occurrences calculator tracker\n- SendGrid report email generator\n\n# Core Features\n- Python Pandas data frame calculation blocks\n- SendGrid REST API email dispatch integrations\n\n# Tech Stack\n- Language: Python 3\n- Library: Pandas & SendGrid SDK\n\n# Constraints\n- Report notifications limited to occurrences of critical errors\n\n# Optional Enhancements\n- High-contrast HTML report email template styles"
+  },
+  {
+    "input": "automated web browser scraper script to download PDFs",
+    "category": "automation",
+    "mcqs": [
+      {
+        "question": "Browser scraping controller choice?",
+        "options": [
+          "Selenium WebDriver",
+          "Playwright framework",
+          "BeautifulSoup parser",
+          "Scrapy spiders"
+        ],
+        "answer": "Selenium WebDriver"
+      },
+      {
+        "question": "Scraping target download options?",
+        "options": [
+          "PDF manuals files only",
+          "All PDF documents documents",
+          "Image files download download",
+          "None"
+        ],
+        "answer": "PDF manuals files only"
+      },
+      {
+        "question": "File downloads storage folder?",
+        "options": [
+          "Local downloads folder",
+          "AWS S3 storage bucket",
+          "Google Drive sync folder",
+          "Dropbox account folder"
+        ],
+        "answer": "Local downloads folder"
+      }
+    ],
+    "output": "# Project Goal\nWrite a Selenium Python scraper checking portal links and saving PDF instruction sheets locally.\n\n# Project Type\nAutomation Script\n\n# Functional Requirements\n- Browser session login automation\n- PDF URL link scanners\n- File download local directory writing\n\n# Core Features\n- Python Selenium browser controller automation\n\n# Tech Stack\n- Language: Python 3\n- Library: Selenium Webdriver\n\n# Constraints\n- Target file download actions limited to PDF extensions only\n\n# Optional Enhancements\n- Dynamic proxy IP address rotators"
+  },
+  {
+    "input": "automated system health check and alert sender script",
+    "category": "automation",
+    "mcqs": [
+      {
+        "question": "Alert notification delivery target?",
+        "options": [
+          "Slack channel webhook",
+          "Admin SMS alerts",
+          "Email alerts inbox",
+          "Local alert sounds"
+        ],
+        "answer": "Slack channel webhook"
+      },
+      {
+        "question": "System metrics alert limits?",
+        "options": [
+          "CPU > 90% and RAM > 90%",
+          "CPU > 90% or RAM > 90%",
+          "Disk space availability < 10%",
+          "None"
+        ],
+        "answer": "CPU > 90% and RAM > 90%"
+      },
+      {
+        "question": "Script query check schedule?",
+        "options": [
+          "Every 5 minutes cron",
+          "Every 1 hour cron",
+          "Continuous loop check",
+          "None"
+        ],
+        "answer": "Every 5 minutes cron"
+      }
+    ],
+    "output": "# Project Goal\nCreate a server health checker script that sends warning alerts directly to Slack chatrooms.\n\n# Project Type\nAutomation Script\n\n# Functional Requirements\n- CPU/RAM capacity check metrics query\n- Slack message alert body generator\n- Cron loop scheduler automation configuration\n\n# Core Features\n- Slack incoming webhook integration modules\n\n# Tech Stack\n- Language: Bash Shell Script\n- Platform: Slack API Webhook\n\n# Constraints\n- Active telemetry checking executed on an automated 5-minute cron schedule\n\n# Optional Enhancements\n- HTML server diagnostics report generator"
+  }
+]

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security & Governance - ForgePrompt</title>
+    <style>
+        :root {
+            --bg-dark: #0a0f1c;
+            --glass-bg: rgba(20, 27, 45, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+        body {
+            margin: 0; padding: 2rem;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, sans-serif;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(52, 211, 153, 0.08), transparent 25%);
+            min-height: 100vh;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        h1 { font-size: 1.875rem; font-weight: 600; margin: 0; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; color: transparent; }
+        h2 { font-size: 1.25rem; font-weight: 500; margin: 0 0 1rem 0; color: var(--text-main); }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 24px -1px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .glass-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px -4px rgba(0,0,0,0.3);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .grid { display: grid; gap: 1.5rem; }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); }
+        
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--glass-border); }
+        th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--glass-border); }
+        tr:last-child td { border-bottom: none; }
+        tr { transition: background-color 0.2s ease; }
+        tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
+        
+        .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .badge.success { background: rgba(52, 211, 153, 0.1); color: var(--success); border: 1px solid rgba(52, 211, 153, 0.2); }
+        .badge.warning { background: rgba(251, 191, 36, 0.1); color: var(--warning); border: 1px solid rgba(251, 191, 36, 0.2); }
+        
+        .btn { background: var(--accent); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+        .btn:hover { background: var(--accent-hover); box-shadow: 0 0 15px rgba(14, 165, 233, 0.5); transform: scale(1.02); }
+        .btn-outline { background: transparent; border: 1px solid var(--glass-border); color: var(--text-main); box-shadow: none; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Security & Governance</h1>
+        <div style="display: flex; gap: 1rem;">
+            <button class="btn btn-outline">Audit Logs</button>
+            <button class="btn">New Policy</button>
+        </div>
+    </header>
+
+    <div class="grid grid-2">
+        <div class="glass-panel">
+            <h2>Policy DSL Rules</h2>
+            <div style="background: rgba(0,0,0,0.4); border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; border: 1px solid var(--glass-border); font-family: 'Fira Code', monospace; font-size: 0.875rem; line-height: 1.5;">
+                <span style="color: var(--success); font-weight: bold;">ALLOW</span> role:developer<br>
+                <span style="color: var(--accent); font-weight: bold;">TO</span> execute:deployment<br>
+                <span style="color: var(--warning); font-weight: bold;">WHEN</span> environment == "staging"
+            </div>
+            <div style="background: rgba(0,0,0,0.4); border-radius: 0.5rem; padding: 1rem; border: 1px solid var(--glass-border); font-family: 'Fira Code', monospace; font-size: 0.875rem; line-height: 1.5;">
+                <span style="color: var(--danger); font-weight: bold;">DENY</span> role:*<br>
+                <span style="color: var(--accent); font-weight: bold;">TO</span> access:kms_keys<br>
+                <span style="color: var(--warning); font-weight: bold;">UNLESS</span> mfa_verified == true
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2>KMS Secrets Manager</h2>
+            <table>
+                <thead><tr><th>Secret Name</th><th>Rotation Status</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for secret in secrets|default([{'name':'DB_PASSWORD_PROD', 'status':'Valid (12d left)'}, {'name':'STRIPE_API_KEY', 'status':'Needs Rotation'}]) %}
+                    <tr>
+                        <td style="font-family: monospace; font-size: 0.875rem; color: var(--accent);">{{ secret.name }}</td>
+                        <td><span class="badge {{ 'warning' if 'Needs' in secret.status else 'success' }}">{{ secret.status }}</span></td>
+                        <td><button class="btn btn-outline" style="padding: 0.25rem 0.75rem; font-size: 0.75rem;">Rotate</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="glass-panel" style="grid-column: 1 / -1;">
+            <h2>Feature Flag Toggles</h2>
+            <table>
+                <thead><tr><th>Feature</th><th>Description</th><th>State</th></tr></thead>
+                <tbody>
+                    {% for flag in flags|default([{'name':'Enable_GraphQL_API', 'desc':'Exposes new GQL endpoint for client apps', 'state':True}, {'name':'Dark_Mode_V2', 'desc':'New UI components and palette', 'state':False}]) %}
+                    <tr>
+                        <td style="font-weight: 500;">{{ flag.name }}</td>
+                        <td style="color: var(--text-muted); font-size: 0.875rem;">{{ flag.desc }}</td>
+                        <td>
+                            <label style="position: relative; display: inline-block; width: 44px; height: 24px;">
+                                <input type="checkbox" {% if flag.state %}checked{% endif %} style="opacity: 0; width: 0; height: 0;">
+                                <span style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: {{ 'var(--success)' if flag.state else 'rgba(255,255,255,0.2)' }}; border-radius: 24px; transition: 0.4s;">
+                                    <span style="position: absolute; content: ''; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; border-radius: 50%; transition: 0.4s; transform: {{ 'translateX(20px)' if flag.state else 'none' }};"></span>
+                                </span>
+                            </label>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

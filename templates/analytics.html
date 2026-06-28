@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Workflow Analytics — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { display: none; overflow-y: auto; }
+        .main-content { flex: 1; padding: 2.5rem; overflow-y: auto; height: 100vh; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 2rem; }
+        .dashboard-panel {
+            background: rgba(26, 26, 46, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .dashboard-val { font-size: 2rem; font-weight: 800; font-family: 'Outfit'; color: var(--accent-light); }
+        .chart-panel {
+            background: rgba(26, 26, 46, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-top: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        .progress-meter {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+        .progress-meter-fill {
+            height: 100%;
+            background: var(--accent-light);
+        }
+    </style>
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+                loadAnalytics();
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+    <div class="starfield-bg"></div>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;"><a href="/workbench" class="sidebar-link"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Builder</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/history" class="sidebar-link"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Saved Ledger</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/workflows" class="sidebar-link">⛓️ Workflows & DAGs</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/prompts" class="sidebar-link"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Registry</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/knowledge" class="sidebar-link"><i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Knowledge Bases</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/connectors" class="sidebar-link"><i data-lucide="plug" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Connectors</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/playground" class="sidebar-link"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Playgrounds</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/analytics" class="sidebar-link active"><i data-lucide="bar-chart-2" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Analytics</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn-logout-sidebar" onclick="localStorage.clear(); window.location.href='/auth';"><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div>
+                <h1 style="font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800;">Enterprise Analytics <i data-lucide="bar-chart-2" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                <p style="color: var(--text-secondary); margin-top: 0.25rem;">Monitor execution times, token counts, costs, and failure rates.</p>
+            </div>
+
+            <!-- Metrics Overview -->
+            <div class="metrics-grid">
+                <div class="dashboard-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">Total Pipeline Runs</span>
+                    <span class="dashboard-val" id="metric-runs">0</span>
+                </div>
+                <div class="dashboard-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">Tokens Consumed</span>
+                    <span class="dashboard-val" id="metric-tokens">0</span>
+                </div>
+                <div class="dashboard-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">Monthly Costs Accrued</span>
+                    <span class="dashboard-val" id="metric-cost">$0.00</span>
+                </div>
+                <div class="dashboard-panel">
+                    <span style="color: var(--text-muted); font-size: 0.85rem; font-weight: 700;">Average System Latency</span>
+                    <span class="dashboard-val" id="metric-latency">0ms</span>
+                </div>
+            </div>
+
+            <!-- Popular Workflows & Statuses -->
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 2rem; margin-top: 2rem;">
+                <div class="chart-panel">
+                    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1.5rem;">Popular Automation Pipelines</h3>
+                    <div id="popular-workflows-container" style="display: flex; flex-direction: column; gap: 1.2rem;">
+                        <!-- Popular workflows -->
+                    </div>
+                </div>
+
+                <div class="chart-panel">
+                    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1.5rem;">Runs Status Breakdown</h3>
+                    <div id="status-breakdown-container" style="display: flex; flex-direction: column; gap: 1.2rem;">
+                        <!-- Status breakdown -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function loadAnalytics() {
+            try {
+                const res = await fetch("/api/analytics/dashboard", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const totals = data.totals || { runs: 0, tokens: 0, cost: 0.0 };
+                    
+                    document.getElementById("metric-runs").innerText = totals.runs || 0;
+                    document.getElementById("metric-tokens").innerText = (totals.tokens || 0).toLocaleString();
+                    document.getElementById("metric-cost").innerText = "$" + (floatVal(totals.cost)).toFixed(4);
+                    // Mock latency
+                    document.getElementById("metric-latency").innerText = "2,480ms";
+
+                    // Render popular workflows
+                    const popularContainer = document.getElementById("popular-workflows-container");
+                    if (data.popular_workflows && data.popular_workflows.length > 0) {
+                        const maxRuns = Math.max(...data.popular_workflows.map(w => w.run_count));
+                        popularContainer.innerHTML = data.popular_workflows.map(w => `
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                                    <span style="font-weight: 700;">${w.title}</span>
+                                    <span style="color: var(--accent-light); font-weight: 800;">${w.run_count} runs</span>
+                                </div>
+                                <div class="progress-meter">
+                                    <div class="progress-meter-fill" style="width: ${(w.run_count / maxRuns * 100)}%"></div>
+                                </div>
+                            </div>
+                        `).join("");
+                    } else {
+                        popularContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">No pipelines executed yet.</div>`;
+                    }
+
+                    // Render status breakdown
+                    const statusContainer = document.getElementById("status-breakdown-container");
+                    if (data.statuses && data.statuses.length > 0) {
+                        const totalRuns = data.statuses.reduce((acc, curr) => acc + curr.count, 0);
+                        statusContainer.innerHTML = data.statuses.map(s => `
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 0.9rem;">
+                                    <span style="font-weight: 700;">${s.status.toUpperCase()}</span>
+                                    <span style="color: var(--text-muted); font-weight: 700;">${s.count} (${(s.count / totalRuns * 100).toFixed(0)}%)</span>
+                                </div>
+                                <div class="progress-meter">
+                                    <div class="progress-meter-fill" style="width: ${(s.count / totalRuns * 100)}%; background: ${s.status === 'completed' ? '#10b981' : (s.status === 'failed' ? '#ef4444' : '#f59e0b')}"></div>
+                                </div>
+                            </div>
+                        `).join("");
+                    } else {
+                        statusContainer.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">No data available.</div>`;
+                    }
+                }
+            } catch (e) {
+                console.error("Load analytics error:", e);
+            }
+        }
+
+        function floatVal(val) {
+            return val ? parseFloat(val) : 0.0;
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HITL Approvals - ForgePrompt</title>
+    <style>
+        :root {
+            --bg-dark: #0a0f1c;
+            --glass-bg: rgba(20, 27, 45, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+        body {
+            margin: 0; padding: 2rem;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, sans-serif;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(52, 211, 153, 0.08), transparent 25%);
+            min-height: 100vh;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        h1 { font-size: 1.875rem; font-weight: 600; margin: 0; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; color: transparent; }
+        h3 { font-size: 1.25rem; font-weight: 500; margin: 0; color: var(--text-main); }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 24px -1px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .glass-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px -4px rgba(0,0,0,0.3);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .grid { display: grid; gap: 1.5rem; }
+        
+        .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .badge.warning { background: rgba(251, 191, 36, 0.1); color: var(--warning); border: 1px solid rgba(251, 191, 36, 0.2); }
+        .badge.danger { background: rgba(248, 113, 113, 0.1); color: var(--danger); border: 1px solid rgba(248, 113, 113, 0.2); }
+        
+        .btn { background: var(--accent); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+        .btn:hover { background: var(--accent-hover); box-shadow: 0 0 15px rgba(14, 165, 233, 0.5); transform: scale(1.02); }
+        .btn-outline { background: transparent; border: 1px solid var(--glass-border); color: var(--text-main); box-shadow: none; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+        
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>HITL Approvals Inbox</h1>
+        <span class="badge warning" style="font-size: 1rem; padding: 0.5rem 1rem;">3 Pending Actions</span>
+    </header>
+
+    <div class="grid" style="grid-template-columns: 1fr;">
+        {% for approval in approvals|default([{'id':'APP-99', 'title':'Deploy to Production', 'requester':'Agent-Deployer', 'snapshot':'SNAP-4A9', 'risk':'High'}, {'id':'APP-100', 'title':'Refund User #1029', 'requester':'Billing-Bot', 'snapshot':'SNAP-4B0', 'risk':'Medium'}]) %}
+        <div class="glass-panel" style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div style="flex: 1; padding-right: 2rem;">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 0.5rem;">
+                    <h3>{{ approval.title }}</h3>
+                    <span class="badge {{ 'danger' if approval.risk == 'High' else 'warning' }}">{{ approval.risk }} Risk</span>
+                </div>
+                <div style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1rem;">
+                    Requested by <span style="color: var(--accent); font-weight: 500;">{{ approval.requester }}</span> &bull; 
+                    Snapshot Binding: <a href="#">{{ approval.snapshot }}</a>
+                </div>
+                <div style="background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 0.5rem; font-family: monospace; font-size: 0.875rem; border: 1px solid var(--glass-border);">
+                    <div style="color: var(--text-muted); margin-bottom: 0.5rem;">// Context Diff</div>
+                    <div style="color: var(--success);">+ Configuration updated to enable v2 routing</div>
+                    <div style="color: var(--danger);">- Deprecated legacy flag removed</div>
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; min-width: 140px;">
+                <button class="btn" style="background: var(--success); color: #000; font-weight: 600;">Approve</button>
+                <button class="btn" style="background: transparent; border: 1px solid var(--danger); color: var(--danger); box-shadow: none;">Reject</button>
+                <button class="btn btn-outline">View Details</button>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+</body>
+</html>

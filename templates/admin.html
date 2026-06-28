@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard — ForgePrompt by Nexafian</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Protected routing head-blocker */
+        body {
+            display: none;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .metric-card {
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent-light);
+            margin-top: 0.5rem;
+        }
+
+        .admin-table-container {
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .admin-table th {
+            background: rgba(18, 18, 29, 0.6);
+            color: var(--accent-light);
+            font-weight: 700;
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .admin-table td {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            color: #fff;
+        }
+
+        .admin-table tr:hover td {
+            background: rgba(108, 99, 255, 0.02);
+        }
+    </style>
+    <!-- Route Guard -->
+    <script>
+        const token = localStorage.getItem("forge_token");
+        const email = localStorage.getItem("forge_user_email") || "";
+        
+        // Block non-admins from rendering page
+        if (!token || (!email.includes("admin") && email !== "root@example.com")) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            // Set style on body once ready
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+
+    <!-- Space Background -->
+    <div class="starfield-bg"></div>
+
+    <div class="app-layout">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workbench" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Prompt Builder
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/history" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Saved Ledger
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/admin" class="sidebar-link active">
+                            <span class="sidebar-icon"><i data-lucide="key" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Admin Panel
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-monogram">FP</div>
+                    <div class="user-info">
+                        <span class="user-name" id="profile-name">Creator User</span>
+                        <span class="user-email" id="profile-email">name@example.com</span>
+                    </div>
+                </div>
+                
+                <button class="btn-logout-sidebar" onclick="handleLogout()">
+                    <span><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN ADMIN STATS WORKSPACE -->
+        <main class="main-content">
+            <div class="dashboard-header">
+                <div class="welcome-info">
+                    <h1>Platform Control Deck <i data-lucide="key" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                    <p>Track registered user metrics, prompt statistics, and platform operations for ForgePrompt by Nexafian.</p>
+                </div>
+                <div style="font-size: 0.75rem; background: rgba(108, 99, 255, 0.15); border: 1px solid rgba(108, 99, 255, 0.3); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 800; color: var(--accent-light);">
+                    ROOT SUPERUSER MODE
+                </div>
+            </div>
+
+            <!-- METRICS COUNTER GRID -->
+            <div class="metrics-grid">
+                <div class="metric-card glass-panel">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-secondary);">Total Visitors</h3>
+                    <div id="stat-total-visitors" class="metric-value">0</div>
+                </div>
+                <div class="metric-card glass-panel">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-secondary);">Daily Active (DAU)</h3>
+                    <div id="stat-dau" class="metric-value">0</div>
+                </div>
+                <div class="metric-card glass-panel">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-secondary);">Returning Users</h3>
+                    <div id="stat-returning" class="metric-value">0</div>
+                </div>
+                <div class="metric-card glass-panel">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-secondary);">Total Creators</h3>
+                    <div id="stat-total-users" class="metric-value">0</div>
+                </div>
+                <div class="metric-card glass-panel">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-secondary);">Prompts Forged</h3>
+                    <div id="stat-total-prompts" class="metric-value">0</div>
+                </div>
+                <div class="metric-card glass-panel">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-secondary);">Avg Quality Score</h3>
+                    <div id="stat-avg-score" class="metric-value">0</div>
+                </div>
+                <div class="metric-card glass-panel">
+                    <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-secondary);">Improvement Rate</h3>
+                    <div id="stat-improvement-rate" class="metric-value">0%</div>
+                </div>
+            </div>
+
+            <!-- PENDING REPORTS / MODERATION QUEUE -->
+            <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px; margin-bottom: 2.5rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">Pending Moderation Reports <i data-lucide="alert-triangle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h3>
+                
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Report ID</th>
+                                <th>Prompt Info</th>
+                                <th>Reporter Email</th>
+                                <th>Reason</th>
+                                <th>Comment</th>
+                                <th>Date Reported</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-reports-body">
+                            <!-- Rows will be injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- REGISTERED USER LEDGER TABLE -->
+            <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px;">
+                <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">Registered Platform Users</h3>
+                
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Creator Name</th>
+                                <th>Email Address</th>
+                                <th>Date Registered</th>
+                                <th>Prompts Forged</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-users-body">
+                            <!-- Rows will be injected dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ANALYTICS CATEGORY & TEMPLATE POPULARITY GRID -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem; margin-bottom: 2.5rem;">
+                <div class="glass-panel" style="padding: 2rem; border-radius: 20px;">
+                    <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">Most Forged Categories</h3>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Category</th>
+                                    <th>Count</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-categories-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="glass-panel" style="padding: 2rem; border-radius: 20px;">
+                    <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">Template Popularity</h3>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Template Name</th>
+                                    <th>Times Used</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-templates-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALYTICS MODELS & REWRITE STYLES GRID -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem; margin-bottom: 2.5rem;">
+                <div class="glass-panel" style="padding: 2rem; border-radius: 20px;">
+                    <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">Target Models Used</h3>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>AI Model</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-models-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="glass-panel" style="padding: 2rem; border-radius: 20px;">
+                    <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">Optimization Styles Used</h3>
+                    <div class="admin-table-container">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Style</th>
+                                    <th>Count</th>
+                                    <th>Percentage</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-styles-body">
+                                <!-- Dynamic rows -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FEEDBACK LEDGER TABLE -->
+            <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px; margin-top: 2.5rem;">
+                <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">Submitted User Feedback</h3>
+                <div class="admin-table-container">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>User Email</th>
+                                <th>Rating</th>
+                                <th>Comment</th>
+                                <th>Target Prompt Input</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-feedback-body">
+                            <!-- Dynamic rows -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Page Scripts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Load user profile details
+            document.getElementById("profile-name").innerText = localStorage.getItem("forge_user_name") || "Admin User";
+            document.getElementById("profile-email").innerText = localStorage.getItem("forge_user_email") || "admin@example.com";
+            document.getElementById("user-monogram").innerText = (localStorage.getItem("forge_user_name") || "FP").substring(0, 2).toUpperCase();
+            
+            loadAdminStats();
+            loadAdminReports();
+        });
+
+        async function loadAdminStats() {
+            const token = localStorage.getItem("forge_token");
+            const tbody = document.getElementById("admin-users-body");
+            tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; color:var(--text-muted);'>Loading metrics...</td></tr>";
+
+            try {
+                const response = await fetch("/api/admin/stats", {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update counters
+                    document.getElementById("stat-total-users").innerText = data.total_users;
+                    document.getElementById("stat-total-prompts").innerText = data.total_prompts;
+                    document.getElementById("stat-total-visitors").innerText = data.analytics.total_visitors;
+                    document.getElementById("stat-dau").innerText = data.analytics.dau;
+                    document.getElementById("stat-returning").innerText = data.analytics.returning_users;
+                    document.getElementById("stat-avg-score").innerText = data.analytics.avg_quality_score !== undefined ? Math.round(data.analytics.avg_quality_score) : 0;
+                    document.getElementById("stat-improvement-rate").innerText = data.analytics.prompt_improvement_rate !== undefined ? `${data.analytics.prompt_improvement_rate.toFixed(1)}%` : "0%";
+
+                    // Load user rows
+                    tbody.innerHTML = "";
+                    data.users.forEach(u => {
+                        const tr = document.createElement("tr");
+
+                        // ID
+                        const tdId = document.createElement("td");
+                        tdId.innerText = u.id;
+                        tr.appendChild(tdId);
+
+                        // Name
+                        const tdName = document.createElement("td");
+                        tdName.innerText = u.name;
+                        tr.appendChild(tdName);
+
+                        // Email
+                        const tdEmail = document.createElement("td");
+                        tdEmail.innerText = u.email;
+                        tr.appendChild(tdEmail);
+
+                        // Date
+                        const tdDate = document.createElement("td");
+                        tdDate.innerText = u.created_at;
+                        tr.appendChild(tdDate);
+
+                        // Prompts Forged
+                        const tdPrompts = document.createElement("td");
+                        tdPrompts.innerText = u.prompts_used;
+                        tr.appendChild(tdPrompts);
+
+                        // Actions
+                        const tdActions = document.createElement("td");
+                        const btnBan = document.createElement("button");
+                        btnBan.style.padding = "0.25rem 0.5rem";
+                        btnBan.style.fontSize = "0.8rem";
+                        btnBan.style.borderRadius = "4px";
+                        btnBan.style.border = "none";
+                        btnBan.style.cursor = "pointer";
+                        btnBan.style.background = u.is_banned ? "#10b981" : "#ef4444";
+                        btnBan.style.color = "#fff";
+                        btnBan.innerText = u.is_banned ? "Unban" : "Ban";
+                        btnBan.onclick = () => toggleBan(u.id, !u.is_banned);
+                        tdActions.appendChild(btnBan);
+                        tr.appendChild(tdActions);
+
+                        tbody.appendChild(tr);
+                    });
+
+                    // Load Category stats
+                    const catBody = document.getElementById("admin-categories-body");
+                    catBody.innerHTML = "";
+                    if (data.analytics.categories.length === 0) {
+                        catBody.innerHTML = "<tr><td colspan='2' style='text-align:center; color:var(--text-muted);'>No category data logged.</td></tr>";
+                    } else {
+                        data.analytics.categories.forEach(c => {
+                            const tr = document.createElement("tr");
+                            tr.innerHTML = `<td>${c.category_used}</td><td>${c.count}</td>`;
+                            catBody.appendChild(tr);
+                        });
+                    }
+
+                    // Load Template stats
+                    const tempBody = document.getElementById("admin-templates-body");
+                    tempBody.innerHTML = "";
+                    if (data.analytics.templates.length === 0) {
+                        tempBody.innerHTML = "<tr><td colspan='2' style='text-align:center; color:var(--text-muted);'>No template data logged.</td></tr>";
+                    } else {
+                        data.analytics.templates.forEach(t => {
+                            const tr = document.createElement("tr");
+                            tr.innerHTML = `<td>${t.template_name}</td><td>${t.count}</td>`;
+                            tempBody.appendChild(tr);
+                        });
+                    }
+
+                    // Load Model stats
+                    const modelBody = document.getElementById("admin-models-body");
+                    modelBody.innerHTML = "";
+                    if (!data.analytics.models || data.analytics.models.length === 0) {
+                        modelBody.innerHTML = "<tr><td colspan='3' style='text-align:center; color:var(--text-muted);'>No model data logged.</td></tr>";
+                    } else {
+                        data.analytics.models.forEach(m => {
+                            const tr = document.createElement("tr");
+                            tr.innerHTML = `<td>${m.model}</td><td>${m.count}</td><td>${m.percentage}%</td>`;
+                            modelBody.appendChild(tr);
+                        });
+                    }
+
+                    // Load Style stats
+                    const styleBody = document.getElementById("admin-styles-body");
+                    styleBody.innerHTML = "";
+                    if (!data.analytics.styles || data.analytics.styles.length === 0) {
+                        styleBody.innerHTML = "<tr><td colspan='3' style='text-align:center; color:var(--text-muted);'>No style data logged.</td></tr>";
+                    } else {
+                        data.analytics.styles.forEach(s => {
+                            const tr = document.createElement("tr");
+                            tr.innerHTML = `<td>${s.style}</td><td>${s.count}</td><td>${s.percentage}%</td>`;
+                            styleBody.appendChild(tr);
+                        });
+                    }
+
+                    // Load Feedback records
+                    const feedbackBody = document.getElementById("admin-feedback-body");
+                    feedbackBody.innerHTML = "";
+                    if (data.feedback.length === 0) {
+                        feedbackBody.innerHTML = "<tr><td colspan='6' style='text-align:center; color:var(--text-muted);'>No feedback submitted yet.</td></tr>";
+                    } else {
+                        data.feedback.forEach(f => {
+                            const tr = document.createElement("tr");
+                            const ratingStars = f.rating ? "★".repeat(f.rating) + "☆".repeat(5 - f.rating) : "N/A";
+                            tr.innerHTML = `
+                                <td>${f.created_at}</td>
+                                <td><span class="badge-intent">${f.feedback_type}</span></td>
+                                <td>${f.user_email || 'Guest'}</td>
+                                <td style="color:#f59e0b;">${ratingStars}</td>
+                                <td style="max-width: 250px; overflow-wrap: break-word;">${f.comment}</td>
+                                <td class="text-truncate-cell" title="${f.prompt_input || ''}">${f.prompt_input || 'N/A'}</td>
+                            `;
+                            feedbackBody.appendChild(tr);
+                        });
+                    }
+                } else {
+                    tbody.innerHTML = `<tr><td colspan='6' style='text-align:center; color:#ef4444;'>Failed: ${data.error}</td></tr>`;
+                }
+            } catch (err) {
+                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; color:#ef4444;'>Connection transaction error loading admin statistics.</td></tr>";
+            }
+        }
+
+        async function loadAdminReports() {
+            const token = localStorage.getItem("forge_token");
+            const tbody = document.getElementById("admin-reports-body");
+            tbody.innerHTML = "<tr><td colspan='7' style='text-align:center; color:var(--text-muted);'>Loading reports...</td></tr>";
+
+            try {
+                const response = await fetch("/api/admin/reports", {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    tbody.innerHTML = "";
+                    if (data.reports.length === 0) {
+                        tbody.innerHTML = "<tr><td colspan='7' style='text-align:center; color:var(--text-muted);'>No pending reports.</td></tr>";
+                        return;
+                    }
+                    data.reports.forEach(r => {
+                        const tr = document.createElement("tr");
+
+                        tr.innerHTML = `
+                            <td>${r.id}</td>
+                            <td>
+                                <div style="font-weight:bold; color:var(--accent-light); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                    ${r.prompt_input || 'N/A'}
+                                </div>
+                                <div style="font-size:0.75rem; color:var(--text-muted); max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                                    ${r.generated_prompt || ''}
+                                </div>
+                            </td>
+                            <td>${r.reporter_email}</td>
+                            <td><span style="background:rgba(239,68,68,0.2); color:#f87171; padding:0.2rem 0.5rem; border-radius:4px; font-size:0.8rem;">${r.reason}</span></td>
+                            <td style="max-width: 200px; overflow-wrap: break-word;">${r.comment || ''}</td>
+                            <td>${r.created_at}</td>
+                            <td>
+                                <button class="btn-action-success" style="background:#10b981; color:#fff; border:none; padding:0.25rem 0.5rem; border-radius:4px; font-size:0.8rem; cursor:pointer; margin-right:0.25rem;" onclick="moderatePrompt(${r.prompt_id}, 'approved')">Dismiss</button>
+                                <button class="btn-action-danger" style="background:#ef4444; color:#fff; border:none; padding:0.25rem 0.5rem; border-radius:4px; font-size:0.8rem; cursor:pointer;" onclick="moderatePrompt(${r.prompt_id}, 'hidden')">Hide</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } else {
+                    tbody.innerHTML = `<tr><td colspan='7' style='text-align:center; color:#ef4444;'>Failed: ${data.error}</td></tr>`;
+                }
+            } catch (err) {
+                tbody.innerHTML = "<tr><td colspan='7' style='text-align:center; color:#ef4444;'>Error loading reports.</td></tr>";
+            }
+        }
+
+        async function toggleBan(userId, ban) {
+            const token = localStorage.getItem("forge_token");
+            if (!confirm(`Are you sure you want to ${ban ? 'ban' : 'unban'} this user?`)) return;
+
+            try {
+                const response = await fetch(`/api/admin/users/${userId}/ban`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ ban })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert(data.message);
+                    loadAdminStats();
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (err) {
+                alert("Connection/transaction error performing action.");
+            }
+        }
+
+        async function moderatePrompt(promptId, status) {
+            const token = localStorage.getItem("forge_token");
+            if (!confirm(`Are you sure you want to set this prompt status to ${status}?`)) return;
+
+            try {
+                const response = await fetch(`/api/admin/prompts/${promptId}/moderate`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ status })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    alert(data.message);
+                    loadAdminReports();
+                    loadAdminStats();
+                } else {
+                    alert("Error: " + data.error);
+                }
+            } catch (err) {
+                alert("Connection/transaction error performing action.");
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem("forge_token");
+            localStorage.removeItem("forge_user_name");
+            localStorage.removeItem("forge_user_email");
+            window.location.href = "/";
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

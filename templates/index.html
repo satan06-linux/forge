@@ -1,0 +1,1831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForgePrompt — Chat Prompt Lab by Nexafian</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .model-badge {
+            padding: 0.35rem 0.85rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+        }
+        .groq-active {
+            background: rgba(108, 99, 255, 0.15);
+            border: 1px solid rgba(108, 99, 255, 0.3);
+            color: var(--accent-light);
+        }
+        .prometheus-active {
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        .badge-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: badgePulse 2s infinite;
+        }
+        @keyframes badgePulse {
+            0% { opacity: 0.4; }
+            50% { opacity: 1; }
+            100% { opacity: 0.4; }
+        }
+
+        /* Notifications Bell Dropdown styling */
+        .notification-dropdown {
+            position: absolute;
+            top: 70px;
+            right: 2rem;
+            width: 350px;
+            background: #12121a;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 1000;
+            text-align: left;
+        }
+
+        .notification-item {
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.8rem;
+            color: #fff;
+            border-radius: 8px;
+            margin-bottom: 0.25rem;
+        }
+
+        .notification-item.unread {
+            background: rgba(108, 99, 255, 0.05);
+            border-left: 2px solid var(--accent);
+        }
+    </style>
+</head>
+<body class="fade-in">
+
+    <!-- Space Background -->
+    <div class="starfield-bg"></div>
+
+    <div class="app-layout">
+        
+        <!-- SIDEBAR NAVIGATION & PERSISTED HISTORY -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                
+                <ul class="sidebar-menu" style="list-style: none; margin-bottom: 1.5rem; padding: 0;">
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/" class="sidebar-link active">
+                            <span class="sidebar-icon"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Prompt Builder
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/history" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Saved Ledger
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/community" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="users" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Community Gallery
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workflows" class="sidebar-link">
+                            <span class="sidebar-icon">⛓️</span> Workflows & DAGs
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/agents" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="bot" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> AI Agent Library
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/marketplace" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="store" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Marketplace
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/organization" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="building" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Organization Settings
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem; display: none;" id="sidebar-profile-item">
+                        <a href="#" id="sidebar-profile-link" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="user" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> My Profile
+                        </a>
+                    </li>
+                </ul>
+                
+                <!-- History list (Visible only to authenticated creators) -->
+                <div id="sidebar-history-section" style="display: none;">
+                    <h4 style="font-size: 0.8rem; font-weight: 800; color: var(--accent-light); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.5px;"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Saved Prompts</h4>
+                    <div style="margin-bottom: 1rem;">
+                        <input type="text" id="history-search-input" placeholder="Search saved prompts..." oninput="loadSavedHistory()" style="width: 100%; padding: 0.4rem 0.75rem; border-radius: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: #fff; font-size: 0.8rem; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-light)'" onblur="this.style.borderColor='var(--border-color)'" />
+                    </div>
+                    <div id="history-items-container" class="history-list">
+                        <!-- History items will be injected here dynamically -->
+                    </div>
+                </div>
+
+                <!-- Guest indicator (Visible to guest users) -->
+                <div id="sidebar-guest-section" class="glass-panel" style="padding: 1.25rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h4 style="font-size: 0.85rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;"><i data-lucide="star" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Guest Account</h4>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;">
+                        Guests can forge unlimited prompts. Sign up to save ledgers and prompt history!
+                    </p>
+                    <div style="margin-top: 1rem; display: flex; justify-content: space-between; font-size: 0.75rem; font-weight: 700;">
+                        <span>Generations:</span>
+                        <span id="guest-cap-text" style="color: var(--accent-light);">Unlimited</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar Footer: Profile monogram / Login switcher -->
+            <div class="sidebar-footer">
+                <!-- Logged In Creator Profile -->
+                <div id="profile-widget" style="display: none;">
+                    <div class="user-profile">
+                        <div class="avatar" id="user-monogram">FP</div>
+                        <div class="user-info">
+                            <span class="user-name" id="profile-name">Creator User</span>
+                            <span class="user-email" id="profile-email">name@example.com</span>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <a href="/admin" id="btn-admin-link" class="btn-secondary" style="font-size: 0.75rem; text-align: center; padding: 0.5rem; display: none; text-decoration: none;">
+                            <i data-lucide="key" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Admin Dashboard
+                        </a>
+                        <button class="btn-logout-sidebar" onclick="handleLogout()">
+                            <span><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Guest Login Button -->
+                <div id="auth-cta-widget" style="display: block;">
+                    <a href="/auth" class="btn-cta" style="width: 100%; border-radius: 8px; padding: 0.65rem; font-size: 0.9rem;">
+                        <span><i data-lucide="key" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Creator Login</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CHAT WORKSPACE CONSOLE -->
+        <main class="chat-workspace">
+            
+            <!-- Chat Header Bar -->
+            <header class="chat-header">
+                <div class="chat-header-left">
+                    <h2 style="font-family: 'Outfit', sans-serif; font-weight: 900; display: flex; align-items: center; gap: 0.5rem; font-size: 1.3rem; letter-spacing: -0.5px;">
+                        <i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span style="font-size: 0.8rem; font-weight: 400; color: var(--accent-light); opacity: 0.85;">· by Nexafian</span>
+                    </h2>
+                </div>
+                <div class="chat-header-center hide-mobile" style="text-align: center;">
+                    <div id="modelBadge" class="model-badge groq-active">
+                        <span class="badge-dot"></span>
+                        <span id="badgeText"><i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Groq Active</span>
+                    </div>
+                </div>
+                <div class="chat-header-right" style="display: flex; align-items: center; gap: 1rem;">
+                    <span id="live-counter-text" style="font-size: 0.8rem; font-weight: 800; color: var(--accent-light); background: rgba(108, 99, 255, 0.1); border: 1px solid rgba(108, 99, 255, 0.2); padding: 0.35rem 0.85rem; border-radius: 20px; box-shadow: 0 0 10px rgba(108, 99, 255, 0.1); white-space: nowrap;">
+                        2,341 prompts forged
+                    </span>
+                    <!-- Notification Bell -->
+                    <div id="header-notif-container" style="display: none; position: relative; cursor: pointer; align-items: center;" onclick="toggleNotificationsDropdown(event)">
+                        <span style="font-size: 1.3rem;"><i data-lucide="bell" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span>
+                        <span id="unread-notif-count" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; font-size: 0.65rem; padding: 0.15rem 0.35rem; display: none; font-weight: 800; line-height: 1;">0</span>
+                    </div>
+                    <!-- Notification Dropdown Menu -->
+                    <div id="notif-dropdown" class="notification-dropdown">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.85rem; font-weight: 800; color: #fff;">Notifications</span>
+                            <button onclick="markAllNotificationsRead(event)" style="background: transparent; border: none; color: var(--accent-light); font-size: 0.75rem; cursor: pointer; font-weight: 700;">Mark all read</button>
+                        </div>
+                        <div id="notifications-list-container" style="max-height: 250px; overflow-y: auto;">
+                            <!-- Items dynamically added -->
+                        </div>
+                    </div>
+                    <div id="user-tier-badge" class="tier-badge">
+                        GUEST VISITOR
+                    </div>
+                </div>
+            </header>
+
+            <!-- Scrollable Message Area -->
+            <div id="chat-messages" class="chat-messages-container">
+                <!-- Chat messages flow upwards here dynamically -->
+            </div>
+
+            <!-- PINNED BOTTOM INPUT BAR -->
+            <div class="chat-input-container">
+                <!-- Starter templates chips row -->
+                <div class="templates-chips-row" id="templates-chips-row" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem; overflow-x: auto; padding: 0.25rem 0; scrollbar-width: none; -ms-overflow-style: none;">
+                    <!-- Template chips will be injected here dynamically -->
+                </div>
+
+                <!-- Category selector chips above input bar -->
+                <div class="category-chips-row" id="category-chips-row">
+                    <button class="chip-btn active" onclick="selectCategory('Generative Image', this)"><i data-lucide="palette" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Generative Image</button>
+                    <button class="chip-btn" onclick="selectCategory('Web Dev', this)"><i data-lucide="globe" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Web Dev</button>
+                    <button class="chip-btn" onclick="selectCategory('Content Writing', this)"><i data-lucide="pen-tool" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Content Writing</button>
+                    <button class="chip-btn" onclick="selectCategory('Code Gen', this)"><i data-lucide="code" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Code Gen</button>
+                    <button class="chip-btn" onclick="selectCategory('Video Script', this)"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Video Script</button>
+                    <button class="chip-btn" onclick="selectCategory('Chatbot', this)"><i data-lucide="bot" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Chatbot</button>
+                </div>
+
+                <!-- Target Model and Optimization Style Selectors -->
+                <div class="selectors-row" style="display: flex; gap: 1rem; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <label for="target-model-select" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Target Model:</label>
+                        <select id="target-model-select" style="padding: 0.35rem 0.75rem; border-radius: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: #fff; font-size: 0.8rem; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-light)'" onblur="this.style.borderColor='var(--border-color)'">
+                            <option value="generic" style="background:#141423;">Generic / Other</option>
+                            <optgroup label="── Chat AI ──" style="background:#141423; color: var(--text-muted);">
+                            <option value="universal_chat" style="background:#141423;">Universal Chat AI</option>
+                            </optgroup>
+                            <optgroup label="── Image AI ──" style="background:#141423; color: var(--text-muted);">
+                            <option value="midjourney" style="background:#141423;">Midjourney v6</option>
+                            <option value="dalle" style="background:#141423;">DALL·E 3</option>
+                            <option value="stablediffusion" style="background:#141423;">Stable Diffusion / Flux</option>
+                            <option value="runway" style="background:#141423;">Runway Gen-3</option>
+                            </optgroup>
+                            <optgroup label="── Code AI ──" style="background:#141423; color: var(--text-muted);">
+                            <option value="cursor" style="background:#141423;">Cursor / Copilot</option>
+                            <option value="bolt" style="background:#141423;">Bolt.new / Lovable</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <label for="optimization-style-select" style="font-size: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">Style:</label>
+                        <select id="optimization-style-select" style="padding: 0.35rem 0.75rem; border-radius: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: #fff; font-size: 0.8rem; outline: none; transition: border-color 0.2s;" onfocus="this.style.borderColor='var(--accent-light)'" onblur="this.style.borderColor='var(--border-color)'">
+                            <option value="detailed" style="background:#141423;">Detailed / Exhaustive</option>
+                            <option value="professional" style="background:#141423;">Professional / Corporate</option>
+                            <option value="creative" style="background:#141423;">Creative / Storytelling</option>
+                            <option value="technical" style="background:#141423;">Technical / Precise</option>
+                            <option value="academic" style="background:#141423;">Academic / Scholarly</option>
+                            <option value="marketing" style="background:#141423;">Marketing / Persuasive</option>
+                            <option value="viral" style="background:#141423;">Viral / Punchy</option>
+                            <option value="scientific" style="background:#141423;">Scientific / Research-Grade</option>
+                            <option value="concise" style="background:#141423;">Concise / Compact</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Input Text Area bar -->
+                <div class="chat-input-bar" id="chat-input-bar-wrap">
+                    <!-- Hidden File Input -->
+                    <input type="file" id="vision-file-input" style="display: none;" accept="image/*" onchange="handleVisionImageSelected(event)" />
+                    
+                    <!-- Attachment button clip -->
+                    <button id="btn-attachment" class="btn-attachment" onclick="triggerVisionUpload()" style="background: transparent; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; color: var(--text-muted); transition: all 0.2s ease; margin-right: 0.5rem; width: 36px; height: 36px; border-radius: 10px;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
+                        </svg>
+                    </button>
+
+                    <textarea id="chat-textarea-input" placeholder="Describe your vision (e.g. anti-gravity vehicle)..." class="chat-textarea" onkeydown="handleInputKeydown(event)"></textarea>
+                    
+                    <!-- Send button arrow -->
+                    <button id="btn-send-message" class="btn-send-message" onclick="submitUserConcept()" disabled>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Success Toast Notification -->
+    <div id="success-toast" class="toast-msg">
+        ✓ Copied to clipboard successfully!
+    </div>
+
+    <!-- Interactive script bindings -->
+    <script>
+        // Global state parameters
+        let isAuthenticated = false;
+        let guestCount = 0;
+        let activeQuestions = [];
+        let selectedAnswers = {};
+        let detectedType = "Generative Image"; // Default is Generative Image
+        let currentQuestionIndex = 0;
+        let lastForgedPromptText = "";
+        let originalConceptText = "";
+        let conversationHistory = []; // Tracks the full refined prompt conversation
+        let currentPromptId = null; // Tracks prompt lineage/parent ID
+        let modelAvailabilityReady = false;
+
+        // Verify authentication state on boot
+        document.addEventListener("DOMContentLoaded", async () => {
+            const token = localStorage.getItem("forge_token");
+            const profileWidget = document.getElementById("profile-widget");
+            const authCtaWidget = document.getElementById("auth-cta-widget");
+            const sidebarHistory = document.getElementById("sidebar-history-section");
+            const sidebarGuest = document.getElementById("sidebar-guest-section");
+            const tierBadge = document.getElementById("user-tier-badge");
+            
+            updateGuestIndicator();
+            initModelAvailability();
+
+            // Load live prompt count
+            try {
+                const res = await fetch("/api/global-stats");
+                const stats = await res.json();
+                if (stats.success) {
+                    document.getElementById("live-counter-text").innerText = `${stats.total_prompts.toLocaleString()} prompts forged`;
+                }
+            } catch (err) {
+                console.log("Error loading global stats count.");
+            }
+
+            if (token) {
+                try {
+                    const response = await fetch("/api/auth/verify", {
+                        method: "GET",
+                        headers: { "Authorization": `Bearer ${token}` }
+                    });
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        isAuthenticated = true;
+                        
+                        // Setup authenticated sidebar
+                        profileWidget.style.display = "block";
+                        authCtaWidget.style.display = "none";
+                        sidebarHistory.style.display = "block";
+                        sidebarGuest.style.display = "none";
+                        
+                        document.getElementById("profile-name").innerText = data.user.name;
+                        document.getElementById("profile-email").innerText = data.user.email;
+                        document.getElementById("user-monogram").innerText = data.user.name.substring(0, 2).toUpperCase();
+                        
+                        // Map user profile link
+                        const cleanUser = data.user.name.replace(/\s+/g, "").toLowerCase();
+                        document.getElementById("sidebar-profile-link").href = `/@${cleanUser}`;
+                        document.getElementById("sidebar-profile-item").style.display = "block";
+                        
+                        // Enable notifications bell
+                        document.getElementById("header-notif-container").style.display = "flex";
+                        loadNotifications();
+
+                        // Enable admin link if applicable
+                        if (data.user.email.includes("admin") || data.user.email === "root@example.com") {
+                            document.getElementById("btn-admin-link").style.display = "block";
+                        }
+                        
+                        tierBadge.innerText = "AUTHENTICATED CREATOR";
+                        tierBadge.style.background = "rgba(16, 185, 129, 0.15)";
+                        tierBadge.style.borderColor = "rgba(16, 185, 129, 0.3)";
+                        tierBadge.style.color = "#10b981";
+                        
+                        // Load stored history logs
+                        loadSavedHistory();
+                    } else {
+                        handleLogout(false);
+                    }
+                } catch (err) {
+                    console.log("Connection or token verification error.");
+                }
+            }
+
+            // Append initial greeting
+            appendAIBubble(`Hey! Describe what you want to create and I'll forge the perfect prompt for you <i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`);
+            
+            // Append 3 example concept chips right below the greeting
+            showExampleChips();
+            
+            setupTextareaFocus();
+            
+            // Load starter templates chips
+            loadTemplates();
+        });
+
+        function updateGuestIndicator() {
+            document.getElementById("guest-cap-text").innerText = "Unlimited";
+        }
+
+        function updateSendButtonState() {
+            const btn = document.getElementById("btn-send-message");
+            const textarea = document.getElementById("chat-textarea-input");
+            if (!btn || !textarea) return;
+            const busy = btn.dataset.busy === "true";
+            btn.disabled = busy || !modelAvailabilityReady || textarea.value.trim().length === 0;
+        }
+
+        async function initModelAvailability() {
+            modelAvailabilityReady = false;
+            updateModelBadge("loading");
+            updateSendButtonState();
+
+            const pollStatus = async () => {
+                try {
+                    const response = await fetch("/api/model-status");
+                    const data = await response.json();
+
+                    if (data.success && data.state !== "loading") {
+                        modelAvailabilityReady = true;
+                        updateModelBadge(data.active_source || data.source || "fallback");
+                        updateSendButtonState();
+                        return;
+                    }
+                } catch (err) {
+                    modelAvailabilityReady = true;
+                    updateModelBadge("fallback");
+                    updateSendButtonState();
+                    return;
+                }
+
+                setTimeout(pollStatus, 1500);
+            };
+
+            pollStatus();
+        }
+
+        // Show example chips on page load
+        function showExampleChips() {
+            const container = document.getElementById("chat-messages");
+            const chipsWrap = document.createElement("div");
+            chipsWrap.className = "example-chips-container";
+            chipsWrap.style.display = "flex";
+            chipsWrap.style.flexWrap = "wrap";
+            chipsWrap.style.gap = "0.75rem";
+            chipsWrap.style.marginTop = "0.5rem";
+            chipsWrap.style.marginBottom = "1.5rem";
+            chipsWrap.style.paddingLeft = "40px"; // Align with AI bubble text start
+            chipsWrap.style.animation = "bubbleSlideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards";
+            
+            const examples = [
+                "anti-gravity car over neon city",
+                "portfolio website dark theme",
+                "Python web scraper script"
+            ];
+            
+            examples.forEach(ex => {
+                const btn = document.createElement("button");
+                btn.className = "pill-option";
+                btn.style.background = "rgba(108, 99, 255, 0.05)";
+                btn.style.borderColor = "rgba(108, 99, 255, 0.2)";
+                btn.innerHTML = `<i data-lucide="lightbulb" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> "${ex}"`;
+                btn.onclick = () => {
+                    const textarea = document.getElementById("chat-textarea-input");
+                    textarea.value = ex;
+                    textarea.focus();
+                    textarea.dispatchEvent(new Event("input"));
+                };
+                chipsWrap.appendChild(btn);
+            });
+            
+            container.appendChild(chipsWrap);
+            if (window.lucide) lucide.createIcons();
+            scrollToBottom();
+        }
+
+        // Textarea height styling & focus & glowing pulse send button
+        function setupTextareaFocus() {
+            const textarea = document.getElementById("chat-textarea-input");
+            const bar = document.getElementById("chat-input-bar-wrap");
+            const btn = document.getElementById("btn-send-message");
+
+            textarea.addEventListener("focus", () => bar.classList.add("focused"));
+            textarea.addEventListener("blur", () => bar.classList.remove("focused"));
+            
+            textarea.addEventListener("input", function() {
+                // Auto resize textarea up to 3 lines
+                this.style.height = "auto";
+                const newHeight = Math.min(this.scrollHeight, 100);
+                this.style.height = newHeight + "px";
+                
+                // Toggle smooth purple glow pulse on send button when input has text
+                if (this.value.trim().length > 0) {
+                    btn.classList.add("has-text");
+                } else {
+                    btn.classList.remove("has-text");
+                }
+                updateSendButtonState();
+            });
+        }
+
+        function handleInputKeydown(event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                submitUserConcept();
+            }
+        }
+
+        function selectCategory(category, buttonEl, preventReset = false) {
+            detectedType = category;
+            const siblings = document.querySelectorAll(".chip-btn");
+            siblings.forEach(s => s.classList.remove("active"));
+            buttonEl.classList.add("active");
+            
+            // If there's an active session, reset silently to start fresh
+            if (!preventReset && (lastForgedPromptText || conversationHistory.length > 0)) {
+                resetChatSession(true);
+            }
+        }
+
+        // --- CHAT APPEND UTILITIES ---
+
+        function appendUserBubble(text) {
+            const container = document.getElementById("chat-messages");
+            
+            const row = document.createElement("div");
+            row.className = "message-row user-row";
+
+            const bubble = document.createElement("div");
+            bubble.className = "chat-bubble";
+            bubble.innerText = text;
+
+            row.appendChild(bubble);
+            container.appendChild(row);
+            scrollToBottom();
+        }
+
+        function appendAIBubble(text, customClass = "") {
+            const container = document.getElementById("chat-messages");
+            
+            const row = document.createElement("div");
+            row.className = "message-row ai-row " + customClass;
+
+            const avatar = document.createElement("div");
+            let metaAvatarSymbol = `<i data-lucide="bot" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+            const lowType = detectedType ? detectedType.toLowerCase() : "";
+            if (lowType.includes("image") || lowType.includes("art")) {
+                metaAvatarSymbol = `<i data-lucide="palette" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+            } else if (lowType.includes("web")) {
+                metaAvatarSymbol = `<i data-lucide="globe" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+            } else if (lowType.includes("write") || lowType.includes("script") || lowType.includes("email")) {
+                metaAvatarSymbol = "✍️";
+            } else if (lowType.includes("code")) {
+                metaAvatarSymbol = `<i data-lucide="code" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+            } else if (lowType.includes("ui")) {
+                metaAvatarSymbol = `<i data-lucide="smartphone" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+            } else if (lowType.includes("research")) {
+                metaAvatarSymbol = `<i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+            }
+            avatar.className = "message-avatar";
+            avatar.innerHTML = metaAvatarSymbol;
+
+            const bubble = document.createElement("div");
+            bubble.className = "chat-bubble";
+            bubble.innerHTML = text;
+
+            row.appendChild(avatar);
+            row.appendChild(bubble);
+            container.appendChild(row);
+            if (window.lucide) lucide.createIcons();
+            scrollToBottom();
+            return bubble;
+        }
+
+        // Bouncing typing indicator
+        function showTypingIndicator() {
+            const container = document.getElementById("chat-messages");
+            
+            const row = document.createElement("div");
+            row.className = "message-row ai-row typing-indicator-row";
+
+            const avatar = document.createElement("div");
+            avatar.className = "message-avatar";
+            avatar.innerHTML = `<i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+
+            const bubble = document.createElement("div");
+            bubble.className = "chat-bubble";
+
+            const typingDots = document.createElement("div");
+            typingDots.className = "typing-dots";
+            for (let i = 0; i < 3; i++) {
+                const dot = document.createElement("div");
+                dot.className = "typing-dot";
+                typingDots.appendChild(dot);
+            }
+
+            bubble.appendChild(typingDots);
+            row.appendChild(avatar);
+            row.appendChild(bubble);
+            container.appendChild(row);
+            if (window.lucide) lucide.createIcons();
+            scrollToBottom();
+        }
+
+        function removeTypingIndicator() {
+            const indicators = document.querySelectorAll(".typing-indicator-row");
+            indicators.forEach(i => i.remove());
+        }
+
+        function scrollToBottom() {
+            const container = document.getElementById("chat-messages");
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // --- CONVERSATION FLOW CONTROL ---
+
+        // Step 1: User submits their concept
+        async function submitUserConcept() {
+            if (!modelAvailabilityReady) return;
+            const textarea = document.getElementById("chat-textarea-input");
+            const text = textarea.value.trim();
+            if (!text) return;
+
+            textarea.value = "";
+            textarea.dispatchEvent(new Event("input"));
+            toggleInputState(false);
+            appendUserBubble(text);
+            showTypingIndicator();
+
+            // If we already have a generated prompt, check if this is a minor refinement or a completely new concept description
+            if (lastForgedPromptText) {
+                const lowText = text.toLowerCase();
+                
+                // Heuristic: If it has business/monetization keywords, or is a long description and not a simple layout/color tweak, start fresh!
+                const keywords = ["want to", "build a", "create a", "generate a", "write a", "earn", "money", "income", "sell", "revenue", "business", "profit", "monetize"];
+                const hasNewTopicKeywords = keywords.some(k => lowText.includes(k));
+                const isTweak = lowText.length < 50 || 
+                                lowText.includes("change") || 
+                                lowText.includes("modify") || 
+                                lowText.includes("add") || 
+                                lowText.includes("remove") || 
+                                lowText.includes("make") || 
+                                lowText.includes("update") || 
+                                lowText.includes("fix") || 
+                                lowText.includes("color") || 
+                                lowText.includes("style");
+                                
+                if (isTweak && !hasNewTopicKeywords) {
+                    conversationHistory.push({"role": "user", "content": text});
+                    forgeMasterPromptStream();
+                    return;
+                } else {
+                    // Start a new session silently to clarify this brand new concept!
+                    resetChatSession(true);
+                }
+            }
+
+            // Otherwise, this is the initial concept submission
+            originalConceptText = text;
+            conversationHistory.push({"role": "user", "content": "Base idea: " + text});
+
+            try {
+                const response = await fetch("/api/clarify-prompt", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: text, category: detectedType })
+                });
+                const data = await response.json();
+
+                removeTypingIndicator();
+
+                if (data.success && data.questions.length > 0) {
+                    activeQuestions = data.questions;
+                    detectedType = data.type_detected;
+                    currentQuestionIndex = 0;
+                    selectedAnswers = {};
+                    updateModelBadge(data.source || 'groq');
+                    
+                    // Auto-highlight category chip detected by backend
+                    selectCategoryByName(data.type_detected);
+
+                    // Trigger the MCQ refiner question series!
+                    setTimeout(() => {
+                        askNextMCQ();
+                    }, 300);
+                } else {
+                    appendAIBubble("Error clarifying concept intent: " + (data.error || "Failed."));
+                    toggleInputState(true);
+                }
+            } catch (err) {
+                removeTypingIndicator();
+                appendAIBubble("Network connection failed analyzing concept.");
+                toggleInputState(true);
+            }
+        }
+
+        // Step 2 & 3: AI asks next question in chat
+        function askNextMCQ() {
+            if (currentQuestionIndex < activeQuestions.length) {
+                const q = activeQuestions[currentQuestionIndex];
+                
+                // Show typing indicator before displaying question
+                showTypingIndicator();
+                setTimeout(() => {
+                    removeTypingIndicator();
+                    
+                    // Prefix with styled transitions
+                    const prefix = currentQuestionIndex === 0 ? `Nice concept <i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ` : "Great choice! ";
+                    
+                    const questionText = q.question || q.text || (typeof q === 'string' ? q : "Please provide more details.");
+                    const qBubble = appendAIBubble(prefix + questionText);
+
+                    // Append outline option pills directly inside or below AI bubble
+                    const pillsWrap = document.createElement("div");
+                    pillsWrap.className = "options-container";
+
+                    const optionsList = q.options || q.choices || ["Yes", "No"];
+                    if (Array.isArray(optionsList)) {
+                        optionsList.forEach(opt => {
+                            const pill = document.createElement("button");
+                            pill.className = "pill-option";
+                            pill.innerText = opt;
+                            pill.onclick = () => selectMCQOption(questionText, opt, pill, pillsWrap);
+                            pillsWrap.appendChild(pill);
+                        });
+
+                        // Add "Other / Custom" input row
+                        const customInputWrap = document.createElement("div");
+                        customInputWrap.style.display = "flex";
+                        customInputWrap.style.gap = "0.5rem";
+                        customInputWrap.style.marginTop = "0.5rem";
+                        customInputWrap.style.width = "100%";
+                        
+                        const customInput = document.createElement("input");
+                        customInput.type = "text";
+                        customInput.placeholder = "Or type your own idea...";
+                        customInput.className = "custom-mcq-input";
+                        customInput.style.flex = "1";
+                        customInput.style.padding = "0.6rem 1rem";
+                        customInput.style.borderRadius = "20px";
+                        customInput.style.border = "1px solid rgba(255, 255, 255, 0.1)";
+                        customInput.style.background = "rgba(10, 10, 15, 0.5)";
+                        customInput.style.color = "white";
+                        customInput.style.fontSize = "0.85rem";
+                        customInput.style.outline = "none";
+                        
+                        const customBtn = document.createElement("button");
+                        customBtn.className = "pill-option";
+                        customBtn.innerText = "Submit";
+                        customBtn.style.margin = "0";
+                        customBtn.style.background = "var(--primary-color)";
+                        customBtn.style.color = "white";
+                        
+                        customBtn.onclick = () => {
+                            const val = customInput.value.trim();
+                            if (val) {
+                                selectMCQOption(questionText, val, customBtn, pillsWrap);
+                            }
+                        };
+                        
+                        customInput.addEventListener('keypress', (e) => {
+                            if (e.key === 'Enter') customBtn.click();
+                        });
+                        
+                        customInputWrap.appendChild(customInput);
+                        customInputWrap.appendChild(customBtn);
+                        pillsWrap.appendChild(customInputWrap);
+                    }
+
+                    qBubble.appendChild(pillsWrap);
+                    scrollToBottom();
+                }, 400);
+            }
+        }
+
+        // User clicks option button
+        function selectMCQOption(question, answer, pillEl, containerEl) {
+            // Checkmark selected options
+            pillEl.classList.add("selected");
+            pillEl.innerText = "✓ " + answer;
+
+            // Freeze choices, remove other options cleanly with fadeout
+            const pills = containerEl.querySelectorAll(".pill-option");
+            pills.forEach(p => {
+                if (p !== pillEl) {
+                    p.style.opacity = "0";
+                    p.style.pointerEvents = "none";
+                    setTimeout(() => p.remove(), 250);
+                }
+            });
+
+            // Lock selected option
+            pillEl.disabled = true;
+            selectedAnswers[question] = answer;
+
+            // Increment index
+            currentQuestionIndex += 1;
+
+            // Wait 300ms, then trigger next question or streaming prompt
+            setTimeout(() => {
+                if (currentQuestionIndex < activeQuestions.length) {
+                    askNextMCQ();
+                } else {
+                    // Record options selections inside conversation history
+                    let selections_str = "";
+                    for (let q in selectedAnswers) {
+                        selections_str += `- Question: ${q} ➔ Answer Selected: ${selectedAnswers[q]}\n`;
+                    }
+                    conversationHistory.push({"role": "user", "content": "Selected choices:\n" + selections_str});
+
+                    // Step 4: Forge final prompt
+                    forgeMasterPromptStream();
+                }
+            }, 300);
+        }
+
+        // Step 4: Stream the final prompt live word-by-word inside special output bubble
+        async function forgeMasterPromptStream() {
+            showTypingIndicator();
+
+            setTimeout(async () => {
+                removeTypingIndicator();
+
+                // Custom refining message based on whether this is the first forge or a refinement
+                if (lastForgedPromptText) {
+                    appendAIBubble(`No problem! Refining your master prompt... <i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`);
+                } else {
+                    appendAIBubble(`Perfect, forging your prompt now... <i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`);
+                }
+
+                showTypingIndicator();
+
+                try {
+                    const response = await fetch("/api/forge-prompt", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            prompt: originalConceptText,
+                            mcq_questions: activeQuestions,
+                            mcq_answers: selectedAnswers,
+                            category: detectedType,
+                            chat_history: conversationHistory,
+                            template_name: window.selectedTemplateName || "",
+                            target_model: document.getElementById("target-model-select").value,
+                            optimization_style: document.getElementById("optimization-style-select").value
+                        })
+                    });
+                    // Clear selected template after use to prevent repeat logging
+                    window.selectedTemplateName = "";
+
+                    removeTypingIndicator();
+
+                    // Append Special Output Prompt Bubble
+                    const outputBubble = appendOutputPromptBubble();
+                    const textarea = outputBubble.querySelector(".output-textarea");
+                    const statusPill = outputBubble.querySelector("#stream-status-pill");
+
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let promptText = "";
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        const chunk = decoder.decode(value, { stream: true });
+                        promptText += chunk;
+                        textarea.value = promptText;
+                        
+                        // Keep text scrolled
+                        textarea.scrollTop = textarea.scrollHeight;
+                    }
+
+                    lastForgedPromptText = promptText;
+                    conversationHistory.push({"role": "assistant", "content": promptText});
+                    
+                    statusPill.innerText = "Status: Ready";
+                    statusPill.style.color = "#10b981";
+
+                    // Show extra actions below the special bubble
+                    renderEndSessionActions(outputBubble);
+
+                    toggleInputState(true);
+
+                } catch (err) {
+                    removeTypingIndicator();
+                    appendAIBubble("Connection stream generation error failed: " + err);
+                    toggleInputState(true);
+                }
+            }, 400);
+        }
+
+        // Create the specialized prompt bubble
+        function appendOutputPromptBubble() {
+            const container = document.getElementById("chat-messages");
+            
+            const row = document.createElement("div");
+            row.className = "message-row ai-row";
+
+            const avatar = document.createElement("div");
+            avatar.className = "message-avatar";
+            avatar.innerHTML = `<i data-lucide="flame" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+
+            const bubble = document.createElement("div");
+            bubble.className = "chat-bubble prompt-output-bubble";
+
+            bubble.innerHTML = `
+                <div class="output-bubble-header">
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <span class="badge-intent">${detectedType.toUpperCase()}</span>
+                        <span id="quality-score-badge" style="display: none; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 0.25rem 0.65rem; border-radius: 12px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase;">Score: N/A</span>
+                    </div>
+                    <span id="stream-status-pill" style="font-size: 0.75rem; color: var(--accent-light); font-weight: 700;">Status: Compiling...</span>
+                </div>
+                
+                <!-- Before / After Tabs -->
+                <div class="comparison-tabs" style="display: flex; gap: 0.5rem; margin-bottom: 0.75rem;">
+                    <button class="tab-btn active" onclick="switchOutputTab(this, 'after')" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s;">✨ Compiled Output (After)</button>
+                    <button class="tab-btn" onclick="switchOutputTab(this, 'before')" style="background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: var(--text-muted); padding: 0.35rem 0.75rem; border-radius: 8px; font-size: 0.75rem; font-weight: 700; cursor: pointer; transition: all 0.2s;"><i data-lucide="file-text" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Original Concept (Before)</button>
+                </div>
+                
+                <div class="tab-content-after">
+                    <textarea class="output-textarea" readonly></textarea>
+                </div>
+                <div class="tab-content-before" style="display: none;">
+                    <textarea class="before-textarea" readonly style="width: 100%; height: 180px; background: transparent; border: none; color: var(--text-muted); font-size: 0.95rem; line-height: 1.5; outline: none; resize: none; font-family: inherit;"></textarea>
+                </div>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; border-top: 1px solid var(--border-color); padding-top: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.25rem;" class="rating-stars-container">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); margin-right: 0.15rem;">Rate:</span>
+                        <button class="star-rating-btn" onclick="ratePrompt(1, this)" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1rem; padding:0 0.1rem;">☆</button>
+                        <button class="star-rating-btn" onclick="ratePrompt(2, this)" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1rem; padding:0 0.1rem;">☆</button>
+                        <button class="star-rating-btn" onclick="ratePrompt(3, this)" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1rem; padding:0 0.1rem;">☆</button>
+                        <button class="star-rating-btn" onclick="ratePrompt(4, this)" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1rem; padding:0 0.1rem;">☆</button>
+                        <button class="star-rating-btn" onclick="ratePrompt(5, this)" style="background:transparent; border:none; cursor:pointer; color:var(--text-muted); font-size:1rem; padding:0 0.1rem;">☆</button>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center;">
+                        <select id="export-format-select" style="padding: 0.3rem 0.5rem; border-radius: 6px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: #fff; font-size: 0.7rem; outline: none; display: none;">
+                            <option value="txt">TXT</option>
+                            <option value="md">MD</option>
+                            <option value="json">JSON</option>
+                        </select>
+                        <button id="btn-export-bubble" class="btn-secondary" style="padding: 0.45rem 0.75rem; font-size: 0.75rem; display: none;" onclick="exportPromptFromBubble(this)"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Export</button>
+                        <button class="btn-secondary" style="padding: 0.45rem 0.75rem; font-size: 0.75rem;" onclick="openFeedbackModal()"><i data-lucide="message-circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Feedback</button>
+                        <button class="btn-secondary" style="padding: 0.45rem 1rem; font-size: 0.75rem;" onclick="copyPromptToClipboard(this)"><i data-lucide="clipboard" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Copy Output</button>
+                        <button id="btn-save-bubble" class="btn-cta" style="padding: 0.45rem 1.25rem; font-size: 0.75rem; border-radius: 8px; display: none;" onclick="savePromptToDatabase()"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Save Prompt</button>
+                    </div>
+                </div>
+            `;
+            bubble.querySelector(".before-textarea").value = originalConceptText;
+
+            row.appendChild(avatar);
+            row.appendChild(bubble);
+            container.appendChild(row);
+            scrollToBottom();
+            return bubble;
+        }
+
+        // Action choices once generation completes
+        function renderEndSessionActions(bubbleElement) {
+            const actionsWrap = document.createElement("div");
+            actionsWrap.style.display = "flex";
+            actionsWrap.style.gap = "0.75rem";
+            actionsWrap.style.marginTop = "1rem";
+
+            // Start Over
+            const btnOver = document.createElement("button");
+            btnOver.className = "btn-secondary";
+            btnOver.style.padding = "0.5rem 1.25rem";
+            btnOver.style.fontSize = "0.8rem";
+            btnOver.innerHTML = `<i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Start New Prompt`;
+            btnOver.onclick = () => resetChatSession();
+            actionsWrap.appendChild(btnOver);
+
+            bubbleElement.appendChild(actionsWrap);
+            
+            // Show save prompt only if authenticated
+            if (isAuthenticated) {
+                bubbleElement.querySelector("#btn-save-bubble").style.display = "inline-flex";
+            }
+            
+            // Re-enable chat inputs
+            toggleInputState(true);
+            scrollToBottom();
+        }
+
+        function resetChatSession(silent = false) {
+            // Reset all state variables
+            conversationHistory = [];
+            activeQuestions = [];
+            selectedAnswers = {};
+            currentQuestionIndex = 0;
+            lastForgedPromptText = "";
+            originalConceptText = "";
+            currentPromptId = null;
+
+            if (!silent) {
+                // Append nice restart notification
+                appendAIBubble(`Let's forge another master prompt! Describe your new concept below <i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`);
+            }
+            document.getElementById("chat-textarea-input").focus();
+        }
+
+        function toggleInputState(enable) {
+            const textarea = document.getElementById("chat-textarea-input");
+            const btn = document.getElementById("btn-send-message");
+            textarea.disabled = false;
+            btn.dataset.busy = enable ? "false" : "true";
+            updateSendButtonState();
+            
+            const chips = document.querySelectorAll(".chip-btn");
+            chips.forEach(c => c.disabled = false);
+        }
+
+        // Store prompt in MySQL database
+        async function savePromptToDatabase() {
+            const token = localStorage.getItem("forge_token");
+            if (!token) return;
+
+            const payload = {
+                input_text: originalConceptText,
+                mcq_questions: activeQuestions,
+                mcq_answers: selectedAnswers,
+                generated_prompt: lastForgedPromptText,
+                category: detectedType,
+                parent_prompt_id: currentPromptId
+            };
+
+            try {
+                const response = await fetch("/api/save-prompt", {
+                    method: "POST",
+                    headers: { 
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    showToast("✓ Saved successfully to your history logs!");
+                    currentPromptId = data.prompt_id;
+                    
+                    // Enable and configure the export buttons in the current bubble!
+                    const bubble = document.querySelector(".prompt-output-bubble:last-of-type");
+                    if (bubble) {
+                        const exportSelect = bubble.querySelector("#export-format-select");
+                        const exportBtn = bubble.querySelector("#btn-export-bubble");
+                        if (exportSelect && exportBtn) {
+                            exportSelect.style.display = "inline-flex";
+                            exportBtn.style.display = "inline-flex";
+                            exportBtn.setAttribute("data-prompt-id", data.prompt_id);
+                        }
+                        
+                        // Update quality score badge in the bubble too!
+                        const scoreBadge = bubble.querySelector("#quality-score-badge");
+                        if (scoreBadge && data.quality_score !== undefined) {
+                            scoreBadge.innerText = `Score: ${data.quality_score}/100`;
+                            scoreBadge.style.display = "inline-flex";
+                        }
+                    }
+                    
+                    loadSavedHistory(); // Refresh sidebar history
+                } else {
+                    alert(data.error || "Failed to save prompt.");
+                }
+            } catch (err) {
+                alert("Connection failed saving prompt.");
+            }
+        }
+
+        // Load prompt history in sidebar
+        async function loadSavedHistory() {
+            const token = localStorage.getItem("forge_token");
+            if (!token) return;
+
+            const searchQuery = document.getElementById("history-search-input") ? document.getElementById("history-search-input").value.trim() : "";
+            const url = searchQuery ? `/api/history?search=${encodeURIComponent(searchQuery)}` : "/api/history";
+
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    const container = document.getElementById("history-items-container");
+                    container.innerHTML = "";
+
+                    if (data.history.length === 0) {
+                        container.innerHTML = "<p style='font-size:0.75rem; color:var(--text-muted); text-align:center;'>No saved prompts.</p>";
+                        return;
+                    }
+
+                    data.history.forEach(item => {
+                        const card = document.createElement("div");
+                        card.className = "history-item";
+                        card.style.position = "relative";
+                        card.style.paddingRight = "2.2rem";
+                        card.onclick = () => loadHistoryEntryToChat(item);
+
+                        const title = document.createElement("div");
+                        title.className = "history-title";
+                        title.innerText = item.input_text;
+                        card.appendChild(title);
+
+                        const meta = document.createElement("div");
+                        meta.className = "history-meta";
+                        meta.style.display = "flex";
+                        meta.style.justifyContent = "space-between";
+                        meta.style.alignItems = "center";
+                        
+                        const metaLeft = document.createElement("div");
+                        metaLeft.style.display = "flex";
+                        metaLeft.style.gap = "0.5rem";
+                        metaLeft.style.alignItems = "center";
+                        
+                        const date = document.createElement("span");
+                        date.innerText = item.created_at.split(" ")[0];
+                        metaLeft.appendChild(date);
+
+                        const badge = document.createElement("span");
+                        badge.className = "history-badge";
+                        badge.innerText = item.type_detected || item.category || "Image gen";
+                        metaLeft.appendChild(badge);
+                        meta.appendChild(metaLeft);
+
+                        const metaRight = document.createElement("div");
+                        metaRight.style.display = "flex";
+                        metaRight.style.gap = "0.3rem";
+
+                        const vBadge = document.createElement("span");
+                        vBadge.className = "history-badge";
+                        vBadge.style.background = "rgba(108, 99, 255, 0.1)";
+                        vBadge.style.color = "var(--accent-light)";
+                        vBadge.innerText = `V${item.version_number || 1}`;
+                        metaRight.appendChild(vBadge);
+
+                        if (item.quality_score !== null && item.quality_score !== undefined) {
+                            const qBadge = document.createElement("span");
+                            qBadge.className = "history-badge";
+                            qBadge.style.background = "rgba(16, 185, 129, 0.1)";
+                            qBadge.style.color = "#10b981";
+                            qBadge.innerText = `Score: ${item.quality_score}/100`;
+                            metaRight.appendChild(qBadge);
+                        }
+
+                        meta.appendChild(metaRight);
+                        card.appendChild(meta);
+
+                        // Star Favorite Button inside Card
+                        const starBtn = document.createElement("button");
+                        starBtn.className = "card-star-btn";
+                        starBtn.style.position = "absolute";
+                        starBtn.style.top = "50%";
+                        starBtn.style.right = "0.75rem";
+                        starBtn.style.transform = "translateY(-50%)";
+                        starBtn.style.background = "transparent";
+                        starBtn.style.border = "none";
+                        starBtn.style.cursor = "pointer";
+                        starBtn.style.fontSize = "1rem";
+                        starBtn.style.padding = "0";
+                        if (item.is_favorite) {
+                            starBtn.innerText = "⭐";
+                            starBtn.style.opacity = "1";
+                        } else {
+                            starBtn.innerText = "☆";
+                            starBtn.style.opacity = "0.3";
+                        }
+
+                        starBtn.onclick = async (event) => {
+                            event.stopPropagation(); // Avoid triggering card selection click
+                            const token = localStorage.getItem("forge_token");
+                            try {
+                                const response = await fetch("/api/history/favorite", {
+                                    method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                        "Authorization": `Bearer ${token}`
+                                    },
+                                    body: JSON.stringify({ prompt_id: item.id })
+                                });
+                                const data = await response.json();
+                                if (data.success) {
+                                    item.is_favorite = data.is_favorite;
+                                    if (data.is_favorite) {
+                                        starBtn.innerText = "⭐";
+                                        starBtn.style.opacity = "1";
+                                    } else {
+                                        starBtn.innerText = "☆";
+                                        starBtn.style.opacity = "0.3";
+                                    }
+                                    showToast(data.is_favorite ? "✓ Added to favorites!" : "✓ Removed from favorites!");
+                                    
+                                    // If we are in the Saved Ledger page, we could sync it, but we are in index.html sidebar.
+                                } else {
+                                    alert(data.error);
+                                }
+                            } catch (err) {
+                                console.error("Error toggling favorite:", err);
+                            }
+                        };
+                        card.appendChild(starBtn);
+
+                        container.appendChild(card);
+                    });
+                }
+            } catch (err) {
+                console.log("Failed to load prompt history logs.");
+            }
+        }
+
+        // Render historically saved prompts back directly inside the chat logs
+        function loadHistoryEntryToChat(item) {
+            // Set session variables to support refinement
+            originalConceptText = item.input_text;
+            detectedType = item.category || item.type_detected || "Image gen";
+            lastForgedPromptText = item.generated_prompt;
+            conversationHistory = [{"role": "user", "content": item.input_text}, {"role": "assistant", "content": item.generated_prompt}];
+            currentPromptId = item.id;
+
+            appendUserBubble(item.input_text);
+            
+            // Loop through questions and output selection logs
+            if (item.mcq_questions) {
+                item.mcq_questions.forEach(q => {
+                    const ans = item.mcq_answers[q.question] || "";
+                    const aiMsg = appendAIBubble(q.question);
+                    
+                    const pillsWrap = document.createElement("div");
+                    pillsWrap.className = "options-container";
+
+                    const pill = document.createElement("button");
+                    pill.className = "pill-option selected";
+                    pill.innerText = "✓ " + ans;
+                    pill.disabled = true;
+                    pillsWrap.appendChild(pill);
+                    
+                    aiMsg.appendChild(pillsWrap);
+                });
+            }
+
+            // Append Output Bubble
+            const outputBubble = appendOutputPromptBubble();
+            const textarea = outputBubble.querySelector(".output-textarea");
+            const statusPill = outputBubble.querySelector("#stream-status-pill");
+
+            textarea.value = item.generated_prompt;
+            statusPill.innerText = "Status: Loaded from History";
+            statusPill.style.color = "#10b981";
+
+            // Enable and configure the export buttons in the loaded bubble!
+            const exportSelect = outputBubble.querySelector("#export-format-select");
+            const exportBtn = outputBubble.querySelector("#btn-export-bubble");
+            if (exportSelect && exportBtn) {
+                exportSelect.style.display = "inline-flex";
+                exportBtn.style.display = "inline-flex";
+                exportBtn.setAttribute("data-prompt-id", item.id);
+            }
+            
+            // Update quality score badge in the loaded bubble!
+            const scoreBadge = outputBubble.querySelector("#quality-score-badge");
+            if (scoreBadge && item.quality_score !== null && item.quality_score !== undefined) {
+                scoreBadge.innerText = `Score: ${item.quality_score}/100`;
+                scoreBadge.style.display = "inline-flex";
+            }
+
+            renderEndSessionActions(outputBubble);
+            scrollToBottom();
+        }
+
+        // Copy prompt clipboard
+        function copyPromptToClipboard(btnEl) {
+            let textToCopy = lastForgedPromptText;
+            
+            if (btnEl) {
+                // Find the textarea within the same prompt bubble as the clicked button
+                const bubble = btnEl.closest('.prompt-output-bubble');
+                if (bubble) {
+                    const textarea = bubble.querySelector('textarea');
+                    if (textarea) {
+                        textToCopy = textarea.value;
+                    }
+                }
+            } else {
+                // Fallback for keyboard shortcuts or global calls
+                const activeTextarea = document.activeElement && document.activeElement.className === "output-textarea" 
+                    ? document.activeElement 
+                    : null;
+                if (activeTextarea && activeTextarea.value) {
+                    textToCopy = activeTextarea.value;
+                }
+            }
+            
+            if (textToCopy) {
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    showToast("✓ Copied prompt to clipboard successfully!");
+                });
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("success-toast");
+            toast.innerText = msg;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        // Vision Model Upload Triggers
+        function triggerVisionUpload() {
+            document.getElementById("vision-file-input").click();
+        }
+
+        async function handleVisionImageSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            // Enforce size boundaries (max 5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                alert("Image size exceeds the 5MB platform limit.");
+                return;
+            }
+
+            // Convert file to base64 DataURL
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                const base64Data = e.target.result;
+                
+                // Show instant client image bubble inside the chat
+                appendUserImageBubble(base64Data);
+                
+                // Trigger Llama 3.2 Vision Streaming reverse engineering endpoint!
+                await analyzeVisionImageStream(base64Data);
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Render user-uploaded visual card inside chat bubble
+        function appendUserImageBubble(dataUrl) {
+            const container = document.getElementById("chat-messages");
+            
+            const row = document.createElement("div");
+            row.className = "message-row user-row";
+
+            const bubble = document.createElement("div");
+            bubble.className = "chat-bubble";
+            bubble.style.padding = "0.5rem";
+            bubble.style.borderRadius = "16px";
+            
+            const img = document.createElement("img");
+            img.src = dataUrl;
+            img.style.maxWidth = "280px";
+            img.style.maxHeight = "200px";
+            img.style.borderRadius = "12px";
+            img.style.display = "block";
+            img.style.boxShadow = "0 4px 15px rgba(0,0,0,0.3)";
+
+            bubble.appendChild(img);
+            row.appendChild(bubble);
+            container.appendChild(row);
+            scrollToBottom();
+        }
+
+        // Call the vision analysis endpoint with SSE streaming outputs
+        async function analyzeVisionImageStream(base64Data) {
+            showTypingIndicator();
+            originalConceptText = "Uploaded Visual Concept Design Spec";
+            detectedType = "Generative Image"; // Force visual mode
+
+            try {
+                const response = await fetch("/api/analyze-vision", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ image: base64Data })
+                });
+
+                removeTypingIndicator();
+                appendAIBubble(`Reconstructing visual concept... <i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`);
+                showTypingIndicator();
+
+                const responseBody = response;
+                removeTypingIndicator();
+
+                // Append output bubble
+                const outputBubble = appendOutputPromptBubble();
+                const textarea = outputBubble.querySelector(".output-textarea");
+                const statusPill = outputBubble.querySelector("#stream-status-pill");
+
+                const reader = responseBody.body.getReader();
+                const decoder = new TextDecoder();
+                let promptText = "";
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    promptText += chunk;
+                    textarea.value = promptText;
+                    
+                    textarea.scrollTop = textarea.scrollHeight;
+                }
+
+                lastForgedPromptText = promptText;
+                conversationHistory.push({"role": "assistant", "content": promptText});
+                
+                statusPill.innerText = "Status: Vision Processed";
+                statusPill.style.color = "#10b981";
+
+                renderEndSessionActions(outputBubble);
+
+            } catch (err) {
+                removeTypingIndicator();
+                appendAIBubble("Connection failed analyzing visual image concept: " + err);
+                toggleInputState(true);
+            }
+        }
+
+        function updateModelBadge(source) {
+            const badge = document.getElementById('modelBadge');
+            const text = document.getElementById('badgeText');
+            if (!badge || !text) return;
+            if (source === 'loading') {
+                badge.className = 'model-badge groq-active';
+                text.innerHTML = `<i data-lucide="loader" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Checking Model`;
+            } else if (source === 'groq') {
+                badge.className = 'model-badge groq-active';
+                text.innerHTML = `<i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Groq Active`;
+            } else if (source === 'fallback') {
+                badge.className = 'model-badge prometheus-active';
+                text.innerHTML = `<i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Local Fallback`;
+            } else {
+                badge.className = 'model-badge prometheus-active';
+                text.innerHTML = `<i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prometheus Local`;
+            }
+            if (window.lucide) lucide.createIcons();
+        }
+
+        function handleLogout(redirect = true) {
+            localStorage.removeItem("forge_token");
+            localStorage.removeItem("forge_user_name");
+            localStorage.removeItem("forge_user_email");
+            if (redirect) {
+                window.location.href = "/";
+            }
+        }
+
+        // --- NEW CHANNELS (TEMPLATES, SELECTIONS, FEEDBACK) ---
+
+        async function loadTemplates() {
+            try {
+                const response = await fetch("/api/templates");
+                const data = await response.json();
+                if (data.success) {
+                    const row = document.getElementById("templates-chips-row");
+                    row.innerHTML = "";
+                    data.templates.forEach(t => {
+                        const btn = document.createElement("button");
+                        btn.className = "chip-btn";
+                        btn.style.background = "rgba(108, 99, 255, 0.08)";
+                        btn.style.borderColor = "rgba(108, 99, 255, 0.3)";
+                        btn.style.color = "#d1d5db";
+                        btn.style.fontSize = "0.75rem";
+                        btn.style.padding = "0.35rem 0.75rem";
+                        btn.style.borderRadius = "20px";
+                        btn.style.border = "1px solid rgba(108, 99, 255, 0.3)";
+                        btn.style.cursor = "pointer";
+                        btn.style.whiteSpace = "nowrap";
+                        btn.innerHTML = `<i data-lucide="lightbulb" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ${t.name}`;
+                        
+                        btn.onclick = () => {
+                            const textarea = document.getElementById("chat-textarea-input");
+                            textarea.value = t.description;
+                            textarea.dispatchEvent(new Event("input"));
+                            textarea.focus();
+                            
+                            selectCategoryByName(t.category);
+                            window.selectedTemplateName = t.name;
+                        };
+                        row.appendChild(btn);
+                    });
+                    if (window.lucide) lucide.createIcons();
+                }
+            } catch (err) {
+                console.log("Failed to load templates:", err);
+            }
+        }
+
+        function selectCategoryByName(categoryName) {
+            if (!categoryName) return;
+            const chips = document.querySelectorAll(".chip-btn");
+            let found = false;
+            
+            // Normalize the target name by removing emojis and extra spaces
+            const normalizedTarget = categoryName.toLowerCase().replace(/[\u1000-\uFFFF]/g, '').trim();
+            
+            chips.forEach(chip => {
+                // Get inner text and normalize it
+                const text = chip.innerText.toLowerCase();
+                const normalizedText = text.replace(/[\u1000-\uFFFF]/g, '').trim();
+                
+                if (normalizedText === normalizedTarget || normalizedText.includes(normalizedTarget) || normalizedTarget.includes(normalizedText)) {
+                    // Extract just the text name (without emojis) for the internal state
+                    const cleanName = chip.innerText.replace(/[\u1000-\uFFFF]/g, '').trim();
+                    selectCategory(cleanName, chip, true);
+                    found = true;
+                }
+            });
+            if (!found) {
+                detectedType = categoryName;
+            }
+        }
+
+        function openFeedbackModal() {
+            document.getElementById("feedback-modal").style.display = "flex";
+        }
+
+        function closeFeedbackModal() {
+            document.getElementById("feedback-modal").style.display = "none";
+            document.getElementById("feedback-comment-textarea").value = "";
+        }
+
+        async function submitFeedbackForm() {
+            const type = document.getElementById("feedback-type-select").value;
+            const comment = document.getElementById("feedback-comment-textarea").value.trim();
+            if (!comment) {
+                alert("Please write a comment first.");
+                return;
+            }
+            
+            const payload = {
+                feedback_type: type,
+                comment: comment,
+                prompt_id: null
+            };
+
+            const token = localStorage.getItem("forge_token");
+            const headers = { "Content-Type": "application/json" };
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
+
+            try {
+                const response = await fetch("/api/feedback", {
+                    method: "POST",
+                    headers: headers,
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast("✓ Thank you for your feedback!");
+                    closeFeedbackModal();
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Connection failed submitting feedback.");
+            }
+        }
+
+        async function ratePrompt(rating, btn) {
+            const container = btn.parentNode;
+            const stars = container.querySelectorAll(".star-rating-btn");
+            
+            stars.forEach((star, idx) => {
+                if (idx < rating) {
+                    star.innerText = "★";
+                    star.style.color = "#f59e0b";
+                } else {
+                    star.innerText = "☆";
+                    star.style.color = "var(--text-muted)";
+                }
+            });
+
+            const payload = {
+                feedback_type: "rating",
+                rating: rating,
+                comment: `Prompt rated ${rating}/5 stars.`
+            };
+
+            const token = localStorage.getItem("forge_token");
+            const headers = { "Content-Type": "application/json" };
+            if (token) {
+                headers["Authorization"] = `Bearer ${token}`;
+            }
+
+            try {
+                const response = await fetch("/api/feedback", {
+                    method: "POST",
+                    headers: headers,
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast(`✓ Rated ${rating}/5 stars!`);
+                }
+            } catch (err) {
+                console.error("Rating submission error:", err);
+            }
+        }
+
+        window.switchOutputTab = function(btn, tabType) {
+            const bubble = btn.closest(".prompt-output-bubble");
+            const afterContent = bubble.querySelector(".tab-content-after");
+            const beforeContent = bubble.querySelector(".tab-content-before");
+            const tabs = bubble.querySelectorAll(".tab-btn");
+            
+            tabs.forEach(t => {
+                t.classList.remove("active");
+                t.style.background = "rgba(255, 255, 255, 0.05)";
+                t.style.borderColor = "var(--border-color)";
+                t.style.color = "var(--text-muted)";
+            });
+            
+            btn.classList.add("active");
+            btn.style.background = "rgba(16, 185, 129, 0.15)";
+            btn.style.borderColor = "rgba(16, 185, 129, 0.3)";
+            btn.style.color = "#10b981";
+            
+            if (tabType === "after") {
+                afterContent.style.display = "block";
+                beforeContent.style.display = "none";
+            } else {
+                afterContent.style.display = "none";
+                beforeContent.style.display = "block";
+            }
+        }
+
+        window.exportPromptFromBubble = function(btn) {
+            const promptId = btn.getAttribute("data-prompt-id");
+            if (!promptId) return;
+            const bubble = btn.closest(".prompt-output-bubble");
+            const formatSelect = bubble.querySelector("#export-format-select");
+            const format = formatSelect ? formatSelect.value : "txt";
+            
+            const token = localStorage.getItem("forge_token");
+            const url = `/api/prompts/export?prompt_id=${promptId}&format=${format}`;
+            
+            fetch(url, {
+                method: "GET",
+                headers: { "Authorization": `Bearer ${token}` }
+            })
+            .then(res => {
+                if (res.status === 200) {
+                    return res.blob();
+                } else {
+                    return res.json().then(d => { throw new Error(d.error || "Export failed."); });
+                }
+            })
+            .then(blob => {
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = downloadUrl;
+                a.download = `prompt_${promptId}.${format}`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                window.URL.revokeObjectURL(downloadUrl);
+            })
+            .catch(err => {
+                alert(err.message);
+            });
+        }
+
+        // --- NOTIFICATION UTILITIES ---
+
+        function toggleNotificationsDropdown(event) {
+            if (event) event.stopPropagation();
+            const dropdown = document.getElementById("notif-dropdown");
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+            } else {
+                dropdown.style.display = "block";
+                loadNotifications();
+                // Close dropdown if clicked outside
+                const closeHandler = (e) => {
+                    if (!dropdown.contains(e.target) && e.target.id !== "header-notif-container" && !document.getElementById("header-notif-container").contains(e.target)) {
+                        dropdown.style.display = "none";
+                        document.removeEventListener("click", closeHandler);
+                    }
+                };
+                document.addEventListener("click", closeHandler);
+            }
+        }
+
+        async function loadNotifications() {
+            const token = localStorage.getItem("forge_token");
+            if (!token) return;
+
+            const notifList = document.getElementById("notifications-list-container");
+            const notifCountBadge = document.getElementById("unread-notif-count");
+            
+            try {
+                const response = await fetch("/api/notifications", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    notifList.innerHTML = "";
+                    let unreadCount = 0;
+                    
+                    if (data.notifications.length === 0) {
+                        notifList.innerHTML = "<div style='color:var(--text-muted); text-align:center; padding:1rem; font-size:0.75rem;'>No notifications yet.</div>";
+                        notifCountBadge.style.display = "none";
+                        return;
+                    }
+
+                    data.notifications.forEach(n => {
+                        if (!n.is_read) unreadCount++;
+                        const div = document.createElement("div");
+                        div.className = `notification-item ${n.is_read ? '' : 'unread'}`;
+                        
+                        let actionText = "";
+                        if (n.type === "like") actionText = "liked your prompt";
+                        else if (n.type === "fork") actionText = "forked your prompt";
+                        else if (n.type === "follow") actionText = "followed you";
+                        else actionText = "sent you a message";
+
+                        const displaySender = n.sender_display_name || n.sender_username || "Someone";
+                        const promptLabel = n.prompt_input ? ` "${escapeHtml(n.prompt_input.substring(0,20))}..."` : "";
+
+                        div.innerHTML = `
+                            <div style="font-weight: 700; margin-bottom: 0.2rem;">${escapeHtml(displaySender)}</div>
+                            <div style="color: var(--text-muted); font-size: 0.75rem; margin-bottom: 0.2rem;">${actionText}${escapeHtml(promptLabel)}</div>
+                            <div style="font-size: 0.65rem; color: rgba(255,255,255,0.3); text-align: right;">${n.created_at}</div>
+                        `;
+                        notifList.appendChild(div);
+                    });
+
+                    if (unreadCount > 0) {
+                        notifCountBadge.innerText = unreadCount;
+                        notifCountBadge.style.display = "block";
+                    } else {
+                        notifCountBadge.style.display = "none";
+                    }
+                }
+            } catch (err) {
+                console.error("Error loading notifications:", err);
+            }
+        }
+
+        async function markAllNotificationsRead(e) {
+            if (e) e.stopPropagation();
+            const token = localStorage.getItem("forge_token");
+            if (!token) return;
+
+            try {
+                const response = await fetch("/api/notifications/read", {
+                    method: "POST",
+                    headers: { 
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loadNotifications();
+                }
+            } catch (err) {
+                console.error("Error marking notifications read:", err);
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return "";
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+    </script>
+
+    <!-- Feedback Form Modal -->
+    <div id="feedback-modal" class="modal-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; backdrop-filter: blur(4px);">
+        <div class="glass-panel" style="width: 90%; max-width: 450px; padding: 2rem; border-radius: 16px; border: 1px solid var(--border-color); background: rgba(20, 20, 35, 0.95); position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            <button onclick="closeFeedbackModal()" style="position: absolute; top: 1rem; right: 1.25rem; background: transparent; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.2rem;">&times;</button>
+            <h3 style="font-size: 1.2rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;"><i data-lucide="message-circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Send Feedback / Report Issue</h3>
+            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1.25rem;">Help us refine ForgePrompt by reporting issues or requesting features.</p>
+            
+            <div style="margin-bottom: 1rem;">
+                <label style="display: block; font-size: 0.75rem; color: var(--accent-light); font-weight: 700; text-transform: uppercase; margin-bottom: 0.35rem;">Feedback Type</label>
+                <select id="feedback-type-select" style="width: 100%; padding: 0.6rem; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: #fff; font-size: 0.85rem; outline: none;">
+                    <option value="issue" style="background:#141423;">Bug / Issue Report</option>
+                    <option value="feature" style="background:#141423;">Feature Request</option>
+                    <option value="general" style="background:#141423;">General Comment</option>
+                </select>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <label style="display: block; font-size: 0.75rem; color: var(--accent-light); font-weight: 700; text-transform: uppercase; margin-bottom: 0.35rem;">Message</label>
+                <textarea id="feedback-comment-textarea" placeholder="Explain what went wrong or what you'd like added..." style="width: 100%; height: 120px; padding: 0.6rem; border-radius: 8px; background: rgba(255,255,255,0.05); border: 1px solid var(--border-color); color: #fff; font-size: 0.85rem; outline: none; resize: none;"></textarea>
+            </div>
+            
+            <div style="display: flex; gap: 0.75rem; justify-content: flex-end;">
+                <button class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; border-radius: 8px;" onclick="closeFeedbackModal()">Cancel</button>
+                <button class="btn-cta" style="padding: 0.5rem 1.5rem; font-size: 0.85rem; border-radius: 8px;" onclick="submitFeedbackForm()">Submit</button>
+            </div>
+        </div>
+    </div>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

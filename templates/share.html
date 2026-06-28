@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shared Prompt preview — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            display: block;
+            overflow-y: auto;
+            min-height: 100vh;
+        }
+
+        .share-container {
+            max-width: 800px;
+            margin: 4rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .share-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .share-brand {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: #fff;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+
+        .share-brand span {
+            color: var(--accent-light);
+        }
+
+        .author-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--border-color);
+            border-radius: 30px;
+            padding: 0.5rem 1.25rem;
+            text-decoration: none;
+            color: #fff;
+            transition: border-color 0.2s ease;
+        }
+
+        .author-box:hover {
+            border-color: var(--accent);
+        }
+
+        .author-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 0.85rem;
+        }
+
+        /* Stats banner */
+        .stats-banner {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(26, 26, 46, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        }
+
+        .stat-item-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .stat-val {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .stat-lbl {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Preview Details */
+        .section-separator {
+            border-top: 1px solid var(--border-color);
+            margin: 2rem 0;
+        }
+
+        .prompt-textarea-preview {
+            width: 100%;
+            height: 250px;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95rem;
+            padding: 1.25rem;
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Space Background -->
+    <div class="starfield-bg"></div>
+
+    <div class="share-container">
+        <!-- Brand Link -->
+        <div class="share-header">
+            <a href="/" class="share-brand">ForgePrompt<span>.ai</span></a>
+            <div>
+                <a href="#" id="author-profile-link" class="author-box">
+                    <div class="author-avatar" id="author-avatar">FP</div>
+                    <div style="text-align:left;">
+                        <div style="font-size:0.8rem; font-weight:700;" id="author-name">Loading...</div>
+                        <div style="font-size:0.65rem; color:var(--text-muted);">@<span id="author-username">username</span></div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- STATS BANNER -->
+        <div class="stats-banner">
+            <div class="stat-item-box">
+                <div class="stat-val" id="stat-score">--</div>
+                <div class="stat-lbl">Quality Score</div>
+            </div>
+            <div class="stat-item-box" style="cursor:pointer;" onclick="toggleLikeShare()">
+                <div class="stat-val"><span id="like-icon-share">❤️</span> <span id="stat-likes">0</span></div>
+                <div class="stat-lbl">Likes</div>
+            </div>
+            <div class="stat-item-box">
+                <div class="stat-val" id="stat-views">0</div>
+                <div class="stat-lbl">Views</div>
+            </div>
+            <div class="stat-item-box">
+                <div class="stat-val" id="stat-forks">0</div>
+                <div class="stat-lbl">Forks</div>
+            </div>
+            <div class="stat-item-box">
+                <div class="stat-val" id="stat-version">V1</div>
+                <div class="stat-lbl">Version</div>
+            </div>
+        </div>
+
+        <!-- CONTENT CARD -->
+        <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px; position:relative;">
+            <div id="badge-container" style="margin-bottom:1rem; display:flex; gap:0.35rem;">
+                <!-- Badges will render here -->
+            </div>
+            
+            <div style="font-size: 0.8rem; color: var(--accent-light); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:0.5rem;">Original concept <i data-lucide="lightbulb" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></div>
+            <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 2rem; line-height:1.4;" id="prompt-concept">Loading concept...</h2>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <div style="font-size: 0.8rem; color: #10b981; font-weight:800; text-transform:uppercase; letter-spacing:0.5px;">Optimized prompt <i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></div>
+                <button class="btn-secondary" style="padding:0.35rem 0.75rem; font-size:0.75rem; border-radius:6px;" onclick="copySharedPrompt()">Copy to clipboard <i data-lucide="clipboard" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+            </div>
+            
+            <textarea id="prompt-output" class="prompt-textarea-preview" readonly>Loading prompt output...</textarea>
+
+            <div style="display:flex; gap:1rem; flex-wrap:wrap; justify-content:center;">
+                <button class="btn-cta" style="padding: 0.75rem 2.5rem; font-size: 0.95rem; border-radius: 10px; width:100%; max-width:300px;" onclick="forkSharedPrompt()">Fork to Workbench <i data-lucide="git-fork" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+                <a href="/workbench" class="btn-secondary" style="padding: 0.75rem 2.5rem; font-size: 0.95rem; border-radius: 10px; text-decoration:none; display:inline-flex; align-items:center; justify-content:center; width:100%; max-width:300px;">Try ForgePrompt Free ✨</a>
+            </div>
+            
+            <div id="additional-sections" style="display:none;">
+                <div class="section-separator"></div>
+                <div style="font-size: 0.8rem; color: var(--accent-light); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:1rem;">Why this prompt is better <i data-lucide="lightbulb" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></div>
+                <div id="why-better-content" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:2rem;"></div>
+
+                <div class="section-separator"></div>
+                <div style="font-size: 0.8rem; color: var(--accent-light); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:1rem;">Suggested improvements <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></div>
+                <div id="improvements-content" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6; margin-bottom:2rem;"></div>
+
+                <div class="section-separator"></div>
+                <div style="font-size: 0.8rem; color: var(--accent-light); font-weight:800; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:1rem;">Alternative variations <i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></div>
+                <div id="variations-content" style="font-size:0.9rem; color:var(--text-secondary); line-height:1.6;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast Notification -->
+    <div id="success-toast" class="toast-msg">
+        ✓ Copied to clipboard successfully!
+    </div>
+
+    <script>
+        const uuid = "{{ share_uuid }}";
+        let promptId = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            loadSharedPrompt();
+        });
+
+        async function loadSharedPrompt() {
+            try {
+                const response = await fetch(`/api/share/${uuid}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    const p = data.prompt;
+                    promptId = p.id;
+
+                    // Author details
+                    const displayName = p.author_display_name || p.author_name || 'Anonymous';
+                    const username = p.username || 'anonymous';
+                    document.getElementById("author-name").innerText = displayName;
+                    document.getElementById("author-username").innerText = username;
+                    document.getElementById("author-avatar").innerText = displayName.substring(0, 2).toUpperCase();
+                    document.getElementById("author-profile-link").href = `/@${username}`;
+
+                    // Stats
+                    document.getElementById("stat-score").innerText = p.quality_score !== null ? `${p.quality_score}/100` : '--';
+                    document.getElementById("stat-likes").innerText = p.like_count;
+                    document.getElementById("stat-views").innerText = p.views;
+                    document.getElementById("stat-forks").innerText = p.fork_count;
+                    document.getElementById("stat-version").innerText = `V${p.version_number || 1}`;
+
+                    // Badges
+                    const badgeContainer = document.getElementById("badge-container");
+                    badgeContainer.innerHTML = "";
+                    if (p.badges) {
+                        p.badges.forEach(b => {
+                            const badge = document.createElement("span");
+                            badge.className = "history-badge";
+                            badge.style.fontSize = "0.7rem";
+                            badge.style.padding = "0.2rem 0.5rem";
+                            badge.style.borderRadius = "4px";
+                            if (b.includes("Week")) {
+                                badge.style.background = "rgba(245, 158, 11, 0.15)";
+                                badge.style.color = "#f59e0b";
+                            } else if (b.includes("Trending")) {
+                                badge.style.background = "rgba(239, 68, 68, 0.15)";
+                                badge.style.color = "#ef4444";
+                            } else {
+                                badge.style.background = "rgba(16, 185, 129, 0.15)";
+                                badge.style.color = "#10b981";
+                            }
+                            badge.innerText = b;
+                            badgeContainer.appendChild(badge);
+                        });
+                    }
+
+                    // Content
+                    document.getElementById("prompt-concept").innerText = p.input_text;
+                    
+                    // Parse structured sections
+                    parsePromptOutput(p.generated_prompt);
+                    checkLikeStatusShare();
+
+                } else {
+                    document.body.innerHTML = `
+                        <div class="starfield-bg"></div>
+                        <div style="max-width:500px; margin:10rem auto; text-align:center; padding:2rem;" class="glass-panel">
+                            <h2 style="font-size:2rem; font-weight:800; color:#ef4444; margin-bottom:1rem;">Not Found</h2>
+                            <p style="color:var(--text-secondary); margin-bottom:2rem;">${data.error || "The shared prompt does not exist or has been removed."}</p>
+                            <a href="/" class="btn-cta" style="text-decoration:none;">Go back home</a>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function parsePromptOutput(rawText) {
+            const outputArea = document.getElementById("prompt-output");
+            
+            // If it follows the elite structured separators, split it
+            if (rawText.includes(`<i data-lucide="lightbulb" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> WHY THIS PROMPT IS BETTER`) || rawText.includes(`<i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> OPTIMIZED PROMPT`)) {
+                const parts = rawText.split(/={3,}/g);
+                let optimizedPrompt = "";
+                let whyBetter = "";
+                let improvements = "";
+                let variations = "";
+                
+                for (let i = 0; i < parts.length; i++) {
+                    const text = parts[i].trim();
+                    if (text.startsWith(`<i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> OPTIMIZED PROMPT`)) {
+                        optimizedPrompt = parts[i+1] ? parts[i+1].trim() : "";
+                    } else if (text.startsWith(`<i data-lucide="lightbulb" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> WHY THIS PROMPT IS BETTER`)) {
+                        whyBetter = parts[i+1] ? parts[i+1].trim() : "";
+                    } else if (text.startsWith(`<i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> SUGGESTED IMPROVEMENTS`)) {
+                        improvements = parts[i+1] ? parts[i+1].trim() : "";
+                    } else if (text.startsWith(`<i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ALTERNATIVE VARIATIONS`)) {
+                        variations = parts[i+1] ? parts[i+1].trim() : "";
+                    }
+                }
+                
+                if (optimizedPrompt) {
+                    outputArea.value = optimizedPrompt;
+                    
+                    document.getElementById("why-better-content").innerText = whyBetter || "N/A";
+                    document.getElementById("improvements-content").innerText = improvements || "N/A";
+                    document.getElementById("variations-content").innerText = variations || "N/A";
+                    document.getElementById("additional-sections").style.display = "block";
+                    return;
+                }
+            }
+            
+            // Fallback for simple prompt texts
+            outputArea.value = rawText;
+            document.getElementById("additional-sections").style.display = "none";
+        }
+
+        function copySharedPrompt() {
+            const output = document.getElementById("prompt-output").value;
+            navigator.clipboard.writeText(output).then(() => {
+                showToast("✓ Copied prompt to clipboard successfully!");
+            });
+        }
+
+        async function forkSharedPrompt() {
+            const token = localStorage.getItem("forge_token");
+            if (!token) {
+                window.location.href = "/auth";
+                return;
+            }
+            try {
+                const response = await fetch(`/api/prompts/${promptId}/fork`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast("✓ Prompt successfully forked to Workbench!");
+                    setTimeout(() => {
+                        window.location.href = "/workbench";
+                    }, 1200);
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {}
+        }
+
+        async function checkLikeStatusShare() {
+            const token = localStorage.getItem("forge_token");
+            if (!token) return;
+            try {
+                const response = await fetch(`/api/prompts/${promptId}/like-status`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success && data.liked) {
+                    document.getElementById("like-icon-share").style.transform = "scale(1.2)";
+                    document.getElementById("like-icon-share").style.textShadow = "0 0 10px #ef4444";
+                }
+            } catch (err) {}
+        }
+
+        async function toggleLikeShare() {
+            const token = localStorage.getItem("forge_token");
+            if (!token) {
+                window.location.href = "/auth";
+                return;
+            }
+            const likeIcon = document.getElementById("like-icon-share");
+            const likeVal = document.getElementById("stat-likes");
+            const isLiked = likeIcon.style.transform === "scale(1.2)";
+
+            const url = isLiked ? `/api/prompts/${promptId}/unlike` : `/api/prompts/${promptId}/like`;
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    let val = parseInt(likeVal.innerText);
+                    if (isLiked) {
+                        likeIcon.style.transform = "none";
+                        likeIcon.style.textShadow = "none";
+                        likeVal.innerText = Math.max(0, val - 1);
+                        showToast("Removed like.");
+                    } else {
+                        likeIcon.style.transform = "scale(1.2)";
+                        likeIcon.style.textShadow = "0 0 10px #ef4444";
+                        likeVal.innerText = val + 1;
+                        showToast("Liked prompt!");
+                    }
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {}
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("success-toast");
+            toast.innerText = msg;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

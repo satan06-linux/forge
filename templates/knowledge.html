@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Bases & RAG — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { display: none; overflow-y: auto; }
+        .main-content { flex: 1; padding: 2.5rem; overflow-y: auto; height: 100vh; }
+        .kb-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; margin-top: 2rem; }
+        .kb-card {
+            background: rgba(26, 26, 46, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .kb-card:hover, .kb-card.active {
+            border-color: var(--accent-light);
+            background: rgba(108, 99, 255, 0.05);
+            transform: translateY(-2px);
+        }
+        .sync-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+        .sync-progress-fill {
+            height: 100%;
+            background: var(--accent-light);
+            transition: width 0.3s ease;
+        }
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+                loadKBs();
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+    <div class="starfield-bg"></div>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;"><a href="/workbench" class="sidebar-link"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Builder</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/history" class="sidebar-link"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Saved Ledger</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/workflows" class="sidebar-link">⛓️ Workflows & DAGs</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/prompts" class="sidebar-link"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Registry</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/knowledge" class="sidebar-link active"><i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Knowledge Bases</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/connectors" class="sidebar-link"><i data-lucide="plug" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Connectors</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/playground" class="sidebar-link"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Playgrounds</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/analytics" class="sidebar-link"><i data-lucide="bar-chart-2" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Analytics</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn-logout-sidebar" onclick="localStorage.clear(); window.location.href='/auth';"><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800;">Knowledge Bases & RAG <i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                    <p style="color: var(--text-secondary); margin-top: 0.25rem;">Create, upload, and semantically search unstructured corporate documents.</p>
+                </div>
+                <button class="btn-cta" onclick="openCreateModal()"><i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Create Knowledge Base</button>
+            </div>
+
+            <div class="kb-grid">
+                <!-- KB List -->
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem;">Active Bases</h3>
+                    <div id="kb-list-container">
+                        <div class="glass-panel" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                            Loading knowledge bases...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- KB Documents & Upload / Test -->
+                <div>
+                    <div class="glass-panel" id="kb-wrapper" style="display: none; padding: 2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="font-size: 1.5rem; font-weight: 800;" id="kb-title">Bases</h3>
+                            <button class="btn-cta" onclick="openUploadModal()"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Add Document</button>
+                        </div>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;" id="kb-desc"></p>
+                        
+                        <!-- Search Test -->
+                        <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                            <h4 style="font-weight: 800;">Query Testing</h4>
+                            <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                                <input type="text" id="search-query" placeholder="Enter test query..." style="flex: 1; padding: 0.5rem 1rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff;">
+                                <button class="btn-secondary" onclick="testSearch()">Search</button>
+                            </div>
+                            <div id="search-results-container" style="margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                        </div>
+
+                        <!-- Documents List -->
+                        <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                            <h4 style="font-weight: 800; margin-bottom: 1rem;">Indexed Documents</h4>
+                            <div id="documents-list-container" style="display: flex; flex-direction: column; gap: 1rem;">
+                                <!-- Documents list -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-panel" id="kb-placeholder" style="padding: 3rem; text-align: center; color: var(--text-muted);">
+                        Select a knowledge base to view sync status, documents list, and execute query semantic searches.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Modal -->
+    <div id="create-modal" class="modal">
+        <div class="glass-panel" style="width: 450px; padding: 2rem; border-radius: 20px; border: 1px solid var(--accent-light);">
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;">New Knowledge Base</h3>
+            <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <div>
+                    <label style="font-weight: 700; font-size: 0.9rem;">Title</label>
+                    <input type="text" id="new-title" placeholder="e.g. Sales Playbook" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; margin-top: 0.4rem;">
+                </div>
+                <div>
+                    <label style="font-weight: 700; font-size: 0.9rem;">Description</label>
+                    <input type="text" id="new-desc" placeholder="e.g. Customer support sync docs" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; margin-top: 0.4rem;">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                    <button class="btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                    <button class="btn-cta" onclick="createKBSubmit()">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div id="upload-modal" class="modal">
+        <div class="glass-panel" style="width: 480px; padding: 2rem; border-radius: 20px; border: 1px solid var(--accent-light);">
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;">Add Document text</h3>
+            <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <div>
+                    <label style="font-weight: 700; font-size: 0.9rem;">Document Name</label>
+                    <input type="text" id="doc-filename" placeholder="e.g. guide.txt" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; margin-top: 0.4rem;">
+                </div>
+                <div>
+                    <label style="font-weight: 700; font-size: 0.9rem;">Content Text</label>
+                    <textarea id="doc-content" placeholder="Paste document contents here..." style="width: 100%; height: 180px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); border-radius: 12px; color: #fff; padding: 1rem; margin-top: 0.4rem; resize: none; outline: none;"></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                    <button class="btn-secondary" onclick="closeUploadModal()">Cancel</button>
+                    <button class="btn-cta" onclick="uploadDocSubmit()">Index Document</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let kbs = [];
+        let activeKBId = null;
+
+        async function loadKBs() {
+            try {
+                const res = await fetch("/api/knowledge/bases", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    kbs = data.knowledge_bases;
+                    renderKBsList();
+                }
+            } catch (e) {
+                console.error("Load KBs error:", e);
+            }
+        }
+
+        function renderKBsList() {
+            const container = document.getElementById("kb-list-container");
+            if (kbs.length === 0) {
+                container.innerHTML = `<div class="glass-panel" style="padding: 2rem; text-align: center; color: var(--text-muted);">No knowledge bases created yet.</div>`;
+                return;
+            }
+            container.innerHTML = kbs.map(k => `
+                <div class="kb-card ${k.id === activeKBId ? 'active' : ''}" onclick="selectKB(${k.id})">
+                    <h4 style="font-size: 1.1rem; font-weight: 800;"><i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ${k.title}</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">${k.description || 'No description'}</p>
+                </div>
+            `).join("");
+        }
+
+        async function selectKB(id) {
+            activeKBId = id;
+            renderKBsList();
+            document.getElementById("kb-placeholder").style.display = "none";
+            document.getElementById("kb-wrapper").style.display = "block";
+
+            const kb = kbs.find(k => k.id === id);
+            document.getElementById("kb-title").innerHTML = `<i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ` + (kb.title || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            if (window.lucide) lucide.createIcons();
+            document.getElementById("kb-desc").innerText = kb.description || "";
+
+            loadDocuments();
+        }
+
+        async function loadDocuments() {
+            try {
+                const res = await fetch(`/api/knowledge/bases/${activeKBId}/documents`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const container = document.getElementById("documents-list-container");
+                    if (data.documents.length === 0) {
+                        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">No documents uploaded.</div>`;
+                        return;
+                    }
+                    container.innerHTML = data.documents.map(d => `
+                        <div class="glass-panel" style="padding: 1rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.25rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span style="font-weight: 700; font-size: 0.95rem;"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ${d.filename.split(/[\\/]/).pop()}</span>
+                                <span style="font-size: 0.8rem; font-weight: 700; color: ${d.sync_status === 'completed' ? '#10b981' : (d.sync_status === 'failed' ? '#ef4444' : '#f59e0b')}">
+                                    ${d.sync_status.toUpperCase()}
+                                </span>
+                            </div>
+                            <span style="color: var(--text-muted); font-size: 0.8rem;">Size: ${(d.filesize / 1024).toFixed(2)} KB</span>
+                            <div class="sync-progress-bar">
+                                <div class="sync-progress-fill" style="width: ${d.sync_progress}%"></div>
+                            </div>
+                        </div>
+                    `).join("");
+                }
+            } catch (e) {
+                console.error("Load documents error:", e);
+            }
+        }
+
+        async function testSearch() {
+            const query = document.getElementById("search-query").value;
+            const container = document.getElementById("search-results-container");
+            if (!query) return;
+
+            container.innerHTML = `<div style="text-align: center; color: var(--text-muted);">Searching similarity store...</div>`;
+
+            try {
+                const res = await fetch(`/api/knowledge/bases/${activeKBId}/search`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ query })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.results.length === 0) {
+                        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); font-size: 0.9rem;">No matching chunks found.</div>`;
+                        return;
+                    }
+                    container.innerHTML = data.results.map(r => `
+                        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: 8px; padding: 0.75rem; font-size: 0.85rem;">
+                            <div style="display: flex; justify-content: space-between; color: var(--accent-light); font-weight: 700; font-size: 0.75rem;">
+                                <span>Chunk ID: ${r.chunk_id}</span>
+                                <span>Score: ${(r.score * 100).toFixed(1)}%</span>
+                            </div>
+                            <p style="margin-top: 0.4rem; color: #fff;">${r.text}</p>
+                        </div>
+                    `).join("");
+                }
+            } catch (e) {
+                console.error("Search error:", e);
+            }
+        }
+
+        function openCreateModal() { document.getElementById("create-modal").style.display = "flex"; }
+        function closeCreateModal() { document.getElementById("create-modal").style.display = "none"; }
+        function openUploadModal() { document.getElementById("upload-modal").style.display = "flex"; }
+        function closeUploadModal() { document.getElementById("upload-modal").style.display = "none"; }
+
+        async function createKBSubmit() {
+            const title = document.getElementById("new-title").value;
+            const desc = document.getElementById("new-desc").value;
+
+            try {
+                const res = await fetch("/api/knowledge/bases", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ title, description: desc })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeCreateModal();
+                    loadKBs();
+                }
+            } catch (e) {
+                console.error("Create KB error:", e);
+            }
+        }
+
+        async function uploadDocSubmit() {
+            const filename = document.getElementById("doc-filename").value;
+            const content = document.getElementById("doc-content").value;
+
+            try {
+                const res = await fetch(`/api/knowledge/bases/${activeKBId}/documents`, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ filename, content })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeUploadModal();
+                    loadDocuments();
+                    // Poll progress
+                    const interval = setInterval(async () => {
+                        await loadDocuments();
+                        const checkRes = await fetch(`/api/knowledge/bases/${activeKBId}/documents`, {
+                            headers: { "Authorization": `Bearer ${token}` }
+                        });
+                        const checkData = await checkRes.json();
+                        const doc = checkData.documents.find(d => d.id === data.doc_id);
+                        if (doc && (doc.sync_status === 'completed' || doc.sync_status === 'failed')) {
+                            clearInterval(interval);
+                        }
+                    }, 1000);
+                }
+            } catch (e) {
+                console.error("Index doc error:", e);
+            }
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

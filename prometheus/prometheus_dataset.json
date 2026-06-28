@@ -1,0 +1,1412 @@
+[
+  {
+    "input": "anti-gravity vehicle over neon city",
+    "category": "image",
+    "mcqs": [
+      {
+        "question": "What type of vehicle should be depicted in the scene?",
+        "options": [
+          "Car",
+          "Motorcycle",
+          "Airplane",
+          "Spacecraft"
+        ],
+        "answer": "Car"
+      },
+      {
+        "question": "What is the desired mood of the scene?",
+        "options": [
+          "Futuristic and exciting",
+          "Dark and ominous",
+          "Serene and peaceful",
+          "Retro and nostalgic"
+        ],
+        "answer": "Futuristic and exciting"
+      },
+      {
+        "question": "What style of lighting should be used in the scene?",
+        "options": [
+          "Warm and golden",
+          "Cool and neon",
+          "Soft and natural",
+          "Dramatic and high-contrast"
+        ],
+        "answer": "Cool and neon"
+      },
+      {
+        "question": "What is the desired level of detail in the cityscape?",
+        "options": [
+          "Highly detailed and realistic",
+          "Stylized and simplified",
+          "Abstract and impressionistic",
+          "Minimalistic and basic"
+        ],
+        "answer": "Highly detailed and realistic"
+      }
+    ],
+    "output": "Create a highly detailed and realistic image of a sleek, futuristic anti-gravity car hovering over a vibrant neon cityscape at dusk. The vehicle should be designed with a metallic silver and neon blue color scheme, and should be surrounded by a halo of soft, pulsing light. The city below should be depicted in a cool and neon lighting style, with towering skyscrapers and bustling streets filled with flying cars and pedestrians. The mood of the scene should be futuristic and exciting, with a sense of dynamic energy and movement. The camera angle should be low and dynamic, with the vehicle and cityscape filling the frame. The image should be of high quality, with a resolution of at least 4K and a detailed texture that invites the viewer to explore the scene. Tags: futuristic, anti-gravity, neon, cityscape, vehicle, metallic, silver, blue, pulsing light, dynamic, energy, movement, 4K, high detail."
+  },
+  {
+    "input": "dragon made of crystals in a forest",
+    "category": "image",
+    "mcqs": [
+      {
+        "question": "What style should the dragon be depicted in?",
+        "options": [
+          "Realistic",
+          "Fantasy",
+          "Abstract",
+          "Cartoonish"
+        ],
+        "answer": "Fantasy"
+      },
+      {
+        "question": "What type of lighting should be used in the scene?",
+        "options": [
+          "Soft, warm sunlight",
+          "Dramatic, high-contrast lighting",
+          "Muted, overcast lighting",
+          "Moonlit"
+        ],
+        "answer": "Soft, warm sunlight"
+      },
+      {
+        "question": "What mood should the image convey?",
+        "options": [
+          "Serene and peaceful",
+          "Dark and ominous",
+          "Magical and enchanting",
+          "Epic and adventurous"
+        ],
+        "answer": "Magical and enchanting"
+      },
+      {
+        "question": "What camera angle should be used to capture the dragon?",
+        "options": [
+          "Low-angle, looking up at the dragon",
+          "High-angle, looking down at the dragon",
+          "Eye-level, straight on at the dragon",
+          "Worm's-eye view, from the dragon's perspective"
+        ],
+        "answer": "Low-angle, looking up at the dragon"
+      }
+    ],
+    "output": "Create a highly detailed, fantasy-style image of a majestic dragon made entirely of crystals, situated in a lush, vibrant forest. The dragon should be illuminated by soft, warm sunlight filtering through the trees, casting dappled shadows across its crystalline scales. The mood of the image should be magical and enchanting, conveying a sense of wonder and awe. The camera angle should be low, looking up at the dragon to emphasize its grandeur and power. The image should include high-quality tags such as 'crystal dragon', 'fantasy creature', 'forest landscape', and 'mythical beings'. The style should be reminiscent of high-fantasy art, with intricate details and textures. The lighting should be warm and inviting, with a mix of bright highlights and deep shadows. The overall quality of the image should be high-resolution, with crisp lines and vibrant colors."
+  },
+  {
+    "input": "cyberpunk samurai at sunset",
+    "category": "image",
+    "mcqs": [
+      {
+        "question": "What style should the cyberpunk samurai image be in?",
+        "options": [
+          "Anime",
+          "Photorealistic",
+          "Illustrative",
+          "Comic Book"
+        ],
+        "answer": "Photorealistic"
+      },
+      {
+        "question": "What mood should the image convey?",
+        "options": [
+          "Dark and ominous",
+          "Bright and hopeful",
+          "Mysterious and intriguing",
+          "Serene and peaceful"
+        ],
+        "answer": "Dark and ominous"
+      },
+      {
+        "question": "What time of day should the image be set in?",
+        "options": [
+          "Sunrise",
+          "Midday",
+          "Sunset",
+          "Nighttime"
+        ],
+        "answer": "Sunset"
+      },
+      {
+        "question": "What should be the primary focus of the image?",
+        "options": [
+          "The samurai's face",
+          "The samurai's cybernetic enhancements",
+          "The sunset background",
+          "The samurai's sword"
+        ],
+        "answer": "The samurai's cybernetic enhancements"
+      }
+    ],
+    "output": "Create a photorealistic image of a cyberpunk samurai standing at the edge of a neon-lit cityscape at sunset. The samurai should be dressed in a mix of traditional and futuristic armor, with a focus on their cybernetic enhancements, such as glowing blue circuits and metallic limbs. The image should convey a dark and ominous mood, with the setting sun casting long shadows across the scene. The camera should be positioned at a low angle, looking up at the samurai, with a shallow depth of field to blur the background and emphasize the samurai's figure. The lighting should be warm and golden, with a hint of pink and purple in the sky to suggest a polluted atmosphere. The image should be high-quality, with intricate details and textures, and include style tags such as 'cyberpunk', 'samurai', 'sunset', 'neon', and 'sci-fi'. The overall quality should be suitable for printing at large sizes, such as a poster or billboard."
+  },
+  {
+    "input": "underwater futuristic city",
+    "category": "image",
+    "mcqs": [
+      {
+        "question": "What style should the underwater city be depicted in?",
+        "options": [
+          "Cyberpunk",
+          "Art Deco",
+          "Surrealism",
+          "Futurism"
+        ],
+        "answer": "Futurism"
+      },
+      {
+        "question": "What should be the primary source of lighting in the city?",
+        "options": [
+          "Natural sunlight",
+          "Artificial LED lighting",
+          "Glowing bioluminescent organisms",
+          "Soft neon lighting"
+        ],
+        "answer": "Glowing bioluminescent organisms"
+      },
+      {
+        "question": "What mood should the city evoke?",
+        "options": [
+          "Ominous and foreboding",
+          "Serene and peaceful",
+          "Vibrant and lively",
+          "Dark and mysterious"
+        ],
+        "answer": "Serene and peaceful"
+      },
+      {
+        "question": "What type of camera angle should be used to capture the city?",
+        "options": [
+          "Aerial shot",
+          "Underwater panoramic",
+          "First-person perspective",
+          "Wide-angle shot"
+        ],
+        "answer": "Underwater panoramic"
+      }
+    ],
+    "output": "Create a highly detailed and realistic image of an underwater futuristic city, set in a serene and peaceful environment. The city should be depicted in a futuristic style, with sleek and modern architecture, and should be illuminated by glowing bioluminescent organisms. The image should be captured from an underwater panoramic perspective, with a high-quality camera. The city should be filled with advanced technology and innovative features, such as self-sustaining ecosystems, renewable energy sources, and advanced transportation systems. The image should evoke a sense of wonder and curiosity, and should include quality tags such as 'high-definition', 'photorealistic', 'cinematic', and 'immersive'. The style should be reminiscent of futuristic concept art, with a focus on clean lines, minimalist design, and a muted color palette. The overall mood should be one of optimism and hope, with a sense of possibility and promise."
+  },
+  {
+    "input": "giant robot fighting a storm",
+    "category": "image",
+    "mcqs": [
+      {
+        "question": "What style should the robot be depicted in?",
+        "options": [
+          "cartoonish",
+          "realistic",
+          "cyberpunk",
+          "steampunk"
+        ],
+        "answer": "realistic"
+      },
+      {
+        "question": "What type of storm should the robot be fighting?",
+        "options": [
+          "hurricane",
+          "tornado",
+          "thunderstorm",
+          "blizzard"
+        ],
+        "answer": "thunderstorm"
+      },
+      {
+        "question": "What mood should the image convey?",
+        "options": [
+          "dark and ominous",
+          "exciting and action-packed",
+          "hopeful and uplifting",
+          "desolate and bleak"
+        ],
+        "answer": "exciting and action-packed"
+      },
+      {
+        "question": "What camera angle should be used to capture the scene?",
+        "options": [
+          "low-angle shot",
+          "high-angle shot",
+          "eye-level shot",
+          "worm's-eye view"
+        ],
+        "answer": "low-angle shot"
+      }
+    ],
+    "output": "Create an image of a giant robot fighting a thunderstorm, depicted in a realistic style with a focus on dynamic lighting and intense mood. The robot should be shown in a low-angle shot, with the stormy sky looming above it. The image should convey an exciting and action-packed mood, with the robot standing strong against the powerful storm. The lighting should be dramatic, with flashes of lightning illuminating the dark sky. The camera should capture the scene in high-quality, with a focus on detail and texture. Tags: giant robot, thunderstorm, realistic, dynamic lighting, low-angle shot, exciting, action-packed, high-quality, detailed, textured."
+  },
+  {
+    "input": "Create a portfolio website for a photographer to showcase their work and attract new clients",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "What type of photography will the website primarily feature?",
+        "options": [
+          "Wedding and event photography",
+          "Landscape and wildlife photography",
+          "Portrait and fashion photography",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What is the desired tone of the website?",
+        "options": [
+          "Modern and sleek",
+          "Rustic and vintage",
+          "Minimalist and simple",
+          "Bold and adventurous"
+        ],
+        "answer": "Modern and sleek"
+      },
+      {
+        "question": "What features should the website have to attract new clients?",
+        "options": [
+          "Contact form and email newsletter",
+          "E-commerce functionality and online payment",
+          "Blog for sharing tips and behind-the-scenes stories",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What devices should the website be optimized for?",
+        "options": [
+          "Desktop only",
+          "Mobile only",
+          "Tablet only",
+          "All devices, including desktop, mobile, and tablet"
+        ],
+        "answer": "All devices, including desktop, mobile, and tablet"
+      }
+    ],
+    "output": "Design and develop a responsive portfolio website for a photographer with a modern and sleek tone, featuring a tech stack of HTML5, CSS3, JavaScript, and a content management system such as WordPress. The website should include the following features: a contact form and email newsletter to facilitate communication with potential clients, e-commerce functionality to allow for online payment and print sales, and a blog to share tips and behind-the-scenes stories. The website should be optimized for all devices, including desktop, mobile, and tablet, with a design that is clean, minimal, and easy to navigate. The website should also include the following pages: a homepage with a showcase of the photographer's best work, a portfolio page with galleries and categories, an about page with the photographer's bio and contact information, and a services page with information on the types of photography services offered. The website should be built with search engine optimization (SEO) in mind, with meta tags, titles, and descriptions that accurately reflect the content of each page. The website should also be secure, with an SSL certificate and regular backups to prevent data loss."
+  },
+  {
+    "input": "Create an e-commerce store for handmade jewelry",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "What type of e-commerce platform should be used for the handmade jewelry store?",
+        "options": [
+          "Shopify",
+          "WooCommerce",
+          "BigCommerce",
+          "Magento"
+        ],
+        "answer": "Shopify"
+      },
+      {
+        "question": "What features should the handmade jewelry e-commerce store have?",
+        "options": [
+          "Product filtering",
+          "Customer reviews",
+          "Secure payment gateway",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "How should the handmade jewelry e-commerce store be designed to ensure a good user experience?",
+        "options": [
+          "Responsive design",
+          "Simple navigation",
+          "High-quality product images",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What type of payment gateways should the handmade jewelry e-commerce store support?",
+        "options": [
+          "PayPal",
+          "Stripe",
+          "Credit cards",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      }
+    ],
+    "output": "Design and develop a fully functional e-commerce store for handmade jewelry using Shopify as the platform, featuring product filtering, customer reviews, and a secure payment gateway. The store should have a responsive design, simple navigation, and high-quality product images to ensure a good user experience. The tech stack should include HTML, CSS, JavaScript, and Liquid. The store should be optimized for search engines and have a fast loading speed. The design should be modern, elegant, and reflective of the handmade jewelry brand. The store should be fully responsive and work seamlessly on desktop, tablet, and mobile devices. The payment gateway should support PayPal, Stripe, and credit cards. The store should have a clear and concise structure, with easy-to-use navigation and a secure checkout process. The store should also have a blog section to showcase the story behind the handmade jewelry, and a contact page for customers to get in touch with the store owners."
+  },
+  {
+    "input": "SaaS dashboard for project management",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "What type of projects will this dashboard primarily be used for?",
+        "options": [
+          "Software development",
+          "Marketing campaigns",
+          "Construction management",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What features should the dashboard include to enhance user experience?",
+        "options": [
+          "Gantt charts",
+          "Kanban boards",
+          "Resource allocation",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What is the desired level of customization for the dashboard?",
+        "options": [
+          "Low",
+          "Medium",
+          "High",
+          "Very High"
+        ],
+        "answer": "High"
+      },
+      {
+        "question": "What is the primary device type that the dashboard will be accessed from?",
+        "options": [
+          "Desktop",
+          "Laptop",
+          "Tablet",
+          "Mobile"
+        ],
+        "answer": "Laptop"
+      }
+    ],
+    "output": "Design and develop a SaaS dashboard for project management that utilizes a tech stack consisting of React, Node.js, and MongoDB. The dashboard should include features such as Gantt charts, Kanban boards, and resource allocation to enhance user experience. The design should be highly customizable, with a responsive layout that adapts to various screen sizes and devices, particularly laptops. The dashboard should have a modern and intuitive design, with a focus on ease of use and navigation. Ensure that the dashboard is optimized for performance, with fast loading times and minimal latency. Implement robust error handling and security measures to protect user data and prevent unauthorized access. The dashboard should be accessible on multiple browsers, including Chrome, Firefox, and Safari, and should be compatible with various operating systems, including Windows, macOS, and Linux."
+  },
+  {
+    "input": "Create a landing page for a fitness app",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "What is the primary goal of the landing page?",
+        "options": [
+          "To generate leads",
+          "To promote a new feature",
+          "To sell a product",
+          "To provide customer support"
+        ],
+        "answer": "To generate leads"
+      },
+      {
+        "question": "What type of design style is most suitable for a fitness app landing page?",
+        "options": [
+          "Minimalist",
+          "Luxurious",
+          "Modern",
+          "Retro"
+        ],
+        "answer": "Modern"
+      },
+      {
+        "question": "What features should the landing page include to increase conversions?",
+        "options": [
+          "Testimonials",
+          "Pricing plans",
+          "Call-to-action buttons",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What is the most important factor to consider when designing a responsive landing page for a fitness app?",
+        "options": [
+          "Page load speed",
+          "Mobile usability",
+          "Desktop compatibility",
+          "Tablet optimization"
+        ],
+        "answer": "Mobile usability"
+      }
+    ],
+    "output": "Design a modern and responsive landing page for a fitness app that includes a prominent call-to-action button, customer testimonials, and clear pricing plans. The page should be built using a tech stack that includes HTML5, CSS3, and JavaScript, with a framework such as React or Angular. The design should feature a bold color scheme and high-quality images of people engaging in various fitness activities. The page should be optimized for mobile devices, with a load speed of under 3 seconds and a responsive design that adapts to different screen sizes. The landing page should also include a newsletter signup form and social media links to encourage user engagement and conversion. The page should be designed to be accessible and user-friendly, with clear and concise language and easy-to-use navigation."
+  },
+  {
+    "input": "I want to create a blog website for a travel writer",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "What is the primary purpose of the blog website?",
+        "options": [
+          "To sell travel products",
+          "To share travel experiences",
+          "To provide travel guides",
+          "To promote travel destinations"
+        ],
+        "answer": "To share travel experiences"
+      },
+      {
+        "question": "What features should the blog website have?",
+        "options": [
+          "E-commerce functionality",
+          "Social media integration",
+          "Search bar and categories",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What design style should the blog website have?",
+        "options": [
+          "Modern and minimalist",
+          "Vintage and adventurous",
+          "Professional and corporate",
+          "Simple and blog-like"
+        ],
+        "answer": "Modern and minimalist"
+      },
+      {
+        "question": "What kind of devices should the blog website be optimized for?",
+        "options": [
+          "Desktop only",
+          "Mobile only",
+          "Tablet only",
+          "All devices"
+        ],
+        "answer": "All devices"
+      }
+    ],
+    "output": "Design and develop a modern and minimalist blog website for a travel writer, with a tech stack including HTML5, CSS3, JavaScript, and a content management system like WordPress. The website should have features such as social media integration, a search bar, and categories for easy navigation. The design should be responsive and optimized for all devices, including desktop, mobile, and tablet. The website should also have a clean and simple layout, with high-quality images and a user-friendly interface. The blog posts should be easy to read and share, with options for comments and subscriptions. The website should also have a clear call-to-action, such as a newsletter signup or a contact form, to encourage users to engage with the travel writer. The website should be built with SEO best practices in mind, including meta tags, header tags, and optimized images. The website should also have a fast loading speed and be secure, with an SSL certificate and regular backups."
+  },
+  {
+    "input": "Create a website to sell online courses",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "What is the primary purpose of the website?",
+        "options": [
+          "E-commerce",
+          "Blog",
+          "Portfolio",
+          "Forum"
+        ],
+        "answer": "E-commerce"
+      },
+      {
+        "question": "What features should the website have?",
+        "options": [
+          "User registration, Course catalog, Payment gateway",
+          "Course catalog, Payment gateway, Discussion forum",
+          "User registration, Discussion forum, Blog",
+          "Blog, Payment gateway, User registration"
+        ],
+        "answer": "User registration, Course catalog, Payment gateway"
+      },
+      {
+        "question": "What technology stack should be used for the website?",
+        "options": [
+          "HTML, CSS, JavaScript",
+          "React, Node.js, MongoDB",
+          "WordPress, PHP, MySQL",
+          "Django, Python, PostgreSQL"
+        ],
+        "answer": "React, Node.js, MongoDB"
+      },
+      {
+        "question": "What design considerations should be taken into account?",
+        "options": [
+          "Responsive design, Accessibility, SEO optimization",
+          "SEO optimization, Speed optimization, Security",
+          "Security, Speed optimization, Responsive design",
+          "Accessibility, Speed optimization, SEO optimization"
+        ],
+        "answer": "Responsive design, Accessibility, SEO optimization"
+      }
+    ],
+    "output": "Design and develop a professional e-learning website using React, Node.js, and MongoDB as the technology stack. The website should have a user registration system, a course catalog with filtering and sorting options, and a secure payment gateway. Ensure the website is fully responsive, accessible, and optimized for search engines. Implement a clean and modern design with a focus on usability and user experience. The website should be able to handle a large number of courses and users, with features such as course reviews, ratings, and discussion forums. Ensure the website is scalable, secure, and reliable, with regular backups and updates. The website should also have a blog section for posting updates, news, and articles related to online learning and education."
+  },
+  {
+    "input": "Create a website for freelancers to find and book jobs",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "What features should the platform include for freelancer profiles?",
+        "options": [
+          "Portfolio showcase",
+          "Skill endorsements",
+          "Client reviews",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "How should the platform handle payment processing for booked jobs?",
+        "options": [
+          "Escrow service",
+          "Direct bank transfer",
+          "Third-party payment gateways",
+          "In-platform wallet"
+        ],
+        "answer": "Escrow service"
+      },
+      {
+        "question": "What technology stack would be suitable for building the platform?",
+        "options": [
+          "MEAN",
+          "MERN",
+          "LAMP",
+          "Django"
+        ],
+        "answer": "MERN"
+      },
+      {
+        "question": "How should the platform ensure a responsive design for various devices?",
+        "options": [
+          "Mobile-first approach",
+          "Desktop-first approach",
+          "Adaptive design",
+          "Responsive design using CSS media queries"
+        ],
+        "answer": "Responsive design using CSS media queries"
+      }
+    ],
+    "output": "Design and develop a freelance booking platform using the MERN tech stack, featuring a responsive design with CSS media queries to ensure seamless usability across various devices. The platform should include features such as portfolio showcase, skill endorsements, and client reviews for freelancer profiles. Implement an escrow service for secure payment processing, and ensure the platform is optimized for search engines. The website should have a modern and professional design, with a focus on user experience and ease of navigation. The platform should also include features such as job posting, job application, and messaging systems for freelancers and clients to communicate. Ensure the platform is scalable, secure, and follows best practices for web development. The design should be optimized for various devices, including desktops, laptops, tablets, and mobile phones, with a minimum resolution of 320px and a maximum resolution of 2560px. The platform should be built using HTML5, CSS3, and JavaScript, with a backend API built using Node.js and Express.js, and a database built using MongoDB. The platform should also include features such as user authentication, authorization, and error handling, to ensure a secure and reliable user experience."
+  },
+  {
+    "input": "Create a blog about affiliate marketing for beginners",
+    "category": "writing",
+    "mcqs": [
+      {
+        "question": "What is the primary goal of the affiliate marketing blog?",
+        "options": [
+          "To sell products directly",
+          "To educate beginners about affiliate marketing",
+          "To promote a specific product",
+          "To generate leads for a business"
+        ],
+        "answer": "To educate beginners about affiliate marketing"
+      },
+      {
+        "question": "What tone should the blog posts have?",
+        "options": [
+          "Formal and technical",
+          "Informal and conversational",
+          "Humorous and entertaining",
+          "Serious and academic"
+        ],
+        "answer": "Informal and conversational"
+      },
+      {
+        "question": "What type of content should the blog include?",
+        "options": [
+          "Product reviews only",
+          "Tutorials and guides",
+          "News and updates",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What is the target audience for the blog?",
+        "options": [
+          "Experienced marketers",
+          "Business owners",
+          "Beginners interested in affiliate marketing",
+          "Industry experts"
+        ],
+        "answer": "Beginners interested in affiliate marketing"
+      }
+    ],
+    "output": "Create a comprehensive and informative blog about affiliate marketing for beginners, with a focus on educating and guiding readers through the process of getting started with affiliate marketing. The tone of the blog should be informal and conversational, making it accessible and engaging for readers who are new to the topic. The blog should include a variety of content types, such as tutorials, guides, product reviews, and news and updates, to keep readers informed and up-to-date on the latest developments in the field. The target audience for the blog is beginners interested in affiliate marketing, so the content should be tailored to meet their needs and provide them with a solid foundation for success. The blog should be well-structured and easy to navigate, with clear headings, concise paragraphs, and relevant images and examples to illustrate key points. The format of the blog should be consistent, with regular posts and updates to keep readers engaged and coming back for more. The platform for the blog should be user-friendly and accessible, with features such as social sharing buttons, comment sections, and email newsletters to facilitate interaction and community-building among readers."
+  },
+  {
+    "input": "Create a dropshipping store for electronics",
+    "category": "business",
+    "mcqs": [
+      {
+        "question": "What is the primary target audience for the dropshipping store?",
+        "options": [
+          "Young adults",
+          "Families",
+          "Tech enthusiasts",
+          "Business owners"
+        ],
+        "answer": "Tech enthusiasts"
+      },
+      {
+        "question": "What is the desired revenue model for the dropshipping store?",
+        "options": [
+          "Commission-based",
+          "Subscription-based",
+          "Advertising-based",
+          "Product-based"
+        ],
+        "answer": "Commission-based"
+      },
+      {
+        "question": "What e-commerce platform should be used for the dropshipping store?",
+        "options": [
+          "Shopify",
+          "WooCommerce",
+          "BigCommerce",
+          "Magento"
+        ],
+        "answer": "Shopify"
+      },
+      {
+        "question": "What marketing strategy should be used to promote the dropshipping store?",
+        "options": [
+          "Social media marketing",
+          "Influencer marketing",
+          "Email marketing",
+          "Search engine optimization"
+        ],
+        "answer": "Social media marketing"
+      }
+    ],
+    "output": "Create a dropshipping store for electronics, targeting tech enthusiasts, with a commission-based revenue model. The store will be built on the Shopify e-commerce platform, utilizing a modern and responsive design. The store will feature a wide range of electronics products, including smartphones, laptops, tablets, and gaming consoles. The marketing strategy will focus on social media marketing, with a strong presence on Facebook, Instagram, and Twitter. The store will also utilize influencer marketing and email marketing to reach a wider audience. The tech stack will include Shopify, Oberlo, and AliExpress, with a focus on providing excellent customer service and fast shipping. The store will be optimized for conversion, with clear product descriptions, high-quality product images, and a secure payment gateway. The store will also have a blog section, featuring articles on the latest electronics trends and product reviews."
+  },
+  {
+    "input": "Create a subscription newsletter platform for tech enthusiasts",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "What programming language should be used for the backend of the newsletter platform?",
+        "options": [
+          "Python",
+          "JavaScript",
+          "Ruby",
+          "PHP"
+        ],
+        "answer": "Python"
+      },
+      {
+        "question": "What features should the newsletter platform have?",
+        "options": [
+          "User authentication, newsletter creation, subscription management",
+          "E-commerce integration, payment processing, customer support",
+          "Social media sharing, email marketing, analytics",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What design style should the newsletter platform have?",
+        "options": [
+          "Modern and minimalist",
+          "Traditional and corporate",
+          "Bold and playful",
+          "Simple and intuitive"
+        ],
+        "answer": "Modern and minimalist"
+      },
+      {
+        "question": "What devices should the newsletter platform be optimized for?",
+        "options": [
+          "Desktop only",
+          "Mobile only",
+          "Tablet only",
+          "Desktop, mobile, and tablet"
+        ],
+        "answer": "Desktop, mobile, and tablet"
+      }
+    ],
+    "output": "Design and develop a subscription newsletter platform for tech enthusiasts using Python as the backend programming language. The platform should have features such as user authentication, newsletter creation, subscription management, e-commerce integration, payment processing, customer support, social media sharing, email marketing, and analytics. The design style should be modern and minimalist, with a focus on simplicity and intuitiveness. The platform should be optimized for desktop, mobile, and tablet devices, with a responsive design that adapts to different screen sizes and devices. The tech stack should include a combination of Django, React, and MySQL, with a focus on scalability, security, and performance. The platform should also have a robust error handling system, with features such as error logging, error reporting, and automated error resolution. The platform should be deployed on a cloud-based infrastructure, such as Amazon Web Services or Google Cloud Platform, with a focus on high availability, scalability, and reliability."
+  },
+  {
+    "input": "Create a Python web scraper for job listings",
+    "category": "code",
+    "mcqs": [
+      {
+        "question": "What is the primary purpose of the web scraper?",
+        "options": [
+          "To scrape company data",
+          "To scrape job listings",
+          "To scrape employee reviews",
+          "To scrape industry news"
+        ],
+        "answer": "To scrape job listings"
+      },
+      {
+        "question": "Which Python library is best suited for web scraping?",
+        "options": [
+          "Requests",
+          "BeautifulSoup",
+          "Scrapy",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What is the desired output format of the scraped job listings?",
+        "options": [
+          "JSON",
+          "CSV",
+          "XML",
+          "SQL database"
+        ],
+        "answer": "JSON"
+      },
+      {
+        "question": "How should the web scraper handle anti-scraping measures?",
+        "options": [
+          "By using a proxy server",
+          "By rotating user agents",
+          "By implementing a delay between requests",
+          "By using all of the above techniques"
+        ],
+        "answer": "By using all of the above techniques"
+      }
+    ],
+    "output": "Create a Python web scraper using Scrapy, Requests, and BeautifulSoup to extract job listings from major job boards. The scraper should handle anti-scraping measures by rotating user agents, implementing a delay between requests, and using a proxy server. The scraped data should be stored in a JSON file, including job title, company name, location, job description, and application link. Implement error handling to handle cases where the webpage structure changes or the scraper is blocked. Utilize a robust logging system to monitor the scraper's activity and performance. Ensure the scraper is designed to be scalable and maintainable, with a modular architecture and clear documentation."
+  },
+  {
+    "input": "REST API for a food delivery app",
+    "category": "code",
+    "mcqs": [
+      {
+        "question": "What programming language should be used for the API?",
+        "options": [
+          "Python",
+          "Java",
+          "JavaScript",
+          "C++"
+        ],
+        "answer": "JavaScript"
+      },
+      {
+        "question": "What framework should be used to build the API?",
+        "options": [
+          "Express.js",
+          "Django",
+          "Flask",
+          "Ruby on Rails"
+        ],
+        "answer": "Express.js"
+      },
+      {
+        "question": "What database should be used to store user and order data?",
+        "options": [
+          "MongoDB",
+          "MySQL",
+          "PostgreSQL",
+          "SQLite"
+        ],
+        "answer": "MongoDB"
+      },
+      {
+        "question": "What authentication method should be used to secure the API?",
+        "options": [
+          "JSON Web Tokens",
+          "OAuth",
+          "Basic Auth",
+          "Session-based"
+        ],
+        "answer": "JSON Web Tokens"
+      }
+    ],
+    "output": "Design a RESTful API for a food delivery application using Node.js and Express.js as the framework. The API should have endpoints for user registration, login, and order placement. Use MongoDB as the database to store user and order data. Implement authentication using JSON Web Tokens to secure the API. The API should follow a microservices architecture and include error handling mechanisms to ensure robustness. The endpoints should be well-documented using Swagger or API Blueprint. Ensure the API is scalable and can handle a large volume of requests. Use a load balancer to distribute traffic and ensure high availability. Implement logging and monitoring to track API performance and identify potential issues."
+  },
+  {
+    "input": "Design a real-time chat application for team collaboration",
+    "category": "webdev",
+    "mcqs": [
+      {
+        "question": "What is the primary purpose of the chat application?",
+        "options": [
+          "Social media",
+          "Customer support",
+          "Team collaboration",
+          "Gaming"
+        ],
+        "answer": "Team collaboration"
+      },
+      {
+        "question": "What features should the chat application have?",
+        "options": [
+          "File sharing and video conferencing",
+          "Screen sharing and audio messaging",
+          "Polls and quizzes",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What technology stack should be used for the application?",
+        "options": [
+          "React, Node.js, and MongoDB",
+          "Angular, Ruby on Rails, and PostgreSQL",
+          "Vue.js, Django, and MySQL",
+          "Flutter, Laravel, and Firebase"
+        ],
+        "answer": "React, Node.js, and MongoDB"
+      },
+      {
+        "question": "What is the expected number of users for the application?",
+        "options": [
+          "Less than 100",
+          "100-1000",
+          "1000-10000",
+          "More than 10000"
+        ],
+        "answer": "1000-10000"
+      }
+    ],
+    "output": "Design a real-time chat application for team collaboration using a tech stack of React, Node.js, and MongoDB. The application should have features such as file sharing, video conferencing, screen sharing, audio messaging, polls, and quizzes. The application should be responsive and accessible on desktop, tablet, and mobile devices, with a modern and intuitive design. The application should also have robust error handling and security measures to ensure the integrity of user data. The expected number of users for the application is between 1000-10000, and the application should be able to handle this scale with ease. The application should also have a robust search function, allowing users to easily find and access previous conversations and files. The application should be built with scalability in mind, using a microservices architecture and containerization using Docker. The application should also have a robust testing suite, using Jest and Enzyme for unit testing and integration testing."
+  },
+  {
+    "input": "Create a machine learning model to predict prices of houses based on features like number of bedrooms, square footage, and location",
+    "category": "code",
+    "mcqs": [
+      {
+        "question": "What type of machine learning algorithm would be most suitable for this task?",
+        "options": [
+          "Linear Regression",
+          "Decision Trees",
+          "Random Forest",
+          "Support Vector Machines"
+        ],
+        "answer": "Linear Regression"
+      },
+      {
+        "question": "What programming language would be most suitable for implementing this model?",
+        "options": [
+          "Python",
+          "R",
+          "Java",
+          "C++"
+        ],
+        "answer": "Python"
+      },
+      {
+        "question": "What library or framework would be most suitable for building and training the model?",
+        "options": [
+          "TensorFlow",
+          "PyTorch",
+          "Scikit-learn",
+          "Keras"
+        ],
+        "answer": "Scikit-learn"
+      },
+      {
+        "question": "How would you handle missing values in the dataset?",
+        "options": [
+          "Remove rows with missing values",
+          "Replace with mean/median",
+          "Use imputation techniques",
+          "Use a different dataset"
+        ],
+        "answer": "Replace with mean/median"
+      }
+    ],
+    "output": "Create a machine learning model using Python and Scikit-learn to predict house prices based on features like number of bedrooms, square footage, and location. Implement a Linear Regression algorithm and handle missing values by replacing them with the mean or median of the respective feature. Use a dataset with at least 1000 samples and evaluate the model's performance using metrics like mean squared error and R-squared. Ensure the model is scalable and can handle large datasets. Implement error handling to catch and log any exceptions that may occur during training or prediction. Use a suitable cross-validation technique to evaluate the model's performance and prevent overfitting."
+  },
+  {
+    "input": "automated email sender script",
+    "category": "code",
+    "mcqs": [
+      {
+        "question": "What programming language is preferred for the automated email sender script?",
+        "options": [
+          "Python",
+          "JavaScript",
+          "Ruby",
+          "Java"
+        ],
+        "answer": "Python"
+      },
+      {
+        "question": "What email protocol will be used for sending emails?",
+        "options": [
+          "SMTP",
+          "IMAP",
+          "POP3",
+          "HTTP"
+        ],
+        "answer": "SMTP"
+      },
+      {
+        "question": "What is the purpose of the automated email sender script?",
+        "options": [
+          "Newsletters",
+          "Transaction notifications",
+          "Marketing campaigns",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "How will the script handle email sending failures?",
+        "options": [
+          "Retry mechanism",
+          "Error logging",
+          "Alert notifications",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      }
+    ],
+    "output": "Create a Python script using the smtplib library for an automated email sender. The script will utilize the SMTP protocol for sending emails. Implement a retry mechanism with a maximum of 3 attempts and a 5-minute delay between attempts. Log all email sending failures and successes in a log file. Use a secure connection (TLS) and authenticate using a username and password. The script should be able to send plain text and HTML emails with attachments. Include error handling for invalid email addresses, network errors, and SMTP server errors. Ensure the script is compatible with Python 3.8 and above, and follows PEP 8 coding standards. The script will be used for sending newsletters, transaction notifications, and marketing campaigns."
+  },
+  {
+    "input": "create Instagram posts for a fitness brand",
+    "category": "writing",
+    "mcqs": [
+      {
+        "question": "What is the primary goal of the Instagram posts for the fitness brand?",
+        "options": [
+          "To increase brand awareness",
+          "To drive sales",
+          "To provide customer support",
+          "To share company news"
+        ],
+        "answer": "To increase brand awareness"
+      },
+      {
+        "question": "What type of content should the Instagram posts focus on?",
+        "options": [
+          "Product promotions",
+          "User-generated content",
+          "Fitness tips and advice",
+          "Behind-the-scenes stories"
+        ],
+        "answer": "Fitness tips and advice"
+      },
+      {
+        "question": "What tone should the Instagram posts convey?",
+        "options": [
+          "Formal and professional",
+          "Friendly and motivational",
+          "Humorous and entertaining",
+          "Serious and educational"
+        ],
+        "answer": "Friendly and motivational"
+      },
+      {
+        "question": "What is the target audience for the Instagram posts?",
+        "options": [
+          "Young adults aged 18-24",
+          "Adults aged 25-44",
+          "Athletes and fitness enthusiasts",
+          "Health-conscious individuals"
+        ],
+        "answer": "Health-conscious individuals"
+      }
+    ],
+    "output": "Create a series of Instagram posts for a fitness brand that aim to increase brand awareness and engage with health-conscious individuals. The posts should focus on providing fitness tips and advice, and convey a friendly and motivational tone. The content should be informative, yet entertaining, and include a mix of visuals such as images, videos, and stories. The posts should be optimized for the Instagram platform, with relevant hashtags and tagging of relevant fitness influencers. The tone should be approachable and supportive, with a focus on encouraging users to take control of their fitness journey. The format should include a mix of short-form and long-form content, with a consistent structure that includes an introduction, a tip or advice section, and a call-to-action. The posts should be published on a regular schedule, such as three times a week, and should be monitored for engagement and adjusted accordingly. The platform should be Instagram, with a focus on the feed, stories, and reels features. The target audience should be health-conscious individuals, with a focus on adults aged 25-44 who are interested in fitness and wellness."
+  },
+  {
+    "input": "Write a LinkedIn article for a CEO about the importance of embracing technology in business",
+    "category": "writing",
+    "mcqs": [
+      {
+        "question": "What is the primary audience for this article?",
+        "options": [
+          "Business owners",
+          "Employees",
+          "Customers",
+          "Investors"
+        ],
+        "answer": "Business owners"
+      },
+      {
+        "question": "What tone should the article convey?",
+        "options": [
+          "Formal and professional",
+          "Informal and conversational",
+          "Humorous and lighthearted",
+          "Critical and argumentative"
+        ],
+        "answer": "Formal and professional"
+      },
+      {
+        "question": "What is the main purpose of the article?",
+        "options": [
+          "To entertain",
+          "To educate",
+          "To persuade",
+          "To inform"
+        ],
+        "answer": "To educate"
+      },
+      {
+        "question": "What format should the article follow?",
+        "options": [
+          "Blog post",
+          "Interview",
+          "Case study",
+          "Opinion piece"
+        ],
+        "answer": "Opinion piece"
+      }
+    ],
+    "output": "Write a 500-word LinkedIn article for a CEO about the importance of embracing technology in business. The article should be written in a formal and professional tone, with the primary audience being business owners. The purpose of the article is to educate readers on the benefits of technology in business, including increased efficiency, improved customer experience, and enhanced competitiveness. The article should follow the format of an opinion piece, with a clear introduction, body, and conclusion. The structure should include an engaging headline, a brief introduction, 3-4 main points, and a call-to-action. The platform is LinkedIn, so the article should be optimized for a professional audience and include relevant hashtags. The target audience is CEOs and business leaders, and the article should provide valuable insights and practical advice on how to successfully implement technology in their organizations."
+  },
+  {
+    "input": "Create a YouTube script for a tech review of a new smartphone",
+    "category": "writing",
+    "mcqs": [
+      {
+        "question": "What is the primary focus of the tech review script?",
+        "options": [
+          "Entertainment",
+          "Education",
+          "Product promotion",
+          "Technical analysis"
+        ],
+        "answer": "Technical analysis"
+      },
+      {
+        "question": "What tone should the script convey?",
+        "options": [
+          "Formal and professional",
+          "Informal and humorous",
+          "Neutral and objective",
+          "Critical and negative"
+        ],
+        "answer": "Neutral and objective"
+      },
+      {
+        "question": "What is the intended audience for the script?",
+        "options": [
+          "General consumers",
+          "Tech enthusiasts",
+          "Business professionals",
+          "Students"
+        ],
+        "answer": "Tech enthusiasts"
+      },
+      {
+        "question": "What format should the script follow?",
+        "options": [
+          "Blog post",
+          "Video script",
+          "Social media post",
+          "Podcast transcript"
+        ],
+        "answer": "Video script"
+      }
+    ],
+    "output": "Create a YouTube script for a tech review of a new smartphone, focusing on technical analysis and conveying a neutral and objective tone. The script should be written for tech enthusiasts and follow a video script format, including an introduction, overview of the device's features, hands-on testing, and a conclusion with recommendations. The script should be approximately 10-12 minutes long, with a formal and professional structure, and include engaging visuals and transitions to enhance the viewing experience. The platform for the script is YouTube, with a target audience of tech-savvy individuals interested in staying up-to-date with the latest smartphone technology."
+  },
+  {
+    "input": "Create an email newsletter for a startup that offers a new sustainable product line",
+    "category": "email",
+    "mcqs": [
+      {
+        "question": "What is the primary goal of the email newsletter?",
+        "options": [
+          "To generate sales",
+          "To build brand awareness",
+          "To share company news",
+          "To promote a new product"
+        ],
+        "answer": "To build brand awareness"
+      },
+      {
+        "question": "What type of content should be included in the newsletter?",
+        "options": [
+          "Only promotional content",
+          "Only educational content",
+          "A mix of promotional and educational content",
+          "Only company updates"
+        ],
+        "answer": "A mix of promotional and educational content"
+      },
+      {
+        "question": "How often should the newsletter be sent to subscribers?",
+        "options": [
+          "Daily",
+          "Weekly",
+          "Monthly",
+          "Quarterly"
+        ],
+        "answer": "Monthly"
+      },
+      {
+        "question": "What is the preferred tone of the newsletter?",
+        "options": [
+          "Formal and professional",
+          "Friendly and conversational",
+          "Humorous and playful",
+          "Technical and informative"
+        ],
+        "answer": "Friendly and conversational"
+      }
+    ],
+    "output": "Create a monthly email newsletter for a startup that offers a new sustainable product line, with the primary goal of building brand awareness. The newsletter should include a mix of promotional and educational content, such as product updates, customer testimonials, and tips on sustainable living. The tone of the newsletter should be friendly and conversational, with a focus on engaging and educating the reader. The newsletter should include a clear and prominent call-to-action, such as 'Shop Now' or 'Learn More', and should be optimized for mobile devices. The email should be sent to subscribers on a monthly basis, with a subject line that is attention-grabbing and relevant to the content of the newsletter. The newsletter should include the following sections: Introduction, Featured Product, Customer Spotlight, Sustainable Living Tips, and Call-to-Action. The design of the newsletter should be clean and modern, with a color scheme that reflects the brand's identity and a font that is easy to read. The newsletter should also include social media links and a link to the company's website, to encourage subscribers to engage with the brand on multiple platforms."
+  },
+  {
+    "input": "write a product description for a new smartwatch that tracks fitness and health metrics",
+    "category": "writing",
+    "mcqs": [
+      {
+        "question": "What is the primary purpose of the smartwatch?",
+        "options": [
+          "To make phone calls",
+          "To track fitness and health metrics",
+          "To send emails",
+          "To browse the internet"
+        ],
+        "answer": "To track fitness and health metrics"
+      },
+      {
+        "question": "What type of audience is the product description targeting?",
+        "options": [
+          "Tech-savvy individuals",
+          "Fitness enthusiasts",
+          "Health professionals",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What tone should the product description convey?",
+        "options": [
+          "Formal and professional",
+          "Friendly and approachable",
+          "Technical and detailed",
+          "Promotional and sales-y"
+        ],
+        "answer": "Friendly and approachable"
+      },
+      {
+        "question": "What platform will the product description be published on?",
+        "options": [
+          "Website",
+          "Social media",
+          "Print catalog",
+          "In-store display"
+        ],
+        "answer": "Website"
+      }
+    ],
+    "output": "Write a product description for the new smartwatch that tracks fitness and health metrics, targeting a wide range of audiences including tech-savvy individuals, fitness enthusiasts, and health professionals. The tone should be friendly and approachable, making the product appealing to a broad audience. The description should be optimized for search engines and include relevant keywords such as 'fitness tracking', 'health monitoring', and 'smartwatch'. The structure should include an introduction to the product, its key features, and benefits, as well as any technical specifications or requirements. The format should be concise and easy to read, with short paragraphs and bullet points to highlight key information. The description should also include a call-to-action, encouraging customers to purchase the product or learn more about its features and capabilities. The platform for publication is the company website, so the description should be optimized for online reading and include links to additional resources or related products."
+  },
+  {
+    "input": "Create a customer support bot for an airline that can handle various customer inquiries and issues",
+    "category": "chatbot",
+    "mcqs": [
+      {
+        "question": "What type of inquiries should the bot be able to handle?",
+        "options": [
+          "Flight status and schedules",
+          "Booking and cancellation",
+          "Baggage claims and lost luggage",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What is the primary goal of the customer support bot?",
+        "options": [
+          "To increase sales",
+          "To provide personalized recommendations",
+          "To resolve customer issues efficiently",
+          "To promote the airline's social media presence"
+        ],
+        "answer": "To resolve customer issues efficiently"
+      },
+      {
+        "question": "What kind of tone should the bot convey in its responses?",
+        "options": [
+          "Formal and professional",
+          "Friendly and casual",
+          "Humorous and sarcastic",
+          "Sympathetic and empathetic"
+        ],
+        "answer": "Formal and professional"
+      },
+      {
+        "question": "What kind of integration should the bot have with the airline's systems?",
+        "options": [
+          "Access to flight schedules and status",
+          "Ability to book and cancel flights",
+          "Integration with customer relationship management (CRM) system",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      }
+    ],
+    "output": "Design a customer support bot for an airline that can handle various customer inquiries and issues, including flight status and schedules, booking and cancellation, and baggage claims and lost luggage. The bot should be able to resolve customer issues efficiently and provide personalized support. The tone of the bot should be formal and professional, conveying a sense of empathy and understanding. The bot should be integrated with the airline's systems, including access to flight schedules and status, ability to book and cancel flights, and integration with customer relationship management (CRM) system. The bot should be able to provide real-time updates and responses to customer inquiries, and should be available 24/7 through multiple channels, including website, mobile app, and social media. The bot should also be able to escalate complex issues to human customer support agents, and should be continuously updated and improved based on customer feedback and interactions."
+  },
+  {
+    "input": "Create a conversational AI chatbot that provides personalized financial advice to users",
+    "category": "chatbot",
+    "mcqs": [
+      {
+        "question": "What type of financial advice should the chatbot provide to its users?",
+        "options": [
+          "investment advice",
+          "budgeting advice",
+          "credit score advice",
+          "all of the above"
+        ],
+        "answer": "all of the above"
+      },
+      {
+        "question": "What is the primary goal of the chatbot's conversation flow?",
+        "options": [
+          "to sell financial products",
+          "to provide educational content",
+          "to offer personalized advice",
+          "to collect user data"
+        ],
+        "answer": "to offer personalized advice"
+      },
+      {
+        "question": "How should the chatbot handle user data and privacy?",
+        "options": [
+          "store user data for future reference",
+          "use user data for targeted advertising",
+          "keep user data anonymous and secure",
+          "share user data with third-party providers"
+        ],
+        "answer": "keep user data anonymous and secure"
+      },
+      {
+        "question": "What is the desired tone of the chatbot's responses?",
+        "options": [
+          "formal and professional",
+          "friendly and casual",
+          "aggressive and sales-oriented",
+          "neutral and informative"
+        ],
+        "answer": "friendly and casual"
+      }
+    ],
+    "output": "Design a conversational AI chatbot that provides personalized financial advice to users, offering a comprehensive range of services including investment advice, budgeting advice, and credit score advice. The chatbot's primary goal is to provide users with tailored guidance and support to help them achieve their financial goals. The chatbot should handle user data with utmost care, keeping it anonymous and secure to ensure user trust and confidentiality. The chatbot's tone should be friendly and casual, making users feel comfortable and at ease when discussing their financial concerns. The chatbot should be integrated with a robust tech stack, including natural language processing (NLP) and machine learning algorithms, to enable seamless and accurate conversations. The chatbot's conversation flow should be designed to be intuitive and user-friendly, with clear and concise responses that provide valuable insights and actionable advice. The chatbot should be available 24/7, with a responsive design that adapts to various devices and screen sizes, ensuring that users can access financial guidance whenever and wherever they need it."
+  },
+  {
+    "input": " Develop an AI tutor for school students to help them learn mathematics, science, and programming",
+    "category": "code",
+    "mcqs": [
+      {
+        "question": "What programming language should be used to develop the AI tutor?",
+        "options": [
+          "Python",
+          "Java",
+          "C++",
+          "JavaScript"
+        ],
+        "answer": "Python"
+      },
+      {
+        "question": "What machine learning framework should be used for the AI tutor?",
+        "options": [
+          "TensorFlow",
+          "PyTorch",
+          "Scikit-learn",
+          "Keras"
+        ],
+        "answer": "TensorFlow"
+      },
+      {
+        "question": "What type of user interface should the AI tutor have?",
+        "options": [
+          "Command-line interface",
+          "Graphical user interface",
+          "Web-based interface",
+          "Mobile app"
+        ],
+        "answer": "Graphical user interface"
+      },
+      {
+        "question": "What type of error handling should the AI tutor implement?",
+        "options": [
+          "Try-except blocks",
+          "Error logging",
+          "User feedback mechanisms",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      }
+    ],
+    "output": "Develop an AI tutor for school students using Python as the primary programming language, leveraging the TensorFlow machine learning framework to create a robust and scalable system. The AI tutor should have a graphical user interface designed to be intuitive and user-friendly, with features such as interactive lessons, real-time feedback, and personalized learning paths. Implement a multi-layered error handling system using try-except blocks, error logging, and user feedback mechanisms to ensure a seamless and reliable user experience. The AI tutor should be able to adapt to different learning styles and abilities, providing customized support and guidance to students as they progress through various subjects, including mathematics, science, and programming. Ensure the system is designed with a modular architecture, allowing for easy integration of new features and updates, and prioritize data security and privacy to protect sensitive student information."
+  },
+  {
+    "input": "Create a mental health support chatbot that provides resources and guidance for users struggling with anxiety and depression",
+    "category": "chatbot",
+    "mcqs": [
+      {
+        "question": "What is the primary goal of the mental health support chatbot?",
+        "options": [
+          "To diagnose mental health conditions",
+          "To provide entertainment and distraction",
+          "To offer resources and guidance for managing anxiety and depression",
+          "To sell mental health products"
+        ],
+        "answer": "To offer resources and guidance for managing anxiety and depression"
+      },
+      {
+        "question": "What type of user data should the chatbot collect to provide personalized support?",
+        "options": [
+          "Demographic information only",
+          "Mental health history and symptoms",
+          "User preferences and interests",
+          "None of the above"
+        ],
+        "answer": "Mental health history and symptoms"
+      },
+      {
+        "question": "How should the chatbot respond to users who express suicidal thoughts or intentions?",
+        "options": [
+          "By providing a list of resources and encouraging users to seek help",
+          "By attempting to diagnose the user's condition",
+          "By ignoring the user's message or responding with a generic reply",
+          "By reporting the user to authorities"
+        ],
+        "answer": "By providing a list of resources and encouraging users to seek help"
+      },
+      {
+        "question": "What is the most important aspect of the chatbot's user interface?",
+        "options": [
+          "A visually appealing design",
+          "A simple and easy-to-use conversation flow",
+          "A comprehensive database of mental health resources",
+          "A secure and private messaging system"
+        ],
+        "answer": "A simple and easy-to-use conversation flow"
+      }
+    ],
+    "output": "Design a mental health support chatbot that provides users with personalized resources and guidance for managing anxiety and depression. The chatbot should collect user data on mental health history and symptoms to provide tailored support. In response to users who express suicidal thoughts or intentions, the chatbot should provide a list of emergency resources, including crisis hotlines and online support groups, and encourage users to seek immediate help. The chatbot's user interface should prioritize a simple and easy-to-use conversation flow, with clear and concise language, to ensure that users can easily navigate the chatbot and access the resources they need. The chatbot should also ensure user data privacy and security, with end-to-end encryption and secure data storage. The chatbot's tone should be empathetic, non-judgmental, and supportive, with a focus on providing users with actionable advice and resources to manage their mental health. The chatbot should be developed using a combination of natural language processing (NLP) and machine learning algorithms, with a tech stack that includes Node.js, MongoDB, and Dialogflow. The chatbot should be integrated with popular messaging platforms, including Facebook Messenger, WhatsApp, and SMS, to ensure widespread accessibility and reach."
+  },
+  {
+    "input": "Create a sales assistant bot for real estate to help clients find their dream homes",
+    "category": "chatbot",
+    "mcqs": [
+      {
+        "question": "What is the primary function of the sales assistant bot?",
+        "options": [
+          "To provide customer support",
+          "To generate leads",
+          "To assist clients in finding properties",
+          "To manage property listings"
+        ],
+        "answer": "To assist clients in finding properties"
+      },
+      {
+        "question": "What type of data should the bot be able to access?",
+        "options": [
+          "Client contact information",
+          "Property listings and details",
+          "Market trends and analysis",
+          "All of the above"
+        ],
+        "answer": "All of the above"
+      },
+      {
+        "question": "What is the desired tone of the bot's interactions with clients?",
+        "options": [
+          "Formal and professional",
+          "Friendly and conversational",
+          "Neutral and informative",
+          "Aggressive and promotional"
+        ],
+        "answer": "Friendly and conversational"
+      },
+      {
+        "question": "What is the primary platform for the bot's deployment?",
+        "options": [
+          "Website chat window",
+          "Mobile app",
+          "Social media messaging",
+          "Voice assistant"
+        ],
+        "answer": "Website chat window"
+      }
+    ],
+    "output": "Design a sales assistant bot for real estate that assists clients in finding their dream homes. The bot should be able to access property listings and details, client contact information, and market trends and analysis. The bot's interactions with clients should be friendly and conversational, providing personalized recommendations and guidance throughout the home-buying process. The bot should be deployed on the company website as a chat window, with a simple and intuitive interface that allows clients to easily input their preferences and receive relevant property suggestions. The bot should be able to handle common client inquiries, such as property availability, pricing, and amenities, and provide timely and accurate responses. The bot's primary goal is to provide exceptional customer service, build trust with clients, and ultimately drive sales and revenue for the real estate company. The bot should be integrated with the company's CRM system to ensure seamless communication and follow-up with clients. The bot's performance should be continuously monitored and evaluated, with regular updates and improvements to ensure it remains effective and efficient in supporting the sales team and driving business growth."
+  }
+]

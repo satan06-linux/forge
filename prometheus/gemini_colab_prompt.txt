@@ -1,0 +1,65 @@
+Act as a Senior AI/ML Engineer and Hugging Face Fine-Tuning Expert.
+
+I want to fine-tune a custom "Prometheus-1.5B" Evaluator Language Model inside Google Colab (using the free T4 GPU tier). I want you to write a complete, copy-pasteable, and error-free single Python script/notebook cells to accomplish this.
+
+Here are the exact technical specifications and requirements:
+
+1. Base Architecture:
+- Base Model: "Qwen/Qwen2.5-1.5B-Instruct" (which will act as our 1.5B base).
+- Acceleration: Use "unsloth" for fast 4-bit quantization, 2x-5x speedups, and 60% memory savings to avoid Out-Of-Memory (OOM) crashes on the T4 GPU.
+
+2. LoRA (PEFT) Parameters:
+- Rank (r) = 16
+- Alpha = 16
+- Dropout = 0 (Optimized for Unsloth)
+- Target Modules: q_proj, k_proj, v_proj, o_proj, gate_proj, up_proj, down_proj
+- Bias = "none"
+
+3. Dataset Structure:
+The dataset is a JSON list of dictionaries. Each dictionary contains:
+- "instruction": The prompt task.
+- "rubric": The score criteria rubric (1 to 5 stars).
+- "response": The model generation being evaluated.
+- "reference_answer": The golden standard benchmark answer.
+- "feedback": The critical analysis text.
+- "score": The final score string (e.g. "5").
+
+Write a Python script using the datasets library to format this JSON list into the standard Prometheus chat template:
+"""###System:
+You are a helpful assistant acting as a fair evaluator.
+###Instruction:
+Evaluate the response based on the following instruction, score rubric, and reference answer:
+
+[Instruction]
+{instruction}
+
+[Score Rubric]
+{rubric}
+
+[Response]
+{response}
+
+[Reference Answer]
+{reference_answer}
+
+###Response:
+[Feedback]
+{feedback}
+[Score]
+{score}"""
+
+4. SFTTrainer Settings:
+- Max Sequence Length: 2048
+- Batch Size: 2 (gradient accumulation = 4)
+- Optimizer: "paged_adamw_8bit"
+- Learning Rate: 2e-4
+- Warmup Steps: 10
+- Max Steps: 120 (for T4 speed)
+- Packing: False
+
+5. Model Merger & Saving:
+Include complete instructions and code to:
+- Merge the trained LoRA adapters back into the 16-bit precision base model.
+- Upload both the standalone LoRA adapters and the fully merged 16-bit model directly to Hugging Face Hub using model.push_to_hub_merged().
+
+Please output the code in clear Jupyter Notebook cells, with clean comments explaining what each step does, and how to configure Hugging Face write tokens in Colab secrets.

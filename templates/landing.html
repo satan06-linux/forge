@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ForgePrompt by Nexafian — Describe it. Answer it. Forge it.</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .hero-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 6rem 2rem;
+            position: relative;
+        }
+
+        .hero-badge {
+            background: rgba(108, 99, 255, 0.1);
+            color: var(--accent-light);
+            border: 1px solid rgba(108, 99, 255, 0.2);
+            padding: 0.35rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 1.1;
+            max-width: 800px;
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+        }
+
+        .hero-subtitle {
+            color: var(--accent-light);
+            font-size: 1.4rem;
+            font-weight: 300;
+            max-width: 600px;
+            margin-bottom: 3rem;
+            line-height: 1.5;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1100px;
+            width: 100%;
+            margin: 4rem auto;
+            padding: 0 2rem;
+        }
+
+        .feature-card {
+            padding: 2.5rem 2rem;
+            text-align: left;
+        }
+
+        .feature-icon {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin-bottom: 0.75rem;
+            color: #ffffff;
+        }
+
+        .feature-desc {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .landing-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 4rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .brand-logo span {
+            color: var(--accent-light);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--accent-light);
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.75rem;
+            }
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            .landing-nav {
+                padding: 1.5rem 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Space Background -->
+    <div class="starfield-bg"></div>
+
+    <!-- Navigation Header -->
+    <header class="landing-nav">
+        <a href="/" class="brand-logo">ForgePrompt<span>.ai</span></a>
+        <div class="nav-links">
+            <a href="/community" class="nav-link">Community</a>
+            <a href="/auth" class="nav-link">Sign In</a>
+            <a href="/auth" class="btn-cta" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; border-radius: 8px;">Create Account</a>
+        </div>
+    </header>
+
+    <!-- Hero Showcase Section -->
+    <section class="hero-section">
+        <span class="hero-badge">AI Prompt Engineering Lab</span>
+        <h1 class="hero-title">Turn Rough Ideas Into Professional AI Prompts</h1>
+        <p class="hero-subtitle">
+            Generate optimized prompts for ChatGPT, Claude, Gemini, Grok, Midjourney, coding assistants, research workflows, and more.
+        </p>
+        <a href="/workbench" class="btn-cta" style="padding: 1rem 3rem; font-size: 1.1rem; border-radius: 14px;">
+            Forge Your First Prompt <i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>
+        </a>
+    </section>
+
+    <!-- SPOTLIGHT PROMPT OF THE WEEK -->
+    {% if prompt_of_the_week %}
+    <section style="max-width: 900px; width: 100%; margin: 0 auto 4rem auto; padding: 0 2rem; text-align: left;">
+        <div class="glass-panel" style="padding: 2rem; border-radius: 16px; border: 1px solid rgba(245, 158, 11, 0.3); background: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.08) 0%, rgba(10, 10, 15, 0.4) 90%);">
+            <span style="font-size: 0.75rem; color: #f59e0b; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; display: inline-flex; align-items: center; gap: 0.25rem; margin-bottom: 0.5rem;">
+                <i data-lucide="trophy" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt of the Week
+            </span>
+            <h2 style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-bottom: 0.75rem;">{{ prompt_of_the_week.input_text }}</h2>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.5rem; line-height: 1.5;">
+                "{{ prompt_of_the_week.generated_prompt[:180] }}..."
+            </p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+                <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                    <i data-lucide="user" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Author: <strong>{{ prompt_of_the_week.author_display_name or prompt_of_the_week.author_name or 'Anonymous' }}</strong> (@{{ prompt_of_the_week.username }})
+                </div>
+                <a href="/share/{{ prompt_of_the_week.share_uuid }}" class="btn-cta" style="padding: 0.5rem 1.5rem; font-size: 0.85rem; border-radius: 8px; box-shadow: none;">
+                    View Optimized Prompt <i data-lucide="eye" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Interactive Example Section -->
+    <section class="example-showcase" style="max-width: 900px; width: 100%; margin: 0 auto 4rem auto; padding: 0 2rem; text-align: left;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" class="example-grid">
+            <div class="glass-panel" style="padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.5rem; background: rgba(255, 255, 255, 0.02); height: 100%;">
+                <span style="font-size: 0.75rem; color: var(--accent-light); font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Your Rough Idea <i data-lucide="lightbulb" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span>
+                <p style="font-size: 0.95rem; color: var(--text-muted); font-style: italic; line-height: 1.5; margin: 0.5rem 0;">"write a python game"</p>
+            </div>
+            <div class="glass-panel" style="padding: 1.5rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.5rem; background: rgba(108, 99, 255, 0.05); border-color: rgba(108, 99, 255, 0.3); height: 100%;">
+                <span style="font-size: 0.75rem; color: #10b981; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Professional AI Prompt <i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span>
+                <div style="font-family: monospace; font-size: 0.75rem; color: #fff; line-height: 1.4; overflow-y: auto; max-height: 100px; padding-right: 0.5rem;">
+                    Act as an elite Python software architect. Write a complete, object-oriented 2D space shooter game using Pygame. Follow PEP 8 guidelines, separate logic into modular classes (Player, Enemy, Bullet, GameState), implement keyboard event hooks, and handle double-buffer frame loops...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card glass-panel">
+            <span class="feature-icon"><i data-lucide="code" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span>
+            <h3 class="feature-title">Coding</h3>
+            <p class="feature-desc">
+                Generate detailed, modular structure specifications for scripts, webapps, algorithms, and automated workflows.
+            </p>
+        </div>
+        <!-- Feature 2 -->
+        <div class="feature-card glass-panel">
+            <span class="feature-icon"><i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span>
+            <h3 class="feature-title">Research</h3>
+            <p class="feature-desc">
+                Synthesize context queries, abstract summarizations, and structured reasoning prompts for deep topic reports.
+            </p>
+        </div>
+        <!-- Feature 3 -->
+        <div class="feature-card glass-panel">
+            <span class="feature-icon"><i data-lucide="trending-up" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span>
+            <h3 class="feature-title">Marketing</h3>
+            <p class="feature-desc">
+                Forge high-converting ad copy layouts, SEO metadata skeletons, email newsletter plans, and call-to-actions.
+            </p>
+        </div>
+        <!-- Feature 4 -->
+        <div class="feature-card glass-panel">
+            <span class="feature-icon"><i data-lucide="graduation-cap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span>
+            <h3 class="feature-title">Education</h3>
+            <p class="feature-desc">
+                Compile tailored study guides, active-recall questionnaires, interactive tutoring scenarios, and curriculum flows.
+            </p>
+        </div>
+        <!-- Feature 5 -->
+        <div class="feature-card glass-panel">
+            <span class="feature-icon">✍️</span>
+            <h3 class="feature-title">Content Creation</h3>
+            <p class="feature-desc">
+                Craft structured outlines for scripts, essays, technical docs, social threads, and brand communication.
+            </p>
+        </div>
+        <!-- Feature 6 -->
+        <div class="feature-card glass-panel">
+            <span class="feature-icon"><i data-lucide="palette" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span>
+            <h3 class="feature-title">Image Generation</h3>
+            <p class="feature-desc">
+                Assemble cinematic realism vectors, Midjourney specs, lighting descriptions, compositions, and stylistic triggers.
+            </p>
+        </div>
+    </section>
+
+    <!-- JavaScript to automatically redirect to workbench if already logged in -->
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (token) {
+            // If already authenticated, bypass landing page
+            window.location.href = "/workbench";
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

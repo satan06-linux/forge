@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Gateway — ForgePrompt by Nexafian</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .auth-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .portal-card {
+            background: rgba(26, 26, 46, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(167, 139, 250, 0.1);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 440px;
+            padding: 3rem 2.5rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5), 
+                        0 0 40px rgba(108, 99, 255, 0.1);
+            animation: cardFadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes cardFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-tabs {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.75rem;
+        }
+
+        .auth-tab {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s ease;
+            background: none;
+            border: none;
+            outline: none;
+            padding-bottom: 0.25rem;
+            position: relative;
+        }
+
+        .auth-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .auth-tab.active {
+            color: var(--accent-light);
+        }
+
+        .auth-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -0.85rem;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent);
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+
+        .form-label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .form-input {
+            width: 100%;
+            background: rgba(18, 18, 29, 0.6);
+            border: 1px solid rgba(167, 139, 250, 0.15);
+            border-radius: 12px;
+            padding: 0.85rem 1.25rem;
+            color: #fff;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.25s ease;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent);
+            background: rgba(18, 18, 29, 0.8);
+            box-shadow: 0 0 15px rgba(108, 99, 255, 0.15);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.6;
+        }
+
+        .error-badge {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            padding: 0.75rem 1rem;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Space Background -->
+    <div class="starfield-bg"></div>
+
+    <div class="auth-container">
+        <div class="portal-card glass-panel fade-in">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h2 style="font-size: 1.75rem; font-weight: 900; margin-bottom: 0.25rem;">Creator Portal</h2>
+                <p style="color: var(--text-secondary); font-size: 0.85rem;">ForgePrompt by Nexafian</p>
+            </div>
+
+            <!-- Switcher Tabs -->
+            <div class="auth-tabs">
+                <button id="tab-login" class="auth-tab active" onclick="switchTab('login')">Sign In</button>
+                <button id="tab-register" class="auth-tab" onclick="switchTab('register')">Create Account</button>
+            </div>
+
+            <!-- Error Banner -->
+            <div id="error-box" class="error-badge" style="display: none;"></div>
+
+            <!-- SIGN IN FORM -->
+            <form id="form-login" onsubmit="handleAuthSubmit(event, 'login')">
+                <div class="form-group">
+                    <label class="form-label" for="login-email">Email Address</label>
+                    <input type="email" id="login-email" required placeholder="name@example.com" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="login-password">Password</label>
+                    <input type="password" id="login-password" required placeholder="••••••••" class="form-input">
+                </div>
+                <button type="submit" class="btn-cta" style="width: 100%; margin-top: 1rem;">
+                    Sign In <i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>
+                </button>
+            </form>
+
+            <!-- REGISTER FORM -->
+            <form id="form-register" onsubmit="handleAuthSubmit(event, 'register')" style="display: none;">
+                <div class="form-group">
+                    <label class="form-label" for="reg-name">Your Full Name</label>
+                    <input type="text" id="reg-name" placeholder="Alex Nexafian" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="reg-email">Email Address</label>
+                    <input type="email" id="reg-email" placeholder="name@example.com" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="reg-password">Password</label>
+                    <input type="password" id="reg-password" placeholder="Min. 8 characters" class="form-input">
+                </div>
+                <button type="submit" class="btn-cta" style="width: 100%; margin-top: 1rem;">
+                    Create Account <i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Auth Script Handlers -->
+    <script>
+        // Redirect if already authenticated
+        if (localStorage.getItem("forge_token")) {
+            window.location.href = "/workbench";
+        }
+
+        let activeMode = 'login';
+
+        function switchTab(mode) {
+            activeMode = mode;
+            const tabLogin = document.getElementById("tab-login");
+            const tabRegister = document.getElementById("tab-register");
+            const formLogin = document.getElementById("form-login");
+            const formRegister = document.getElementById("form-register");
+            const errorBox = document.getElementById("error-box");
+            
+            errorBox.style.display = "none";
+
+            if (mode === 'login') {
+                tabLogin.classList.add("active");
+                tabRegister.classList.remove("active");
+                formLogin.style.display = "block";
+                formRegister.style.display = "none";
+            } else {
+                tabRegister.classList.add("active");
+                tabLogin.classList.remove("active");
+                formRegister.style.display = "block";
+                formLogin.style.display = "none";
+            }
+        }
+
+        async function handleAuthSubmit(event, mode) {
+            event.preventDefault();
+            const errorBox = document.getElementById("error-box");
+            errorBox.style.display = "none";
+
+            let url = "";
+            let payload = {};
+
+            if (mode === 'login') {
+                const email = document.getElementById("login-email").value.trim();
+                const password = document.getElementById("login-password").value;
+                url = "/api/auth/login";
+                payload = { email, password };
+            } else {
+                const name = document.getElementById("reg-name").value.trim();
+                const email = document.getElementById("reg-email").value.trim();
+                const password = document.getElementById("reg-password").value;
+                
+                if (!name) {
+                    errorBox.innerText = "Please tell us your name!";
+                    errorBox.style.display = "block";
+                    return;
+                }
+                
+                url = "/api/auth/register";
+                payload = { name, email, password };
+            }
+
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+
+                if (data.success && data.token) {
+                    // Save JWT token in localStorage
+                    localStorage.setItem("forge_token", data.token);
+                    localStorage.setItem("forge_user_name", data.user.name);
+                    localStorage.setItem("forge_user_email", data.user.email);
+                    
+                    // Redirect to secure workbench
+                    window.location.href = "/workbench";
+                } else {
+                    errorBox.innerText = data.error || "Authentication failed.";
+                    errorBox.style.display = "block";
+                }
+            } catch (err) {
+                errorBox.innerText = "Network error connection failed.";
+                errorBox.style.display = "block";
+            }
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+[
+  {
+    "instruction": "Forge a visual concept for a futuristic floating house over an emerald ocean.",
+    "rubric": "Score 1: The response lacks visual styling, camera specifications, or engine details.\nScore 5: The response includes pro camera specs, volumetric lighting details, Octane render quality tags, and specific aspect ratios.",
+    "response": "A beautiful house floating in the emerald sea. Sunny day. Highly detailed.",
+    "reference_answer": "An architectural marvel of a modern, modular glass villa floating seamlessly over an emerald ocean at golden hour. Capture this scene with a low-angle wide shot on a Sony A7R V, 24mm f/2.8 lens, capturing volumetric light rays reflecting off the crystal sea. Rendered in Octane, Unreal Engine 5 aesthetic. --ar 16:9",
+    "feedback": "The response is overly brief, lacking camera details, render specifications, or specific lighting directives. It fails to meet any advanced visual prompt criteria.",
+    "score": "2"
+  },
+  {
+    "instruction": "Forge a Web Development specs prompt for a SaaS landing page.",
+    "rubric": "Score 1: The response only mentions basic text pages without layout structures, tech stacks, or color palettes.\nScore 5: The response specifies a complete modern tech stack (e.g. Next.js, Tailwind), glassmorphism styles, UX/accessibility standards, and harmonized HSL color tokens.",
+    "response": "Create a landing page for a SaaS app. It should look modern, have a blue color scheme, and include features.",
+    "reference_answer": "Build a responsive Next.js and Tailwind CSS landing page for an AI Productivity SaaS. Design: Sleek dark mode with glassmorphic cards (rgba borders, backdrops), HSL tailwind tokens, smooth framer-motion slide-ups, and a premiumOutfit header font. Structure: Hero section with dynamic visual previews, features grid, pricing tab, and a centered CTA. Accessibility: Semantic HTML5, full ARIA roles, and verified contrast ratios.",
+    "feedback": "The input specifies 'blue color scheme' and 'modern' but lacks structural layout files, accessibility metrics, Tailwind/Next.js tokens, or interactive motion specifications.",
+    "score": "2"
+  },
+  {
+    "instruction": "Forge a detailed TechnicalSpec prompt for a secure REST API in Node.js.",
+    "rubric": "Score 1: The response lacks modular architectures, security headers, database schemas, or mock routes.\nScore 5: The response details modular Express controller splits, Helmet/CORS headers, JWT-based authentication routes, rate-limiting, and Mocha/Chai integration testing specifications.",
+    "response": "Write a Node.js REST API with Express. Use MongoDB and secure the routes with JWT.",
+    "reference_answer": "Act as a Principal Backend Architect. Generate a modular Express REST API using TypeScript and Mongoose. The prompt must require: MVC structure split into routes, controllers, and models; Helmet, CORS, and express-rate-limit middleware; JWT authentication with HttpOnly cookies; robust global error handler middleware; and complete integration tests using Mocha, Chai, and SuperTest.",
+    "feedback": "While mentioning Express, MongoDB, and JWT, it does not specify controller directories, middleware stacks, rate-limiting values, cookie security, or test assertions.",
+    "score": "3"
+  },
+  {
+    "instruction": "Forge a Professional Content Writing prompt for a SEO-optimized blog post.",
+    "rubric": "Score 1: The response fails to specify target audience, word count, tone of voice, or structural outlines.\nScore 5: The response establishes specific target personas, a 1500-word limit, positive/negative keyword lists, and hierarchical H2/H3 outline briefs.",
+    "response": "Write an article about why remote work is great. Make it engaging and easy to read.",
+    "reference_answer": "Act as an Expert Content Strategist. Forge a 1,500-word SEO article analyzing the productivity impacts of remote work. Audience: Corporate mid-level managers. Tone: Professional yet conversational and data-driven. Keywords: Include 'remote work efficiency' naturally; strictly avoid jargon and empty corporate buzzwords. Structure: Clear H1, three H2 subsections including statistical charts briefs, and an actionable H3 conclusion.",
+    "feedback": "The input is generic, omitting target reader personas, statistical backing, keyword constraints, structure briefs, or word-count limitations.",
+    "score": "1"
+  },
+  {
+    "instruction": "Forge a Video Script brief prompt for a 60-second TikTok ad.",
+    "rubric": "Score 1: The response lacks audio/visual columns, emotional beats, pacing hooks, or calls-to-action.\nScore 5: The response details a dual-column format (Visual Actions vs. Voiceover Audio), exact timestamp cues, emotional pacing arcs, and highly engaging hooks.",
+    "response": "Create a short script for a social media ad about our new coffee machine. Show someone drinking coffee.",
+    "reference_answer": "Act as an Elite Video Copywriter. Generate a 60-second TikTok ad script in dual-column format: Left column details on-screen Visuals (cinematic close-up, color grading, fast-cuts); Right column details Audio and Voiceover cues. Pacing: 3-second visual hook showing steam rising, 15-second emotional setup (morning rush struggle), 30-second product solution (the espresso machine), and a 12-second strong call-to-action.",
+    "feedback": "The proposal fails to construct a split audio/visual layout, timestamp cues, emotional arcs, or pacing structures.",
+    "score": "2"
+  },
+  {
+    "instruction": "Forge an App UI prompt for a mobile workout tracker dashboard.",
+    "rubric": "Score 1: The response lacks component layouts, navigation architecture, or state controllers.\nScore 5: The response details screen states, bottom navigation tabs, chart components, state controllers, and interactive widgets.",
+    "response": "Design a workout tracker app dashboard with charts showing activity.",
+    "reference_answer": "Act as a Lead UI/UX Mobile Designer. Generate a visual prompt for a mobile workout tracker dashboard screen. The design must feature: a persistent bottom navigation bar (Home, Log, Progress, Settings), a top header card displaying current streak with animated fire emojis, a horizontally scrollable weekly calendar widget, a central calorie burn bar chart with custom color scales, and an interactive 'Start Workout' quick-action floating button.",
+    "feedback": "The request mentions charts and workouts but fails to layout navigation structures, header states, streak widgets, or key interaction items.",
+    "score": "2"
+  },
+  {
+    "instruction": "Forge a Chatbot System prompt establishing a helpful Customer Support persona.",
+    "rubric": "Score 1: The response lists basic guidelines without constraints, step-by-step logic, or vocabulary mappings.\nScore 5: The response details specific constraints (e.g. no medical advice), step-by-step logic, active listening vocabulary, and clear fallback handles.",
+    "response": "You are a customer support agent. Help customers with their orders and be friendly.",
+    "reference_answer": "Act as an Expert Conversational AI Architect. Forge a system prompt for a Customer Support bot named 'Nexafian Assistant'. Behavioral constraints: Strictly friendly, professional, and empathetic; must never make pricing commitments or assume shipping logistics. Response rules: Use active listening techniques, output step-by-step bullet points for order tracking processes, and trigger a graceful human-transfer handoff if inquiries fail twice.",
+    "feedback": "The proposal is friendly but lacks critical behavioral boundaries, order lookup workflows, active listening vocabularies, or human handoff rules.",
+    "score": "3"
+  },
+  {
+    "instruction": "Forge a highly converting Cold Email prompt targeting Tech CEOs.",
+    "rubric": "Score 1: The response has a generic pitch with no subject line options, personalization guidelines, or strong calls-to-action.\nScore 5: The response outlines 3 different subject lines, personalized opener formats, pitch-to-pain ratios, and clear, low-friction call-to-actions.",
+    "response": "Write a cold email to sell our design services to startup founders.",
+    "reference_answer": "Act as a Master of B2B Copywriting. Forge a cold outreach email template targeting Startup CEOs. Outline: Provide 3 high-open subject lines with custom personalization variables; a personalized opening hook addressing their recent product release; a clear value proposition matching design velocity to their churn rates; and a low-friction, single-sentence call-to-action requesting a 5-minute virtual sync.",
+    "feedback": "The input specifies target founders but does not outline subject lines, personalized openers, metric-backed pitches, or low-friction CTA designs.",
+    "score": "2"
+  },
+  {
+    "instruction": "Forge a detailed Academic Research spec prompt analyzing solar energy innovations.",
+    "rubric": "Score 1: The response asks for an essay without citation guidelines, literature structures, or data validation parameters.\nScore 5: The response details literature review methodologies, abstract structures, data validation, APA citation rules, and specific hypothesis testing.",
+    "response": "Write a research paper about solar panel efficiency and recent technology.",
+    "reference_answer": "Act as a Lead Academic Researcher. Forge a spec prompt for a 3,000-word scientific paper analyzing efficiency improvements in perovskite solar cells. Guidelines: Include a structured abstract (Background, Methods, Results, Conclusion); a detailed literature review comparing 5 top journals; specific hypothesis equations testing cell performance under high heat; robust data validation metrics; and strict formatting under APA 7th edition standards.",
+    "feedback": "The prompt asks for solar efficiency details but lacks specific material parameters (like perovskite), structured abstract layouts, literature counts, or citation style constraints.",
+    "score": "1"
+  }
+]

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worker Telemetry - ForgePrompt</title>
+    <style>
+        :root {
+            --bg-dark: #0a0f1c;
+            --glass-bg: rgba(20, 27, 45, 0.5);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #38bdf8;
+            --accent-hover: #0ea5e9;
+            --success: #34d399;
+            --warning: #fbbf24;
+            --danger: #f87171;
+        }
+        body {
+            margin: 0; padding: 2rem;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, sans-serif;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(56, 189, 248, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(52, 211, 153, 0.08), transparent 25%);
+            min-height: 100vh;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        h1 { font-size: 1.875rem; font-weight: 600; margin: 0; background: linear-gradient(to right, #fff, #94a3b8); -webkit-background-clip: text; color: transparent; }
+        h2 { font-size: 1.25rem; font-weight: 500; margin: 0 0 1rem 0; color: var(--text-main); }
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 24px -1px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .glass-panel:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px -4px rgba(0,0,0,0.3);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+        .grid { display: grid; gap: 1.5rem; }
+        .grid-2 { grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); }
+        .grid-4 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+        
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        th, td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--glass-border); }
+        th { color: var(--text-muted); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 2px solid var(--glass-border); }
+        tr:last-child td { border-bottom: none; }
+        tr { transition: background-color 0.2s ease; }
+        tr:hover td { background-color: rgba(255, 255, 255, 0.02); }
+        
+        .badge { display: inline-flex; align-items: center; padding: 0.25rem 0.625rem; border-radius: 9999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+        .badge.success { background: rgba(52, 211, 153, 0.1); color: var(--success); border: 1px solid rgba(52, 211, 153, 0.2); }
+        .badge.warning { background: rgba(251, 191, 36, 0.1); color: var(--warning); border: 1px solid rgba(251, 191, 36, 0.2); }
+        
+        .btn { background: var(--accent); color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 0 10px rgba(56, 189, 248, 0.3); }
+        .btn:hover { background: var(--accent-hover); box-shadow: 0 0 15px rgba(14, 165, 233, 0.5); transform: scale(1.02); }
+        .btn-outline { background: transparent; border: 1px solid var(--glass-border); color: var(--text-main); box-shadow: none; }
+        .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+        
+        .stat-card { display: flex; flex-direction: column; gap: 0.5rem; }
+        .stat-value { font-size: 2rem; font-weight: 700; color: var(--text-main); }
+        .stat-label { font-size: 0.875rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        .progress-bar { width: 100%; height: 6px; background: rgba(255,255,255,0.1); border-radius: 999px; overflow: hidden; margin-top: 0.5rem; }
+        .progress-fill { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.5s ease-out; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>Worker Node Telemetry</h1>
+        <button class="btn">Refresh Metrics</button>
+    </header>
+    
+    <div class="grid grid-4" style="margin-bottom: 1.5rem;">
+        <div class="glass-panel stat-card">
+            <span class="stat-label">Active Workers</span>
+            <span class="stat-value">42 <span style="font-size: 1rem; color: var(--success);">↑ 3</span></span>
+        </div>
+        <div class="glass-panel stat-card">
+            <span class="stat-label">Bulkhead Capacity</span>
+            <span class="stat-value">84%</span>
+            <div class="progress-bar"><div class="progress-fill" style="width: 84%; background: var(--warning);"></div></div>
+        </div>
+        <div class="glass-panel stat-card">
+            <span class="stat-label">Dead-Letter Queue</span>
+            <span class="stat-value">128</span>
+        </div>
+        <div class="glass-panel stat-card">
+            <span class="stat-label">Autoscaler Target</span>
+            <span class="stat-value">50 Nodes</span>
+        </div>
+    </div>
+
+    <div class="grid grid-2">
+        <div class="glass-panel">
+            <h2>Worker Pools</h2>
+            <table>
+                <thead><tr><th>Pool Name</th><th>Nodes</th><th>Load</th><th>Status</th></tr></thead>
+                <tbody>
+                    {% for pool in pools|default([{'name':'High-Priority', 'nodes':12, 'load':90, 'status':'scaling'}, {'name':'Batch-Jobs', 'nodes':30, 'load':45, 'status':'healthy'}]) %}
+                    <tr>
+                        <td style="font-weight: 500;">{{ pool.name }}</td>
+                        <td>{{ pool.nodes }}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 0.875rem; width: 30px;">{{ pool.load }}%</span>
+                                <div class="progress-bar" style="width: 60px; margin-top: 0;"><div class="progress-fill" style="width: {{ pool.load }}%; background: {{ 'var(--danger)' if pool.load > 85 else 'var(--success)' }};"></div></div>
+                            </div>
+                        </td>
+                        <td><span class="badge {{ 'warning' if pool.status == 'scaling' else 'success' }}">{{ pool.status }}</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="glass-panel">
+            <h2>Dead-Letter Inspector</h2>
+            <table>
+                <thead><tr><th>Message ID</th><th>Error Reason</th><th>Retries</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for dlq in dead_letters|default([{'id':'MSG-992', 'reason':'Timeout (5000ms)', 'retries':3}, {'id':'MSG-841', 'reason':'Malformed JSON', 'retries':0}]) %}
+                    <tr>
+                        <td style="font-family: monospace; font-size: 0.875rem;">{{ dlq.id }}</td>
+                        <td style="color: var(--danger); font-size: 0.875rem;">{{ dlq.reason }}</td>
+                        <td>{{ dlq.retries }}</td>
+                        <td><button class="btn btn-outline" style="padding: 0.25rem 0.5rem; font-size: 0.75rem;">Requeue</button></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

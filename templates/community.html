@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Gallery — ForgePrompt by Nexafian</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Protected routing head-blocker */
+        body {
+            display: none;
+        }
+
+        .main-content {
+            padding: 2rem;
+            flex: 1;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .prompt-card {
+            background: rgba(26, 26, 46, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .prompt-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 30px rgba(108, 99, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .author-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .author-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 6px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .author-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-display {
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .author-handle {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .card-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .badge-item {
+            font-size: 0.65rem;
+            padding: 0.15rem 0.45rem;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .badge-spotlight { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-featured { background: rgba(167, 139, 250, 0.15); color: var(--accent-light); border: 1px solid rgba(167, 139, 250, 0.3); }
+        .badge-trending { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+        .badge-quality { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+
+        .prompt-concept {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .prompt-preview {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            font-family: monospace;
+            color: var(--text-muted);
+            height: 90px;
+            resize: none;
+            outline: none;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .card-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .stat-item.interactive {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .stat-item.interactive:hover {
+            color: var(--accent-light);
+        }
+
+        .card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .btn-card {
+            font-size: 0.8rem;
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        /* Filter Controls */
+        .controls-panel {
+            background: rgba(18, 18, 29, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-input-wrapper {
+            flex: 1;
+            position: relative;
+            min-width: 250px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            outline: none;
+            font-size: 0.9rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent);
+        }
+
+        .search-icon-svg {
+            position: absolute;
+            left: 0.9rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 16px;
+            height: 16px;
+        }
+
+        .filter-select {
+            padding: 0.75rem 1.25rem;
+            border-radius: 10px;
+            background: rgba(18, 18, 29, 0.9);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            outline: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            min-width: 150px;
+        }
+
+        .category-scroll {
+            display: flex;
+            gap: 0.5rem;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+        }
+
+        .category-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .category-scroll::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 2px;
+        }
+
+        .cat-pill {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.45rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+        }
+
+        .cat-pill:hover {
+            background: rgba(108, 99, 255, 0.08);
+            border-color: var(--accent);
+        }
+
+        .cat-pill.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+        }
+
+        /* Spotlight Spotlight Banner */
+        .spotlight-banner {
+            background: radial-gradient(circle at 10% 20%, rgba(108, 99, 255, 0.15) 0%, rgba(10, 10, 15, 0.6) 90%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .spotlight-banner::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 300px;
+            height: 300px;
+            background: rgba(245, 158, 11, 0.1);
+            filter: blur(80px);
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .spotlight-title {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #f59e0b;
+            letter-spacing: 1.5px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #12121a;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 450px;
+            width: 90%;
+            position: relative;
+        }
+
+        /* Notifications Bell Dropdown styling */
+        .notification-dropdown {
+            position: absolute;
+            top: 70px;
+            right: 2rem;
+            width: 350px;
+            background: #12121a;
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            display: none;
+            z-index: 200;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            padding: 0.75rem 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.8rem;
+            color: #fff;
+            display: flex;
+            gap: 0.5rem;
+            align-items: flex-start;
+        }
+        .notification-item.unread {
+            background: rgba(108, 99, 255, 0.05);
+            border-left: 2px solid var(--accent);
+        }
+    </style>
+    <!-- Route Guard -->
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+
+    <!-- Space Background -->
+    <div class="starfield-bg"></div>
+
+    <div class="app-layout">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workbench" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Prompt Builder
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/history" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Saved Ledger
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/community" class="sidebar-link active">
+                            <span class="sidebar-icon"><i data-lucide="globe" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Community Gallery
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workflows" class="sidebar-link">
+                            <span class="sidebar-icon">⛓️</span> Workflows & DAGs
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/agents" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="bot" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> AI Agent Library
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/marketplace" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="store" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Marketplace
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/organization" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="building" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Organization Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-monogram">FP</div>
+                    <div class="user-info">
+                        <a href="#" id="sidebar-profile-link" class="user-name">Creator User</a>
+                        <span class="user-email" id="profile-email">name@example.com</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="/admin" id="btn-admin-link" class="btn-secondary" style="font-size: 0.75rem; text-align: center; padding: 0.5rem; display: none;">
+                        <i data-lucide="key" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Admin Dashboard
+                    </a>
+                    <button class="btn-logout-sidebar" onclick="handleLogout()">
+                        <span><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN WINDOW -->
+        <main class="main-content">
+            <!-- HEADER -->
+            <div class="chat-header" style="height: auto; padding: 1rem 0; background: transparent; border-bottom: none; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; position: relative;">
+                <div>
+                    <h2 style="font-size: 1.5rem; font-weight: 800;">Community Arena <i data-lucide="globe" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h2>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.25rem;">Discover, fork, and learn from top prompt creators globally.</p>
+                </div>
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <!-- Notification Bell -->
+                    <div style="position: relative; cursor: pointer;" onclick="toggleNotificationsDropdown()">
+                        <span style="font-size: 1.5rem;"><i data-lucide="bell" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span>
+                        <span id="unread-notif-count" style="position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; font-size: 0.65rem; padding: 0.15rem 0.35rem; display: none; font-weight: 800;">0</span>
+                    </div>
+                    <!-- Notification Dropdown Menu -->
+                    <div id="notif-dropdown" class="notification-dropdown">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
+                            <span style="font-size: 0.85rem; font-weight: 800;">Notifications</span>
+                            <button onclick="markAllNotificationsRead(event)" style="background: transparent; border: none; color: var(--accent-light); font-size: 0.75rem; cursor: pointer; font-weight: 700;">Mark all read</button>
+                        </div>
+                        <div id="notifications-list-container">
+                            <!-- Items dynamically added -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SPOTLIGHT (PROMPT OF THE WEEK) -->
+            <div id="spotlight-card-section" style="display: none;">
+                <!-- Spotlights will render here -->
+            </div>
+
+            <!-- CONTROLS & FILTER PANEL -->
+            <div class="controls-panel">
+                <div class="search-row">
+                    <div class="search-input-wrapper">
+                        <svg class="search-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" id="community-search" class="search-input" placeholder="Search by prompts, creator username, category..." oninput="handleSearchInput()">
+                    </div>
+                    <select id="filter-model" class="filter-select" onchange="loadGallery(1)">
+                        <option value="">All AI Models</option>
+                        <option value="chatgpt">ChatGPT</option>
+                        <option value="claude">Claude</option>
+                        <option value="gemini">Gemini</option>
+                        <option value="grok">Grok</option>
+                        <option value="midjourney">Midjourney</option>
+                        <option value="cursor">Cursor/Copilot</option>
+                    </select>
+                    <select id="filter-style" class="filter-select" onchange="loadGallery(1)">
+                        <option value="">All Rewrite Styles</option>
+                        <option value="detailed">Detailed</option>
+                        <option value="concise">Concise</option>
+                        <option value="professional">Professional</option>
+                        <option value="creative">Creative</option>
+                        <option value="technical">Technical</option>
+                        <option value="academic">Academic</option>
+                        <option value="marketing">Marketing</option>
+                    </select>
+                </div>
+
+                <div class="category-scroll">
+                    <button class="cat-pill active" onclick="selectCategory(this, 'trending')"><i data-lucide="flame" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Trending</button>
+                    <button class="cat-pill" onclick="selectCategory(this, 'latest')">✨ Latest</button>
+                    <button class="cat-pill" onclick="selectCategory(this, 'Coding')"><i data-lucide="code" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Coding</button>
+                    <button class="cat-pill" onclick="selectCategory(this, 'Marketing')"><i data-lucide="trending-up" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Marketing</button>
+                    <button class="cat-pill" onclick="selectCategory(this, 'Research')"><i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Research</button>
+                    <button class="cat-pill" onclick="selectCategory(this, 'Education')"><i data-lucide="graduation-cap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Education</button>
+                    <button class="cat-pill" onclick="selectCategory(this, 'Image Gen')"><i data-lucide="palette" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Images</button>
+                </div>
+            </div>
+
+            <!-- PROMPTS GRID GALLERY -->
+            <div class="gallery-grid" id="gallery-container">
+                <!-- Cards will render here -->
+            </div>
+
+            <!-- PAGINATION -->
+            <div style="display: flex; justify-content: center; margin: 2.5rem 0;" id="pagination-section">
+                <button class="btn-secondary" id="btn-load-more" onclick="loadNextPage()">Load More Prompts ⬇</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- REPORT MODAL -->
+    <div id="report-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1rem;">Report Prompt review</h3>
+            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1.25rem;">Help keep ForgePrompt safe. Select a reason for flagging this prompt.</p>
+            
+            <input type="hidden" id="report-prompt-id">
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+                <label style="font-size: 0.8rem; font-weight: 700; color: #fff;">Reason</label>
+                <select id="report-reason" class="filter-select" style="width: 100%;">
+                    <option value="Spam">Spam / Advertising</option>
+                    <option value="Abuse">Abusive or Toxic</option>
+                    <option value="Duplicate">Duplicate / Plagiarism</option>
+                    <option value="Copyright">Copyright Infringement</option>
+                    <option value="Other">Other Issues</option>
+                </select>
+                
+                <label style="font-size: 0.8rem; font-weight: 700; color: #fff; margin-top: 0.5rem;">Additional comments</label>
+                <textarea id="report-comment" style="width:100%; height:80px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:#fff; padding:0.5rem; outline:none; resize:none; font-size:0.85rem;" placeholder="Details..."></textarea>
+            </div>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+                <button class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="closeReportModal()">Cancel</button>
+                <button class="btn-cta" style="padding: 0.5rem 1.25rem; font-size: 0.8rem; box-shadow: none; background: #ef4444;" onclick="submitReport()">Submit Report</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast Notification -->
+    <div id="success-toast" class="toast-msg">
+        ✓ Action completed successfully!
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let activeCategory = "trending";
+        let searchTimeout = null;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const myName = localStorage.getItem("forge_user_name") || "Creator User";
+            const myEmail = localStorage.getItem("forge_user_email") || "name@example.com";
+            
+            document.getElementById("sidebar-profile-link").innerText = myName;
+            document.getElementById("profile-email").innerText = myEmail;
+            document.getElementById("user-monogram").innerText = myName.substring(0, 2).toUpperCase();
+
+            // Profile page href mapping
+            const cleanUser = myName.replace(/\s+/g, "").toLowerCase();
+            document.getElementById("sidebar-profile-link").href = `/@${cleanUser}`;
+
+            if (myEmail.includes("admin") || myEmail === "root@example.com") {
+                document.getElementById("btn-admin-link").style.display = "block";
+            }
+
+            loadGallery(1);
+            loadNotifications();
+        });
+
+        function handleLogout() {
+            localStorage.removeItem("forge_token");
+            localStorage.removeItem("forge_user_name");
+            localStorage.removeItem("forge_user_email");
+            window.location.href = "/";
+        }
+
+        function handleSearchInput() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                loadGallery(1);
+            }, 350);
+        }
+
+        function selectCategory(btn, category) {
+            document.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
+            btn.classList.add("active");
+            activeCategory = category;
+            loadGallery(1);
+        }
+
+        async function loadGallery(page = 1) {
+            currentPage = page;
+            const container = document.getElementById("gallery-container");
+            const loadMoreBtn = document.getElementById("btn-load-more");
+
+            if (page === 1) {
+                container.innerHTML = "<div style='grid-column: 1/-1; text-align:center; color:var(--text-muted); padding:3rem;'>Loading gallery prompts...</div>";
+            }
+
+            const searchVal = document.getElementById("community-search").value.trim();
+            const modelVal = document.getElementById("filter-model").value;
+            const styleVal = document.getElementById("filter-style").value;
+            const sortVal = activeCategory === "latest" ? "newest" : "trending";
+
+            let url = `/api/community/prompts?page=${page}&limit=12&sort=${sortVal}`;
+            if (searchVal) url += `&search=${encodeURIComponent(searchVal)}`;
+            if (activeCategory !== "trending" && activeCategory !== "latest") url += `&category=${encodeURIComponent(activeCategory)}`;
+            if (modelVal) url += `&target_model=${encodeURIComponent(modelVal)}`;
+            if (styleVal) url += `&style=${encodeURIComponent(styleVal)}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if (data.success) {
+                    if (page === 1) {
+                        container.innerHTML = "";
+                        // Set Spotlight Banner
+                        renderSpotlight(data.spotlight);
+                    }
+
+                    if (data.prompts.length === 0) {
+                        if (page === 1) {
+                            container.innerHTML = "<div style='grid-column: 1/-1; text-align:center; color:var(--text-muted); padding:3rem;'>No prompts found in the gallery.</div>";
+                        }
+                        loadMoreBtn.style.display = "none";
+                        return;
+                    }
+
+                    data.prompts.forEach(p => {
+                        const card = createPromptCard(p);
+                        container.appendChild(card);
+                    });
+
+                    // Manage load more visibility
+                    if (data.prompts.length < 12 || (page * 12) >= data.total) {
+                        loadMoreBtn.style.display = "none";
+                    } else {
+                        loadMoreBtn.style.display = "block";
+                    }
+                } else {
+                    container.innerHTML = `<div style='grid-column:1/-1; text-align:center; color:#ef4444;'>Failed loading gallery: ${data.error}</div>`;
+                }
+            } catch (err) {
+                console.error("Gallery Load Error:", err);
+                container.innerHTML = "<div style='grid-column:1/-1; text-align:center; color:#ef4444;'>Network error connecting to community feed.</div>";
+            }
+        }
+
+        function loadNextPage() {
+            loadGallery(currentPage + 1);
+        }
+
+        function renderSpotlight(s) {
+            const spotlightSec = document.getElementById("spotlight-card-section");
+            if (!s) {
+                spotlightSec.style.display = "none";
+                return;
+            }
+            spotlightSec.style.display = "block";
+            
+            spotlightSec.innerHTML = `
+                <div class="spotlight-banner">
+                    <div>
+                        <div class="spotlight-title"><span><i data-lucide="trophy" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Prompt of the Week</div>
+                        <h2 style="font-size: 1.4rem; font-weight: 900; margin-bottom: 0.5rem; color:#fff;">${escapeHtml(s.input_text)}</h2>
+                        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem; max-width: 650px;">
+                            ${escapeHtml(s.generated_prompt.substring(0, 150))}...
+                        </p>
+                        <div style="display:flex; gap:1.5rem; font-size:0.75rem; color:var(--text-secondary); margin-bottom:1.5rem;">
+                            <span><i data-lucide="user" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Author: <strong>${escapeHtml(s.author_display_name || s.author_name || 'Anonymous')}</strong> (@${escapeHtml(s.username)})</span>
+                            <span>⭐ Score: <strong>${s.quality_score}/100</strong></span>
+                            <span>❤️ Likes: <strong>${s.like_count}</strong></span>
+                            <span><i data-lucide="eye" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Views: <strong>${s.views}</strong></span>
+                        </div>
+                        <div style="display:flex; gap:0.5rem;">
+                            <button class="btn-cta" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; border-radius: 8px; box-shadow:none;" onclick="forkPrompt(${s.id})">Fork to Workbench <i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+                            <a href="/share/${s.share_uuid}" class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; border-radius: 8px; text-decoration:none; display:inline-block;">View Full Prompt <i data-lucide="eye" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></a>
+                        </div>
+                    </div>
+                    <div style="font-size: 4rem; opacity: 0.35;"><i data-lucide="star" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></div>
+                </div>
+            `;
+        }
+
+        function createPromptCard(p) {
+            const div = document.createElement("div");
+            div.className = "prompt-card";
+
+            const username = p.username || "anonymous";
+            const profileUrl = `/@${username}`;
+
+            // Badges HTML
+            let badgesHtml = "";
+            if (p.badges) {
+                p.badges.forEach(b => {
+                    let badgeClass = "badge-featured";
+                    if (b.includes("Week")) badgeClass = "badge-spotlight";
+                    else if (b.includes("Trending")) badgeClass = "badge-trending";
+                    else if (b.includes("Quality")) badgeClass = "badge-quality";
+                    badgesHtml += `<span class="badge-item ${badgeClass}">${b}</span>`;
+                });
+            }
+
+            div.innerHTML = `
+                <div>
+                    <div class="card-header">
+                        <a href="${profileUrl}" class="author-info">
+                            <div class="author-avatar">${escapeHtml((p.author_display_name || p.author_name || 'U').substring(0, 2).toUpperCase())}</div>
+                            <div class="author-details">
+                                <span class="author-display">${escapeHtml(p.author_display_name || p.author_name || 'Anonymous')}</span>
+                                <span class="author-handle">@${escapeHtml(username)}</span>
+                            </div>
+                        </a>
+                        <span class="badge-intent" style="font-size:0.65rem;">${escapeHtml(p.category)}</span>
+                    </div>
+
+                    <div class="card-badges">${badgesHtml}</div>
+                    <h3 class="prompt-concept">${escapeHtml(p.input_text)}</h3>
+                    <textarea class="prompt-preview" readonly>${escapeHtml(p.generated_prompt)}</textarea>
+                </div>
+
+                <div>
+                    <div class="card-stats">
+                        <div class="stat-item interactive" onclick="toggleLike(${p.id}, this)">
+                            <span class="like-icon">❤️</span> <span class="like-val">${p.like_count}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span><i data-lucide="eye" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> <span>${p.views}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span><i data-lucide="git-fork" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> <span>${p.fork_count}</span>
+                        </div>
+                        <div class="stat-item" style="color:#10b981; font-weight:800;">
+                            <span>Score:</span> <span>${p.quality_score}/100</span>
+                        </div>
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-secondary btn-card" style="padding:0.45rem;" onclick="forkPrompt(${p.id})">Fork <i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+                        <button class="btn-card" style="padding:0.45rem; background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:#fff;" onclick="copyCardPrompt('${escapeJs(p.generated_prompt)}')">Copy <i data-lucide="clipboard" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+                    </div>
+                    
+                    <div style="display:flex; justify-content:space-between; margin-top:0.75rem; font-size:0.7rem; color:var(--text-muted);">
+                        <a href="/share/${p.share_uuid}" style="color:var(--accent-light); text-decoration:none; font-weight:700;">Share link <i data-lucide="link" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></a>
+                        <span style="cursor:pointer;" onclick="openReportModal(${p.id})"><i data-lucide="alert-triangle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Report</span>
+                    </div>
+                </div>
+            `;
+
+            // Initialize like state
+            checkLikeStatus(p.id, div.querySelector(".like-icon"));
+
+            return div;
+        }
+
+        async function checkLikeStatus(id, likeIconEl) {
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch(`/api/prompts/${id}/like-status`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success && data.liked) {
+                    likeIconEl.style.transform = "scale(1.2)";
+                    likeIconEl.style.textShadow = "0 0 10px #ef4444";
+                }
+            } catch (err) {}
+        }
+
+        async function toggleLike(id, statItemEl) {
+            const token = localStorage.getItem("forge_token");
+            const likeIcon = statItemEl.querySelector(".like-icon");
+            const likeVal = statItemEl.querySelector(".like-val");
+            const isLiked = likeIcon.style.transform === "scale(1.2)";
+
+            const url = isLiked ? `/api/prompts/${id}/unlike` : `/api/prompts/${id}/like`;
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    let val = parseInt(likeVal.innerText);
+                    if (isLiked) {
+                        likeIcon.style.transform = "none";
+                        likeIcon.style.textShadow = "none";
+                        likeVal.innerText = Math.max(0, val - 1);
+                        showToast("Removed like.");
+                    } else {
+                        likeIcon.style.transform = "scale(1.2)";
+                        likeIcon.style.textShadow = "0 0 10px #ef4444";
+                        likeVal.innerText = val + 1;
+                        showToast("Liked prompt!");
+                    }
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {}
+        }
+
+        async function forkPrompt(id) {
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch(`/api/prompts/${id}/fork`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast("Prompt successfully forked to Workbench!");
+                    setTimeout(() => {
+                        window.location.href = "/workbench";
+                    }, 1200);
+                } else {
+                    alert(data.error || "Fork failed.");
+                }
+            } catch (err) {
+                alert("Fork failed due to connection error.");
+            }
+        }
+
+        function copyCardPrompt(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("✓ Copied prompt successfully!");
+            });
+        }
+
+        // REPORT MODAL LOGIC
+        function openReportModal(promptId) {
+            document.getElementById("report-prompt-id").value = promptId;
+            document.getElementById("report-comment").value = "";
+            document.getElementById("report-modal").style.display = "flex";
+        }
+
+        function closeReportModal() {
+            document.getElementById("report-modal").style.display = "none";
+        }
+
+        async function submitReport() {
+            const token = localStorage.getItem("forge_token");
+            const promptId = document.getElementById("report-prompt-id").value;
+            const reason = document.getElementById("report-reason").value;
+            const comment = document.getElementById("report-comment").value.trim();
+
+            try {
+                const response = await fetch(`/api/prompts/${promptId}/report`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ reason, comment })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast("✓ Report submitted for review.");
+                    closeReportModal();
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {
+                alert("Report submission failed.");
+            }
+        }
+
+        // NOTIFICATIONS
+        let dropdownOpen = false;
+        function toggleNotificationsDropdown() {
+            const dropdown = document.getElementById("notif-dropdown");
+            dropdownOpen = !dropdownOpen;
+            dropdown.style.display = dropdownOpen ? "block" : "none";
+            if (dropdownOpen) {
+                loadNotifications();
+            }
+        }
+
+        async function loadNotifications() {
+            const token = localStorage.getItem("forge_token");
+            const notifList = document.getElementById("notifications-list-container");
+            const notifCountBadge = document.getElementById("unread-notif-count");
+            
+            try {
+                const response = await fetch("/api/notifications", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    notifList.innerHTML = "";
+                    let unreadCount = 0;
+                    
+                    if (data.notifications.length === 0) {
+                        notifList.innerHTML = "<div style='color:var(--text-muted); text-align:center; padding:1rem; font-size:0.75rem;'>No notifications yet.</div>";
+                        notifCountBadge.style.display = "none";
+                        return;
+                    }
+
+                    data.notifications.forEach(n => {
+                        if (!n.is_read) unreadCount++;
+                        const div = document.createElement("div");
+                        div.className = `notification-item ${n.is_read ? '' : 'unread'}`;
+                        
+                        let actionText = "";
+                        if (n.type === "like") actionText = "liked your prompt";
+                        else if (n.type === "fork") actionText = "forked your prompt";
+                        else if (n.type === "follow") actionText = "followed you";
+                        else actionText = "sent you a message";
+
+                        const displaySender = n.sender_display_name || n.sender_username || "Someone";
+                        const promptLabel = n.prompt_input ? ` "${escapeHtml(n.prompt_input.substring(0,20))}..."` : "";
+
+                        div.innerHTML = `
+                            <div class="author-avatar" style="width:20px; height:20px; font-size:0.6rem;">${escapeHtml(displaySender.substring(0,1).toUpperCase())}</div>
+                            <div style="flex:1;">
+                                <div><strong>${escapeHtml(displaySender)}</strong> ${actionText}${promptLabel}</div>
+                                <div style="font-size:0.65rem; color:var(--text-muted); margin-top:0.15rem;">${n.created_at}</div>
+                            </div>
+                        `;
+                        notifList.appendChild(div);
+                    });
+
+                    if (unreadCount > 0) {
+                        notifCountBadge.innerText = unreadCount;
+                        notifCountBadge.style.display = "block";
+                    } else {
+                        notifCountBadge.style.display = "none";
+                    }
+                }
+            } catch (err) {}
+        }
+
+        async function markAllNotificationsRead(e) {
+            e.stopPropagation();
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch("/api/notifications/read", {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    loadNotifications();
+                }
+            } catch (err) {}
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("success-toast");
+            toast.innerText = msg;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        // Helpers
+        function escapeHtml(str) {
+            if (!str) return "";
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function escapeJs(str) {
+            if (!str) return "";
+            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

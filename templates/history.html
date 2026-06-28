@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Ledger — ForgePrompt by Nexafian</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Protected routing head-blocker */
+        body {
+            display: none;
+        }
+
+        .ledger-table-container {
+            margin-top: 2rem;
+            overflow-x: auto;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+
+        .ledger-table th {
+            background: rgba(18, 18, 29, 0.6);
+            color: var(--accent-light);
+            font-weight: 700;
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .ledger-table td {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border-color);
+            color: #fff;
+            vertical-align: top;
+        }
+
+        .ledger-table tr:hover td {
+            background: rgba(108, 99, 255, 0.02);
+        }
+
+        .text-truncate-cell {
+            max-width: 250px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .prompt-preview-textarea {
+            width: 100%;
+            height: 80px;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: #fff;
+            padding: 0.5rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            resize: none;
+            outline: none;
+        }
+    </style>
+    <!-- Route Guard -->
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            // Set style on body once ready
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+
+    <!-- Space Background -->
+    <div class="starfield-bg"></div>
+
+    <div class="app-layout">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workbench" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Prompt Builder
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/history" class="sidebar-link active">
+                            <span class="sidebar-icon"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Saved Ledger
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workflows" class="sidebar-link">
+                            <span class="sidebar-icon">⛓️</span> Workflows & DAGs
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/agents" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="bot" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> AI Agent Library
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/marketplace" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="store" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Marketplace
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/organization" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="building" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Organization Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-monogram">FP</div>
+                    <div class="user-info">
+                        <span class="user-name" id="profile-name">Creator User</span>
+                        <span class="user-email" id="profile-email">name@example.com</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="/admin" id="btn-admin-link" class="btn-secondary" style="font-size: 0.75rem; text-align: center; padding: 0.5rem; display: none;">
+                        <i data-lucide="key" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Admin Dashboard
+                    </a>
+                    <button class="btn-logout-sidebar" onclick="handleLogout()">
+                        <span><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN HISTORY LEDGER WORKSPACE -->
+        <main class="main-content">
+            <div class="dashboard-header">
+                <div class="welcome-info">
+                    <h1>Saved Ledger History <i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                    <p>Review all your previously generated and refined prompts from your secure MySQL history database.</p>
+                </div>
+                <div style="font-size: 0.75rem; background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.4rem 1rem; border-radius: 20px; font-weight: 800; color: #10b981;">
+                    ✓ DATA PERSISTED IN MYSQL
+                </div>
+            </div>
+
+            <!-- LEDGER DATA TABLE -->
+            <div class="glass-panel" style="padding: 2.5rem; border-radius: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+                    <div>
+                        <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 0.25rem;">Prompt Log Entries</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin: 0;">Click 'Copy' to copy the generated output directly to your clipboard.</p>
+                    </div>
+                    <div>
+                        <input type="text" id="ledger-search-input" placeholder="Search prompts..." oninput="loadLedgerEntries()" style="padding: 0.5rem 1rem; border-radius: 8px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-color); color: #fff; font-size: 0.9rem; min-width: 250px;" />
+                    </div>
+                </div>
+
+                <div class="ledger-table-container">
+                    <table class="ledger-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px;">Fav</th>
+                                <th>Date Created</th>
+                                <th>Intent Type</th>
+                                <th>Original Concept Input</th>
+                                <th>Generated Master Prompt</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ledger-entries-body">
+                            <!-- Rows will be injected here dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Success Toast Notification -->
+    <div id="success-toast" class="toast-msg">
+        ✓ Copied to clipboard successfully!
+    </div>
+
+    <!-- Page Scripts -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Load user profile details
+            document.getElementById("profile-name").innerText = localStorage.getItem("forge_user_name") || "Creator User";
+            document.getElementById("profile-email").innerText = localStorage.getItem("forge_user_email") || "name@example.com";
+            document.getElementById("user-monogram").innerText = (localStorage.getItem("forge_user_name") || "FP").substring(0, 2).toUpperCase();
+            
+            const email = localStorage.getItem("forge_user_email") || "";
+            if (email.includes("admin") || email === "root@example.com") {
+                document.getElementById("btn-admin-link").style.display = "block";
+            }
+
+            loadCollections().then(() => {
+                loadLedgerEntries();
+            });
+        });
+
+        let userCollections = [];
+
+        async function loadCollections() {
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch("/api/collections", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    userCollections = data.collections;
+                }
+            } catch (err) {
+                console.error("Error loading collections:", err);
+            }
+        }
+
+        async function toggleFavorite(promptId, starBtn) {
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch("/api/history/favorite", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prompt_id: promptId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    if (data.is_favorite) {
+                        starBtn.innerText = "⭐";
+                        starBtn.style.opacity = "1";
+                    } else {
+                        starBtn.innerText = "☆";
+                        starBtn.style.opacity = "0.4";
+                    }
+                    showToast(data.is_favorite ? "✓ Added to favorites!" : "✓ Removed from favorites!");
+                } else {
+                    alert(data.error || "Failed to toggle favorite.");
+                }
+            } catch (err) {
+                console.error("Error toggling favorite:", err);
+            }
+        }
+
+        async function loadLedgerEntries() {
+            const token = localStorage.getItem("forge_token");
+            const tbody = document.getElementById("ledger-entries-body");
+            tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; color:var(--text-muted);'>Loading history entries...</td></tr>";
+
+            const searchQuery = document.getElementById("ledger-search-input") ? document.getElementById("ledger-search-input").value.trim() : "";
+            const url = searchQuery ? `/api/history?search=${encodeURIComponent(searchQuery)}` : "/api/history";
+
+            try {
+                const response = await fetch(url, {
+                    method: "GET",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    tbody.innerHTML = "";
+                    if (data.history.length === 0) {
+                        tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; color:var(--text-muted);'>No saved prompts found. Return to workbench to forge prompts!</td></tr>";
+                        return;
+                    }
+
+                    data.history.forEach(item => {
+                        const tr = document.createElement("tr");
+
+                        // Favorite Star Column
+                        const tdFav = document.createElement("td");
+                        const starBtn = document.createElement("button");
+                        starBtn.style.background = "transparent";
+                        starBtn.style.border = "none";
+                        starBtn.style.cursor = "pointer";
+                        starBtn.style.fontSize = "1.2rem";
+                        starBtn.style.padding = "0";
+                        if (item.is_favorite) {
+                            starBtn.innerText = "⭐";
+                            starBtn.style.opacity = "1";
+                        } else {
+                            starBtn.innerText = "☆";
+                            starBtn.style.opacity = "0.4";
+                        }
+                        starBtn.onclick = () => toggleFavorite(item.id, starBtn);
+                        tdFav.appendChild(starBtn);
+                        tr.appendChild(tdFav);
+
+                        // Date
+                        const tdDate = document.createElement("td");
+                        tdDate.innerText = item.created_at;
+                        tr.appendChild(tdDate);
+
+                        // Type
+                        const tdType = document.createElement("td");
+                        const badge = document.createElement("span");
+                        badge.className = "badge-intent";
+                        badge.innerText = item.category || item.type_detected || "Image gen";
+                        badge.style.display = "block";
+                        badge.style.marginBottom = "0.5rem";
+                        tdType.appendChild(badge);
+
+                        const vBadge = document.createElement("span");
+                        vBadge.className = "history-badge";
+                        vBadge.style.background = "rgba(108, 99, 255, 0.1)";
+                        vBadge.style.color = "var(--accent-light)";
+                        vBadge.style.padding = "0.2rem 0.5rem";
+                        vBadge.style.borderRadius = "4px";
+                        vBadge.style.fontSize = "0.75rem";
+                        vBadge.style.marginRight = "0.3rem";
+                        vBadge.innerText = `V${item.version_number || 1}`;
+                        tdType.appendChild(vBadge);
+                        
+                        if (item.quality_score !== null && item.quality_score !== undefined) {
+                            const sBadge = document.createElement("span");
+                            sBadge.className = "history-badge";
+                            sBadge.style.background = "rgba(16, 185, 129, 0.1)";
+                            sBadge.style.color = "#10b981";
+                            sBadge.style.padding = "0.2rem 0.5rem";
+                            sBadge.style.borderRadius = "4px";
+                            sBadge.style.fontSize = "0.75rem";
+                            sBadge.innerText = `Score: ${item.quality_score}/100`;
+                            tdType.appendChild(sBadge);
+                        }
+                        tr.appendChild(tdType);
+
+                        // Concept Input
+                        const tdConcept = document.createElement("td");
+                        tdConcept.className = "text-truncate-cell";
+                        tdConcept.innerText = item.input_text;
+                        tdConcept.title = item.input_text;
+                        tr.appendChild(tdConcept);
+
+                        // Forged Prompt
+                        const tdPrompt = document.createElement("td");
+                        const preview = document.createElement("textarea");
+                        preview.className = "prompt-preview-textarea";
+                        preview.value = item.generated_prompt;
+                        preview.readOnly = true;
+                        tdPrompt.appendChild(preview);
+                        tr.appendChild(tdPrompt);
+
+                        // Action button
+                        const tdAction = document.createElement("td");
+                        tdAction.style.display = "flex";
+                        tdAction.style.flexDirection = "column";
+                        tdAction.style.gap = "0.5rem";
+                        tdAction.style.minWidth = "130px";
+
+                        const copyBtn = document.createElement("button");
+                        copyBtn.className = "btn-secondary";
+                        copyBtn.style.padding = "0.35rem 0.75rem";
+                        copyBtn.style.fontSize = "0.8rem";
+                        copyBtn.innerHTML = `Copy <i data-lucide="clipboard" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+                        copyBtn.onclick = () => copyText(item.generated_prompt);
+                        tdAction.appendChild(copyBtn);
+
+                        const pubBtn = document.createElement("button");
+                        pubBtn.className = "btn-secondary";
+                        pubBtn.style.padding = "0.35rem 0.75rem";
+                        pubBtn.style.fontSize = "0.8rem";
+                        if (item.is_public) {
+                            pubBtn.innerHTML = `Unpublish <i data-lucide="lock" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+                            pubBtn.style.background = "rgba(239, 68, 68, 0.1)";
+                            pubBtn.style.color = "#fca5a5";
+                            pubBtn.style.borderColor = "rgba(239, 68, 68, 0.2)";
+                            pubBtn.onclick = () => unpublishPrompt(item.id);
+                        } else {
+                            pubBtn.innerHTML = `Publish <i data-lucide="globe" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+                            pubBtn.onclick = () => publishPrompt(item.id);
+                        }
+                        tdAction.appendChild(pubBtn);
+
+                        if (item.is_public && item.share_uuid) {
+                            const shareLink = document.createElement("a");
+                            shareLink.href = `/share/${item.share_uuid}`;
+                            shareLink.target = "_blank";
+                            shareLink.style.fontSize = "0.7rem";
+                            shareLink.style.color = "var(--accent-light)";
+                            shareLink.style.textDecoration = "none";
+                            shareLink.style.fontWeight = "bold";
+                            shareLink.style.textAlign = "center";
+                            shareLink.innerHTML = `View Share Link <i data-lucide="link" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>`;
+                            tdAction.appendChild(shareLink);
+                        }
+
+                        // Collections Dropdown
+                        const colSelect = document.createElement("select");
+                        colSelect.style.padding = "0.25rem 0.5rem";
+                        colSelect.style.fontSize = "0.75rem";
+                        colSelect.style.background = "rgba(18, 18, 29, 0.9)";
+                        colSelect.style.border = "1px solid var(--border-color)";
+                        colSelect.style.color = "#fff";
+                        colSelect.style.borderRadius = "6px";
+                        colSelect.style.minWidth = "100%";
+                        colSelect.style.outline = "none";
+
+                        const defOpt = document.createElement("option");
+                        defOpt.value = "";
+                        defOpt.innerText = "Add to collection...";
+                        colSelect.appendChild(defOpt);
+
+                        userCollections.forEach(c => {
+                            const opt = document.createElement("option");
+                            opt.value = c.id;
+                            opt.innerText = `${c.emoji} ${c.title}`;
+                            colSelect.appendChild(opt);
+                        });
+
+                        const createOpt = document.createElement("option");
+                        createOpt.value = "CREATE_NEW";
+                        createOpt.innerText = "＋ Create New...";
+                        colSelect.appendChild(createOpt);
+
+                        colSelect.onchange = (e) => handleCollectionSelect(e.target, item.id);
+                        tdAction.appendChild(colSelect);
+
+                        const delBtn = document.createElement("button");
+                        delBtn.className = "btn-secondary";
+                        delBtn.style.padding = "0.35rem 0.75rem";
+                        delBtn.style.fontSize = "0.8rem";
+                        delBtn.style.background = "rgba(239, 68, 68, 0.05)";
+                        delBtn.style.color = "#fca5a5";
+                        delBtn.style.border = "1px solid rgba(239, 68, 68, 0.1)";
+                        delBtn.innerHTML = `<i data-lucide="trash-2" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Delete`;
+                        delBtn.onclick = () => deletePrompt(item.id);
+                        tdAction.appendChild(delBtn);
+
+                        tr.appendChild(tdAction);
+
+                        tbody.appendChild(tr);
+                    });
+                    if (window.lucide) lucide.createIcons();
+                } else {
+                    tbody.innerHTML = `<tr><td colspan='6' style='text-align:center; color:#ef4444;'>Failed: ${data.error}</td></tr>`;
+                }
+            } catch (err) {
+                tbody.innerHTML = "<tr><td colspan='6' style='text-align:center; color:#ef4444;'>Connection failed loading ledger records.</td></tr>";
+            }
+        }
+
+        async function publishPrompt(promptId) {
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch("/api/prompts/publish", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prompt_id: promptId, visibility: "public" })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast("Prompt published to Community Gallery!");
+                    loadLedgerEntries();
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function unpublishPrompt(promptId) {
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch("/api/prompts/unpublish", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prompt_id: promptId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast("Prompt unpublished successfully.");
+                    loadLedgerEntries();
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function deletePrompt(promptId) {
+            if (!confirm("Are you sure you want to delete this prompt?")) return;
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch("/api/prompts/delete", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prompt_id: promptId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast("Prompt deleted successfully.");
+                    loadLedgerEntries();
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function handleCollectionSelect(selectEl, promptId) {
+            const val = selectEl.value;
+            if (!val) return;
+
+            if (val === "CREATE_NEW") {
+                const title = prompt("Enter Collection Name:");
+                if (!title) {
+                    selectEl.value = "";
+                    return;
+                }
+                const emoji = prompt("Enter Collection Emoji (default <i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>):", "<i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>") || "<i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i>";
+
+                const token = localStorage.getItem("forge_token");
+                try {
+                    const response = await fetch("/api/collections", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ title, emoji })
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        showToast("Collection created!");
+                        await loadCollections();
+                        await addPromptToCollection(data.collection_id, promptId);
+                    } else {
+                        alert(data.error);
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+            } else {
+                await addPromptToCollection(parseInt(val), promptId);
+            }
+            selectEl.value = "";
+        }
+
+        async function addPromptToCollection(colId, promptId) {
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch(`/api/collections/${colId}/prompts`, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ prompt_id: promptId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast("Added to collection successfully!");
+                    loadLedgerEntries();
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("✓ Copied prompt output successfully!");
+            });
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("success-toast");
+            toast.innerText = msg;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        function handleLogout() {
+            localStorage.removeItem("forge_token");
+            localStorage.removeItem("forge_user_name");
+            localStorage.removeItem("forge_user_email");
+            window.location.href = "/";
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

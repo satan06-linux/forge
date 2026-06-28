@@ -1,0 +1,15 @@
+flask==3.0.0
+mysql-connector-python==8.0.33
+python-dotenv==1.0.0
+groq==0.4.2
+requests==2.31.0
+pillow==10.1.0
+pyjwt==2.8.0
+bcrypt==4.1.2
+unsloth
+trl
+peft
+bitsandbytes
+datasets
+accelerate
+torch>=2.0.0

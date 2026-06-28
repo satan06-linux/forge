@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Profile — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            display: none;
+        }
+
+        .main-content {
+            padding: 2rem;
+            flex: 1;
+            overflow-y: auto;
+            height: 100vh;
+        }
+
+        .profile-header-card {
+            background: rgba(26, 26, 46, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .profile-avatar-large {
+            width: 90px;
+            height: 90px;
+            border-radius: 16px;
+            background: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(108, 99, 255, 0.4);
+        }
+
+        .profile-info {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .profile-name-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-display-name {
+            font-size: 1.75rem;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .profile-bio {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .profile-meta-links {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+
+        .profile-meta-links a {
+            color: var(--accent-light);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .profile-meta-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat-card {
+            background: rgba(18, 18, 29, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-val {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-lbl {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Gallery Grid */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .prompt-card {
+            background: rgba(26, 26, 46, 0.4);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .prompt-card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 30px rgba(108, 99, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .prompt-concept {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .prompt-preview {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-size: 0.8rem;
+            font-family: monospace;
+            color: var(--text-muted);
+            height: 90px;
+            resize: none;
+            outline: none;
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+
+        .card-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .card-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        /* Profile Editing Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: #12121a;
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 480px;
+            width: 90%;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .form-input {
+            padding: 0.65rem 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: #fff;
+            outline: none;
+            font-size: 0.85rem;
+        }
+
+        .form-input:focus {
+            border-color: var(--accent);
+        }
+    </style>
+    <!-- Route Guard -->
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+
+    <!-- Space Background -->
+    <div class="starfield-bg"></div>
+
+    <div class="app-layout">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workbench" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Prompt Builder
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/history" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Saved Ledger
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/community" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="globe" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Community Gallery
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="my-avatar">FP</div>
+                    <div class="user-info">
+                        <a href="#" id="sidebar-profile-link" class="user-name">Creator User</a>
+                        <span class="user-email" id="my-email">name@example.com</span>
+                    </div>
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <a href="/admin" id="btn-admin-link" class="btn-secondary" style="font-size: 0.75rem; text-align: center; padding: 0.5rem; display: none;">
+                        <i data-lucide="key" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Admin Dashboard
+                    </a>
+                    <button class="btn-logout-sidebar" onclick="handleLogout()">
+                        <span><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- PROFILE DETAILS HEADER CARD -->
+            <div class="profile-header-card" id="profile-card">
+                <div class="profile-avatar-large" id="profile-avatar-large">FP</div>
+                <div class="profile-info">
+                    <div class="profile-name-row">
+                        <div>
+                            <div class="profile-display-name" id="profile-display-name">Loading Display Name...</div>
+                            <div style="font-size:0.85rem; color:var(--text-secondary); margin-top:0.15rem;">@<span id="profile-username">{{ username }}</span></div>
+                        </div>
+                        <div id="profile-action-btn-container">
+                            <!-- Follow / Edit button injected -->
+                        </div>
+                    </div>
+                    <p class="profile-bio" id="profile-bio-text">No bio written yet.</p>
+                    
+                    <div class="profile-meta-links">
+                        <span id="profile-joined-date">Joined: --</span>
+                        <span id="github-link-wrapper">GitHub: <a href="#" id="profile-github" target="_blank">--</a></span>
+                        <span id="website-link-wrapper">Website: <a href="#" id="profile-website" target="_blank">--</a></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ANALYTICS PORTFOLIO METRICS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-val" id="stat-published">0</div>
+                    <div class="stat-lbl">Published</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="stat-followers">0</div>
+                    <div class="stat-lbl">Followers</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="stat-following">0</div>
+                    <div class="stat-lbl">Following</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="stat-quality">0.0</div>
+                    <div class="stat-lbl">Avg Quality</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="stat-likes">0.0</div>
+                    <div class="stat-lbl">Avg Likes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="stat-model">None</div>
+                    <div class="stat-lbl">Top Model</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val" id="stat-category">None</div>
+                    <div class="stat-lbl">Top Focus</div>
+                </div>
+            </div>
+
+            <!-- CREATOR PUBLIC PROMPTS FEED -->
+            <h3 style="font-size:1.25rem; font-weight:800; margin-bottom:1.5rem; border-bottom:1px solid var(--border-color); padding-bottom:0.5rem;">Published Prompts</h3>
+            <div class="gallery-grid" id="profile-prompts-grid">
+                <!-- User's public prompts list -->
+            </div>
+        </main>
+    </div>
+
+    <!-- PROFILE EDIT MODAL -->
+    <div id="edit-profile-modal" class="modal">
+        <div class="modal-content">
+            <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 1.25rem;">Edit Profile Portfolio</h3>
+            
+            <div class="form-group">
+                <label style="font-size: 0.8rem; font-weight: 700;">Display Name</label>
+                <input type="text" id="edit-display-name" class="form-input" placeholder="Your name">
+            </div>
+            
+            <div class="form-group">
+                <label style="font-size: 0.8rem; font-weight: 700;">Bio Description</label>
+                <textarea id="edit-bio" class="form-input" style="height: 80px; resize: none;" placeholder="Tell the community about yourself..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label style="font-size: 0.8rem; font-weight: 700;">GitHub URL</label>
+                <input type="text" id="edit-github" class="form-input" placeholder="https://github.com/username">
+            </div>
+
+            <div class="form-group">
+                <label style="font-size: 0.8rem; font-weight: 700;">Personal Website</label>
+                <input type="text" id="edit-website" class="form-input" placeholder="https://example.com">
+            </div>
+            
+            <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1.5rem;">
+                <button class="btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem;" onclick="closeEditModal()">Cancel</button>
+                <button class="btn-cta" style="padding: 0.5rem 1.25rem; font-size: 0.8rem; box-shadow: none;" onclick="saveProfileChanges()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast Notification -->
+    <div id="success-toast" class="toast-msg">
+        ✓ Profile saved successfully!
+    </div>
+
+    <script>
+        const targetUsername = "{{ username }}";
+        let targetUserId = null;
+        let isFollowingTarget = false;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const myName = localStorage.getItem("forge_user_name") || "Creator User";
+            const myEmail = localStorage.getItem("forge_user_email") || "name@example.com";
+            
+            document.getElementById("sidebar-profile-link").innerText = myName;
+            document.getElementById("my-email").innerText = myEmail;
+            document.getElementById("my-avatar").innerText = myName.substring(0, 2).toUpperCase();
+
+            const cleanUser = myName.replace(/\s+/g, "").toLowerCase();
+            document.getElementById("sidebar-profile-link").href = `/@${cleanUser}`;
+
+            if (myEmail.includes("admin") || myEmail === "root@example.com") {
+                document.getElementById("btn-admin-link").style.display = "block";
+            }
+
+            loadProfileData();
+        });
+
+        function handleLogout() {
+            localStorage.removeItem("forge_token");
+            localStorage.removeItem("forge_user_name");
+            localStorage.removeItem("forge_user_email");
+            window.location.href = "/";
+        }
+
+        async function loadProfileData() {
+            const token = localStorage.getItem("forge_token");
+            const myName = localStorage.getItem("forge_user_name") || "";
+            const cleanMyUser = myName.replace(/\s+/g, "").toLowerCase();
+
+            try {
+                const response = await fetch(`/api/profiles/${targetUsername}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    targetUserId = data.user.id;
+                    
+                    // Render details
+                    document.getElementById("profile-display-name").innerText = data.profile.display_name;
+                    document.getElementById("profile-avatar-large").innerText = data.profile.display_name.substring(0, 2).toUpperCase();
+                    document.getElementById("profile-bio-text").innerText = data.profile.bio || "This creator hasn't written a bio yet.";
+                    document.getElementById("profile-joined-date").innerText = `Joined: ${data.user.joined}`;
+                    
+                    if (data.profile.github) {
+                        document.getElementById("profile-github").href = data.profile.github;
+                        document.getElementById("profile-github").innerText = "GitHub";
+                        document.getElementById("github-link-wrapper").style.display = "inline";
+                    } else {
+                        document.getElementById("github-link-wrapper").style.display = "none";
+                    }
+
+                    if (data.profile.website) {
+                        document.getElementById("profile-website").href = data.profile.website;
+                        document.getElementById("profile-website").innerText = "Website";
+                        document.getElementById("website-link-wrapper").style.display = "inline";
+                    } else {
+                        document.getElementById("website-link-wrapper").style.display = "none";
+                    }
+
+                    // Stats
+                    document.getElementById("stat-published").innerText = data.stats.published;
+                    document.getElementById("stat-followers").innerText = data.stats.followers;
+                    document.getElementById("stat-following").innerText = data.stats.following;
+                    document.getElementById("stat-quality").innerText = data.stats.avg_quality;
+                    document.getElementById("stat-likes").innerText = data.stats.avg_likes;
+                    document.getElementById("stat-model").innerText = data.stats.most_used_model !== "None" ? data.stats.most_used_model : "--";
+                    document.getElementById("stat-category").innerText = data.stats.most_used_category !== "None" ? data.stats.most_used_category : "--";
+
+                    // Action buttons (Follow vs Edit Portfolio)
+                    const actionContainer = document.getElementById("profile-action-btn-container");
+                    if (targetUsername === cleanMyUser) {
+                        // Own profile
+                        actionContainer.innerHTML = `<button class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem;" onclick="openEditModal(${JSON.stringify(data.profile)})"><i data-lucide="settings" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Edit Portfolio</button>`;
+                    } else {
+                        // Check follow state
+                        checkFollowState(data.user.id, actionContainer);
+                    }
+
+                    // Prompts grid list
+                    const grid = document.getElementById("profile-prompts-grid");
+                    grid.innerHTML = "";
+                    if (data.prompts.length === 0) {
+                        grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; color:var(--text-muted); padding:3rem;'>No public prompts published by this creator yet.</div>";
+                        return;
+                    }
+
+                    data.prompts.forEach(p => {
+                        grid.appendChild(createPromptCard(p));
+                    });
+
+                } else {
+                    document.getElementById("profile-display-name").innerText = "User not found";
+                    document.getElementById("profile-bio-text").innerText = data.error;
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        async function checkFollowState(userId, container) {
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch("/api/following", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    const following = data.following.some(u => u.id === userId);
+                    isFollowingTarget = following;
+                    
+                    if (following) {
+                        container.innerHTML = `<button class="btn-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; background:rgba(255,255,255,0.05); color:#fff; border-color:var(--border-color);" onclick="toggleFollow()">✓ Following</button>`;
+                    } else {
+                        container.innerHTML = `<button class="btn-cta" style="padding: 0.5rem 1.5rem; font-size: 0.85rem; box-shadow:none;" onclick="toggleFollow()">＋ Follow</button>`;
+                    }
+                }
+            } catch (err) {}
+        }
+
+        async function toggleFollow() {
+            const token = localStorage.getItem("forge_token");
+            const url = isFollowingTarget ? "/api/unfollow" : "/api/follow";
+            try {
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ following_id: targetUserId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    isFollowingTarget = !isFollowingTarget;
+                    showToast(isFollowingTarget ? "✓ Followed creator!" : "✓ Unfollowed creator.");
+                    loadProfileData();
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {}
+        }
+
+        function createPromptCard(p) {
+            const div = document.createElement("div");
+            div.className = "prompt-card";
+
+            let badgesHtml = "";
+            if (p.badges) {
+                p.badges.forEach(b => {
+                    let badgeClass = "badge-featured";
+                    if (b.includes("Week")) badgeClass = "badge-spotlight";
+                    else if (b.includes("Trending")) badgeClass = "badge-trending";
+                    else if (b.includes("Quality")) badgeClass = "badge-quality";
+                    badgesHtml += `<span class="badge-item ${badgeClass}" style="font-size:0.6rem; padding:0.1rem 0.35rem; border-radius:3px; margin-right:0.25rem; font-weight:700; text-transform:uppercase;">${b}</span>`;
+                });
+            }
+
+            div.innerHTML = `
+                <div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+                        <span class="badge-intent" style="font-size:0.65rem;">${escapeHtml(p.category)}</span>
+                        <div style="font-size:0.7rem; color:var(--text-muted);">${escapeHtml(p.published_at.substring(0, 10))}</div>
+                    </div>
+                    <div style="margin-bottom: 0.5rem; display:flex;">${badgesHtml}</div>
+                    <h3 class="prompt-concept">${escapeHtml(p.input_text)}</h3>
+                    <textarea class="prompt-preview" readonly>${escapeHtml(p.generated_prompt)}</textarea>
+                </div>
+                <div>
+                    <div class="card-stats">
+                        <div style="display:flex; gap:1rem;">
+                            <span>❤️ ${p.like_count}</span>
+                            <span><i data-lucide="eye" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ${p.views}</span>
+                            <span><i data-lucide="git-fork" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ${p.fork_count}</span>
+                        </div>
+                        <div style="color:#10b981; font-weight:800;">Score: ${p.quality_score}/100</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-secondary btn-card" onclick="forkPrompt(${p.id})">Fork <i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+                        <button class="btn-card" style="background:rgba(255,255,255,0.05); border:1px solid var(--border-color); color:#fff;" onclick="copyCardPrompt('${escapeJs(p.generated_prompt)}')">Copy <i data-lucide="clipboard" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:0.75rem; font-size:0.65rem;">
+                        <a href="/share/${p.share_uuid}" style="color:var(--accent-light); text-decoration:none; font-weight:700;">Share link <i data-lucide="link" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></a>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+
+        async function forkPrompt(id) {
+            const token = localStorage.getItem("forge_token");
+            try {
+                const response = await fetch(`/api/prompts/${id}/fork`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await response.json();
+                if (data.success) {
+                    showToast("Prompt successfully forked to Workbench!");
+                    setTimeout(() => {
+                        window.location.href = "/workbench";
+                    }, 1200);
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {}
+        }
+
+        function copyCardPrompt(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast("✓ Copied prompt output successfully!");
+            });
+        }
+
+        // Profile edit logic
+        function openEditModal(profile) {
+            document.getElementById("edit-display-name").value = profile.display_name;
+            document.getElementById("edit-bio").value = profile.bio;
+            document.getElementById("edit-github").value = profile.github;
+            document.getElementById("edit-website").value = profile.website;
+            document.getElementById("edit-profile-modal").style.display = "flex";
+        }
+
+        function closeEditModal() {
+            document.getElementById("edit-profile-modal").style.display = "none";
+        }
+
+        async function saveProfileChanges() {
+            const token = localStorage.getItem("forge_token");
+            const display_name = document.getElementById("edit-display-name").value.trim();
+            const bio = document.getElementById("edit-bio").value.trim();
+            const github = document.getElementById("edit-github").value.trim();
+            const website = document.getElementById("edit-website").value.trim();
+
+            if (!display_name) {
+                alert("Display name is required.");
+                return;
+            }
+
+            try {
+                const response = await fetch("/api/profile", {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ display_name, bio, github, website })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    // Update username in localstorage
+                    localStorage.setItem("forge_user_name", display_name);
+                    showToast("✓ Profile saved successfully!");
+                    closeEditModal();
+                    loadProfileData();
+                } else {
+                    alert(data.error);
+                }
+            } catch (err) {}
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById("success-toast");
+            toast.innerText = msg;
+            toast.classList.add("show");
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 3000);
+        }
+
+        function escapeHtml(str) {
+            if (!str) return "";
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+
+        function escapeJs(str) {
+            if (!str) return "";
+            return str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '\\r');
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

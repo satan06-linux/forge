@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Registry Library — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { display: none; overflow-y: auto; }
+        .main-content { flex: 1; padding: 2.5rem; overflow-y: auto; height: 100vh; }
+        .prompt-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; margin-top: 2rem; }
+        .prompt-card {
+            background: rgba(26, 26, 46, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .prompt-card:hover, .prompt-card.active {
+            border-color: var(--accent-light);
+            background: rgba(108, 99, 255, 0.05);
+            transform: translateY(-2px);
+        }
+        .version-badge {
+            background: rgba(108, 99, 255, 0.15);
+            color: var(--accent-light);
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .editor-container {
+            background: rgba(15, 15, 25, 0.5);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2rem;
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(10px);
+        }
+        .code-textarea {
+            width: 100%;
+            height: 250px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: #fff;
+            font-family: monospace;
+            padding: 1rem;
+            margin-top: 0.5rem;
+            resize: none;
+            outline: none;
+        }
+        .code-textarea:focus { border-color: var(--accent-light); }
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+                loadPrompts();
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+    <div class="starfield-bg"></div>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;"><a href="/workbench" class="sidebar-link"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Builder</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/history" class="sidebar-link"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Saved Ledger</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/workflows" class="sidebar-link">⛓️ Workflows & DAGs</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/prompts" class="sidebar-link active"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Registry</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/knowledge" class="sidebar-link"><i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Knowledge Bases</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/connectors" class="sidebar-link"><i data-lucide="plug" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Connectors</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/playground" class="sidebar-link"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Playgrounds</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/analytics" class="sidebar-link"><i data-lucide="bar-chart-2" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Analytics</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn-logout-sidebar" onclick="localStorage.clear(); window.location.href='/auth';"><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800;">Prompt Registry Library <i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                    <p style="color: var(--text-secondary); margin-top: 0.25rem;">Centrally manage version-controlled enterprise prompts library.</p>
+                </div>
+                <button class="btn-cta" onclick="openCreateModal()"><i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Register Prompt</button>
+            </div>
+
+            <div class="prompt-grid">
+                <!-- Prompts List -->
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem;">Prompts Library</h3>
+                    <div id="prompts-list-container">
+                        <div class="glass-panel" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                            Loading prompt registry...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Editor & Versions -->
+                <div>
+                    <div class="editor-container" id="editor-wrapper" style="display: none;">
+                        <h3 style="font-size: 1.25rem; font-weight: 800;" id="editor-title">Prompt Details</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;" id="editor-desc"></p>
+                        
+                        <div style="margin-top: 1.5rem;">
+                            <label style="font-weight: 700; font-size: 0.9rem;">System Prompt</label>
+                            <textarea class="code-textarea" id="editor-system-prompt" style="height: 80px;"></textarea>
+                        </div>
+
+                        <div style="margin-top: 1.5rem;">
+                            <label style="font-weight: 700; font-size: 0.9rem;">Prompt Template</label>
+                            <textarea class="code-textarea" id="editor-template"></textarea>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <label style="font-weight: 700; font-size: 0.9rem;">Active Version:</label>
+                                <select id="version-selector" onchange="loadSelectedVersion()" style="margin-left: 0.5rem; padding: 0.3rem 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff;"></select>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button class="btn-secondary" onclick="rollbackToSelectedVersion()">Rollback</button>
+                                <button class="btn-cta" onclick="saveNewVersion()">Save Version</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-panel" id="editor-placeholder" style="padding: 3rem; text-align: center; color: var(--text-muted);">
+                        Select a prompt from the list to view version details and editing options.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Modal -->
+    <div id="create-modal" class="modal">
+        <div class="glass-panel" style="width: 480px; padding: 2rem; border-radius: 20px; border: 1px solid var(--accent-light);">
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;">Register New Prompt</h3>
+            <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <div>
+                    <label style="font-weight: 700; font-size: 0.9rem;">Title</label>
+                    <input type="text" id="new-title" placeholder="e.g. Code Reviewer" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; margin-top: 0.4rem;">
+                </div>
+                <div>
+                    <label style="font-weight: 700; font-size: 0.9rem;">Description</label>
+                    <input type="text" id="new-desc" placeholder="e.g. Evaluates code quality inputs" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; margin-top: 0.4rem;">
+                </div>
+                <div>
+                    <label style="font-weight: 700; font-size: 0.9rem;">Template</label>
+                    <textarea id="new-template" class="code-textarea" style="height: 120px;" placeholder="Code: {{code_input}}"></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                    <button class="btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                    <button class="btn-cta" onclick="registerPromptSubmit()">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let prompts = [];
+        let activePromptId = null;
+        let activeVersions = [];
+
+        async function loadPrompts() {
+            try {
+                const res = await fetch("/api/prompts/registry", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    prompts = data.prompts;
+                    renderPromptsList();
+                }
+            } catch (e) {
+                console.error("Load prompts error:", e);
+            }
+        }
+
+        function renderPromptsList() {
+            const container = document.getElementById("prompts-list-container");
+            if (prompts.length === 0) {
+                container.innerHTML = `<div class="glass-panel" style="padding: 2rem; text-align: center; color: var(--text-muted);">No prompts registered yet.</div>`;
+                return;
+            }
+            container.innerHTML = prompts.map(p => `
+                <div class="prompt-card ${p.id === activePromptId ? 'active' : ''}" onclick="selectPrompt(${p.id})">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="font-size: 1.1rem; font-weight: 800;">${p.title}</h4>
+                        <span class="version-badge">v${p.latest_version}</span>
+                    </div>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">${p.description || 'No description'}</p>
+                </div>
+            `).join("");
+        }
+
+        async function selectPrompt(id) {
+            activePromptId = id;
+            renderPromptsList();
+            document.getElementById("editor-placeholder").style.display = "none";
+            document.getElementById("editor-wrapper").style.display = "block";
+
+            try {
+                const res = await fetch(`/api/prompts/registry/${id}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const p = data.prompt;
+                    activeVersions = data.versions;
+
+                    document.getElementById("editor-title").innerText = p.title;
+                    document.getElementById("editor-desc").innerText = p.description || "";
+                    
+                    const selector = document.getElementById("version-selector");
+                    selector.innerHTML = activeVersions.map(v => `
+                        <option value="${v.version_number}">v${v.version_number} - ${v.created_at}</option>
+                    `).join("");
+
+                    loadSelectedVersion();
+                }
+            } catch (e) {
+                console.error("Select prompt error:", e);
+            }
+        }
+
+        function loadSelectedVersion() {
+            const vNum = parseInt(document.getElementById("version-selector").value);
+            const version = activeVersions.find(v => v.version_number === vNum);
+            if (version) {
+                document.getElementById("editor-system-prompt").value = version.system_prompt || "";
+                document.getElementById("editor-template").value = version.prompt_template;
+            }
+        }
+
+        async function saveNewVersion() {
+            const template = document.getElementById("editor-template").value;
+            const system = document.getElementById("editor-system-prompt").value;
+
+            try {
+                const res = await fetch(`/api/prompts/registry/${activePromptId}`, {
+                    method: "PUT",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ prompt_template: template, system_prompt: system })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(`Version ${data.version} saved successfully!`);
+                    loadPrompts().then(() => selectPrompt(activePromptId));
+                }
+            } catch (e) {
+                console.error("Save version error:", e);
+            }
+        }
+
+        async function rollbackToSelectedVersion() {
+            const vNum = parseInt(document.getElementById("version-selector").value);
+            if (!confirm(`Are you sure you want to rollback this prompt to version v${vNum}? This will create a new rollback version snapshot.`)) return;
+
+            try {
+                const res = await fetch(`/api/prompts/registry/${activePromptId}/rollback/${vNum}`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert(`Prompt rolled back to v${vNum}. Created new version v${data.version}`);
+                    loadPrompts().then(() => selectPrompt(activePromptId));
+                }
+            } catch (e) {
+                console.error("Rollback error:", e);
+            }
+        }
+
+        function openCreateModal() { document.getElementById("create-modal").style.display = "flex"; }
+        function closeCreateModal() { document.getElementById("create-modal").style.display = "none"; }
+
+        async function registerPromptSubmit() {
+            const title = document.getElementById("new-title").value;
+            const desc = document.getElementById("new-desc").value;
+            const template = document.getElementById("new-template").value;
+
+            try {
+                const res = await fetch("/api/prompts/registry", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ title, description: desc, prompt_template: template })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeCreateModal();
+                    loadPrompts();
+                }
+            } catch (e) {
+                console.error("Register prompt error:", e);
+            }
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

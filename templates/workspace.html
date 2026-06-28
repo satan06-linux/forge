@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workflows & Automation Workspace — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* Protected routing head-blocker */
+        body {
+            display: none;
+            overflow-y: auto;
+        }
+        .main-content {
+            flex: 1;
+            padding: 2.5rem;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .wf-card {
+            background: rgba(26, 26, 46, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.25s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .wf-card:hover {
+            border-color: var(--accent-light);
+            background: rgba(108, 99, 255, 0.05);
+            transform: translateY(-2px);
+        }
+        .badge {
+            padding: 0.3rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .badge-draft { background: rgba(107, 114, 128, 0.15); color: #9ca3af; border: 1px solid #4b5563; }
+        .badge-published { background: rgba(16, 185, 129, 0.15); color: #10b981; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-archived { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid #b91c1c; }
+        
+        .status-queued { color: #f59e0b; animation: pulse 2s infinite; }
+        .status-running { color: #3b82f6; animation: pulse 1s infinite; }
+        .status-completed { color: #10b981; }
+        .status-failed { color: #ef4444; }
+        .status-paused { color: #8b5cf6; }
+        
+        @keyframes pulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+        
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+    <!-- Route Guard -->
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+                loadWorkspaceData();
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+    <div class="starfield-bg"></div>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workbench" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Prompt Builder
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/history" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Saved Ledger
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/workflows" class="sidebar-link active">
+                            <span class="sidebar-icon">⛓️</span> Workflows & DAGs
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/agents" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="bot" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> AI Agent Library
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/marketplace" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="store" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Marketplace
+                        </a>
+                    </li>
+                    <li style="margin-bottom: 0.5rem;">
+                        <a href="/organization" class="sidebar-link">
+                            <span class="sidebar-icon"><i data-lucide="building" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></span> Organization Settings
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar" id="user-monogram">FP</div>
+                    <div class="user-info">
+                        <span class="user-name" id="profile-name">Creator User</span>
+                        <span class="user-email" id="profile-email">name@example.com</span>
+                    </div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                    <button class="btn-logout-sidebar" onclick="localStorage.clear(); window.location.href='/auth';">
+                        <span><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</span>
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800;">AI Prompt Workflows ⛓️</h1>
+                    <p style="color: var(--text-secondary); margin-top: 0.25rem;">Build, schedule, and run parallel multi-node prompt automation DAGs.</p>
+                </div>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn-secondary" onclick="openImportModal()"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Import JSON</button>
+                    <button class="btn-cta" onclick="openCreateModal()"><i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> New Workflow</button>
+                </div>
+            </div>
+
+            <!-- Org Selector -->
+            <div class="glass-panel" style="padding: 1.25rem; border-radius: 12px; margin-top: 1.5rem; display: flex; align-items: center; gap: 1rem;">
+                <span style="font-weight: 800; font-size: 0.9rem;">Workspace Environment:</span>
+                <select id="org-selector" onchange="loadWorkspaceData()" style="padding: 0.4rem 1rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; outline: none; cursor: pointer;">
+                    <option value="">Personal Space</option>
+                </select>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- Workflows List -->
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem;">Active Workflows</h3>
+                    <div id="workflows-list-container">
+                        <!-- Dynamic items -->
+                        <div class="glass-panel" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                            Loading prompt workflows...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Executions & Run History -->
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem;">Recent Execution Runs</h3>
+                    <div class="glass-panel" style="padding: 1.5rem; border-radius: 16px; max-height: 500px; overflow-y: auto;" id="runs-history-container">
+                        <div style="text-align: center; color: var(--text-muted);">No runs executed yet.</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Modal -->
+    <div id="create-modal" class="modal">
+        <div class="glass-panel" style="width: 450px; padding: 2rem; border-radius: 20px; border: 1px solid var(--accent-light);">
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;">New Prompt Workflow</h3>
+            <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Workflow Title</label>
+                    <input type="text" id="create-title" class="form-input" placeholder="e.g. Multi-Model Content Extractor" style="width: 100%;">
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Description</label>
+                    <textarea id="create-desc" class="form-input" placeholder="What does this pipeline automate?" style="width: 100%; height: 80px; resize: none;"></textarea>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 0.4rem;">
+                    <label style="font-size: 0.8rem; font-weight: 800; text-transform: uppercase;">Category</label>
+                    <select id="create-category" style="width: 100%; padding: 0.75rem; border-radius: 12px; background: rgba(18,18,29,0.8); border: 1px solid rgba(167,139,250,0.15); color: #fff;">
+                        <option value="AI Writing">AI Writing</option>
+                        <option value="Coding">Coding</option>
+                        <option value="Research">Research</option>
+                        <option value="Automation">Automation</option>
+                        <option value="Business">Business</option>
+                    </select>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1rem; justify-content: flex-end;">
+                    <button class="btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                    <button class="btn-cta" onclick="submitCreateWorkflow()">Create & Build <i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Import Modal -->
+    <div id="import-modal" class="modal">
+        <div class="glass-panel" style="width: 500px; padding: 2rem; border-radius: 20px; border: 1px solid var(--accent-light);">
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;">Import Workflow (JSON)</h3>
+            <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <textarea id="import-json" class="form-input" placeholder="Paste workflow JSON here..." style="width: 100%; height: 250px; font-family: monospace; font-size: 0.8rem;"></textarea>
+                <div style="display: flex; gap: 1rem; justify-content: flex-end;">
+                    <button class="btn-secondary" onclick="closeImportModal()">Cancel</button>
+                    <button class="btn-cta" onclick="submitImportWorkflow()">Import Workflow</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set user profile sidebar details
+        document.getElementById("profile-name").innerText = localStorage.getItem("forge_user_name") || "Creator User";
+        document.getElementById("profile-email").innerText = localStorage.getItem("forge_user_email") || "name@example.com";
+        const parts = (localStorage.getItem("forge_user_name") || "FP").split(" ");
+        document.getElementById("user-monogram").innerText = parts.map(p => p[0]).join("").toUpperCase().substring(0, 2);
+
+        function openCreateModal() { document.getElementById("create-modal").style.display = "flex"; }
+        function closeCreateModal() { document.getElementById("create-modal").style.display = "none"; }
+        function openImportModal() { document.getElementById("import-modal").style.display = "flex"; }
+        function closeImportModal() { document.getElementById("import-modal").style.display = "none"; }
+
+        async function loadWorkspaceData() {
+            const orgSelect = document.getElementById("org-selector");
+            const selectedOrgId = orgSelect.value;
+            
+            // 1. Fetch Orgs list first to populate selector (only run once)
+            if (orgSelect.options.length === 1) {
+                try {
+                    const res = await fetch("/api/organizations", {
+                        headers: { "Authorization": `Bearer ${token}` }
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        data.organizations.forEach(org => {
+                            const opt = document.createElement("option");
+                            opt.value = org.id;
+                            opt.innerText = `${org.name} (${org.role})`;
+                            orgSelect.appendChild(opt);
+                        });
+                    }
+                } catch(e) {}
+            }
+
+            // 2. Fetch Workflows
+            try {
+                let url = "/api/workflows";
+                if (selectedOrgId) url += `?organization_id=${selectedOrgId}`;
+                const res = await fetch(url, { headers: { "Authorization": `Bearer ${token}` } });
+                const data = await res.json();
+                
+                const container = document.getElementById("workflows-list-container");
+                container.innerHTML = "";
+                
+                if (data.success && data.workflows.length > 0) {
+                    data.workflows.forEach(wf => {
+                        const div = document.createElement("div");
+                        div.className = "wf-card";
+                        div.innerHTML = `
+                            <div>
+                                <h4 style="font-size: 1.1rem; font-weight: 800;">${wf.title}</h4>
+                                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.2rem;">${wf.description || 'No description provided.'}</p>
+                                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem; align-items: center;">
+                                    <span class="badge badge-${wf.status}">${wf.status.toUpperCase()}</span>
+                                    <span style="font-size: 0.75rem; color: var(--text-secondary);">${wf.category}</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <a href="/workflows/builder/${wf.id}" class="btn-secondary" style="padding: 0.5rem 1rem; border-radius: 8px; text-decoration: none; font-size: 0.85rem;">Edit Canvas</a>
+                                <button onclick="quickRunWorkflow(${wf.id})" class="btn-cta" style="padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.85rem;">Run <i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></button>
+                            </div>
+                        `;
+                        container.appendChild(div);
+                    });
+                } else {
+                    container.innerHTML = `
+                        <div class="glass-panel" style="padding: 3rem; text-align: center; color: var(--text-muted); border-radius: 16px;">
+                            No workflows found in this space. Click 'New Workflow' to get started!
+                        </div>
+                    `;
+                }
+            } catch(e) {}
+        }
+
+        async function submitCreateWorkflow() {
+            const title = document.getElementById("create-title").value.trim();
+            const description = document.getElementById("create-desc").value.trim();
+            const category = document.getElementById("create-category").value;
+            const orgSelect = document.getElementById("org-selector");
+            const organization_id = orgSelect.value ? parseInt(orgSelect.value) : null;
+
+            if (!title) {
+                alert("Please specify a workflow title!");
+                return;
+            }
+
+            try {
+                const res = await fetch("/api/workflows", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ title, description, category, organization_id })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = `/workflows/builder/${data.workflow_id}`;
+                } else {
+                    alert("Creation failed: " + data.error);
+                }
+            } catch (e) {
+                alert("Network error.");
+            }
+        }
+
+        async function submitImportWorkflow() {
+            const jsonText = document.getElementById("import-json").value.trim();
+            const orgSelect = document.getElementById("org-selector");
+            const organization_id = orgSelect.value ? parseInt(orgSelect.value) : null;
+
+            if (!jsonText) {
+                alert("JSON content is empty!");
+                return;
+            }
+
+            try {
+                const parsed = JSON.parse(jsonText);
+                const res = await fetch("/api/workflows/import", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ workflow_data: parsed, organization_id })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = `/workflows/builder/${data.workflow_id}`;
+                } else {
+                    alert("Import failed: " + data.error);
+                }
+            } catch (e) {
+                alert("Invalid JSON format or network error.");
+            }
+        }
+
+        async function quickRunWorkflow(wfId) {
+            try {
+                const res = await fetch(`/api/workflows/${wfId}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.variables && data.variables.length > 0) {
+                        window.location.href = `/workflows/builder/${wfId}?trigger=run`;
+                    } else {
+                        const runRes = await fetch(`/api/workflows/${wfId}/run`, {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json",
+                                "Authorization": `Bearer ${token}`
+                            },
+                            body: JSON.stringify({ inputs: {} })
+                        });
+                        const runData = await runRes.json();
+                        if (runData.success) {
+                            alert("Execution enqueued successfully!");
+                            window.location.href = `/workflows/run/${runData.run_id}`;
+                        } else {
+                            alert("Run failed: " + runData.error);
+                        }
+                    }
+                }
+            } catch(e) {
+                alert("Run failed: network error.");
+            }
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

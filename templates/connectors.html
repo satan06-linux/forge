@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Connectors Integration — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { display: none; overflow-y: auto; }
+        .main-content { flex: 1; padding: 2.5rem; overflow-y: auto; height: 100vh; }
+        .connector-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; margin-top: 2rem; }
+        .conn-card {
+            background: rgba(26, 26, 46, 0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .conn-card:hover, .conn-card.active {
+            border-color: var(--accent-light);
+            background: rgba(108, 99, 255, 0.05);
+            transform: translateY(-2px);
+        }
+        .modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+                loadConnectors();
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+    <div class="starfield-bg"></div>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;"><a href="/workbench" class="sidebar-link"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Builder</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/history" class="sidebar-link"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Saved Ledger</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/workflows" class="sidebar-link">⛓️ Workflows & DAGs</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/prompts" class="sidebar-link"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Registry</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/knowledge" class="sidebar-link"><i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Knowledge Bases</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/connectors" class="sidebar-link active"><i data-lucide="plug" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Connectors</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/playground" class="sidebar-link"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Playgrounds</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/analytics" class="sidebar-link"><i data-lucide="bar-chart-2" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Analytics</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn-logout-sidebar" onclick="localStorage.clear(); window.location.href='/auth';"><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800;">Enterprise Connectors <i data-lucide="plug" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                    <p style="color: var(--text-secondary); margin-top: 0.25rem;">Sync external data repositories to local Knowledge Bases.</p>
+                </div>
+                <button class="btn-cta" onclick="openCreateModal()"><i data-lucide="zap" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Add Connector</button>
+            </div>
+
+            <div class="connector-grid">
+                <!-- Connectors List -->
+                <div>
+                    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem;">Active Connections</h3>
+                    <div id="connectors-list-container">
+                        <div class="glass-panel" style="padding: 2rem; text-align: center; color: var(--text-muted);">
+                            Loading connectors...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sync Log / Options -->
+                <div>
+                    <div class="glass-panel" id="connector-wrapper" style="display: none; padding: 2rem;">
+                        <h3 style="font-size: 1.5rem; font-weight: 800;" id="conn-title">Connector</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem;" id="conn-type"></p>
+                        
+                        <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                            <h4 style="font-weight: 800;">Sync Operations</h4>
+                            <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem;">
+                                Trigger manual background sync job or view sync statuses.
+                            </p>
+                            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <span style="font-weight: 700;">Status:</span>
+                                        <span id="conn-status" style="margin-left: 0.5rem; font-weight: 800;">ACTIVE</span>
+                                    </div>
+                                    <button class="btn-cta" onclick="triggerSync()">Sync Now</button>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem; background: rgba(0,0,0,0.2); padding: 1rem; border-radius: 8px;">
+                                    <div><span style="color: var(--text-muted);">Last Sync Time:</span> <span id="conn-last-sync" style="float: right;">N/A</span></div>
+                                    <div><span style="color: var(--text-muted);">Job Progress:</span> <span id="conn-progress" style="float: right;">0%</span></div>
+                                    <div id="conn-error-wrapper" style="display: none;"><span style="color: #ef4444; font-weight: 700;">Error:</span> <span id="conn-error" style="color: #ef4444;"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-panel" id="conn-placeholder" style="padding: 3rem; text-align: center; color: var(--text-muted);">
+                        Select an active connection mapping to trigger sync logs, configurations, and schedules.
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create Modal -->
+    <div id="create-modal" class="modal">
+        <div class="glass-panel" style="width: 450px; padding: 2rem; border-radius: 20px; border: 1px solid var(--accent-light);">
+            <h3 style="font-size: 1.5rem; font-weight: 800; margin-bottom: 1.5rem;">Add New Connector</h3>
+            <div style="display: flex; flex-direction: column; gap: 1.2rem;">
+                <div>
+                    <label style="font-weight: 700; font-size: 0.9rem;">Connector Name</label>
+                    <input type="text" id="new-name" placeholder="e.g. GitHub TechDocs" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; margin-top: 0.4rem;">
+                </div>
+                <div>
+                    <label style="font-weight: 700; font-size: 0.9rem;">Type</label>
+                    <select id="new-type" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; margin-top: 0.4rem; outline: none;">
+                        <option value="github">GitHub Repositories</option>
+                        <option value="notion">Notion Workspace</option>
+                        <option value="google_drive">Google Drive Shared Folder</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="font-weight: 700; font-size: 0.9rem;">Config Value (Repository/Page ID)</label>
+                    <input type="text" id="new-config-val" placeholder="e.g. owner/project-repo" style="width: 100%; padding: 0.75rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; margin-top: 0.4rem;">
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 0.75rem; margin-top: 1rem;">
+                    <button class="btn-secondary" onclick="closeCreateModal()">Cancel</button>
+                    <button class="btn-cta" onclick="createConnectorSubmit()">Register</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let connectors = [];
+        let activeConnId = null;
+
+        async function loadConnectors() {
+            try {
+                const res = await fetch("/api/connectors", {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    connectors = data.connectors;
+                    renderConnectorsList();
+                    if (activeConnId) {
+                        updateSelectedConnectorDetail();
+                    }
+                }
+            } catch (e) {
+                console.error("Load connectors error:", e);
+            }
+        }
+
+        function renderConnectorsList() {
+            const container = document.getElementById("connectors-list-container");
+            if (connectors.length === 0) {
+                container.innerHTML = `<div class="glass-panel" style="padding: 2rem; text-align: center; color: var(--text-muted);">No connectors configured yet.</div>`;
+                return;
+            }
+            container.innerHTML = connectors.map(c => `
+                <div class="conn-card ${c.id === activeConnId ? 'active' : ''}" onclick="selectConnector(${c.id})">
+                    <h4 style="font-size: 1.1rem; font-weight: 800;"><i data-lucide="plug" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ${c.name}</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 0.5rem;">Type: ${c.type.toUpperCase()}</p>
+                </div>
+            `).join("");
+        }
+
+        function selectConnector(id) {
+            activeConnId = id;
+            renderConnectorsList();
+            document.getElementById("conn-placeholder").style.display = "none";
+            document.getElementById("connector-wrapper").style.display = "block";
+            updateSelectedConnectorDetail();
+        }
+
+        function updateSelectedConnectorDetail() {
+            const c = connectors.find(item => item.id === activeConnId);
+            if (!c) return;
+
+            document.getElementById("conn-title").innerHTML = `<i data-lucide="plug" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ` + (c.name || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            if (window.lucide) lucide.createIcons();
+            document.getElementById("conn-type").innerText = "Type: " + c.type.toUpperCase();
+            
+            const statusEl = document.getElementById("conn-status");
+            statusEl.innerText = c.sync_status.toUpperCase();
+            statusEl.style.color = c.sync_status === 'completed' || c.status === 'active' ? '#10b981' : (c.sync_status === 'failed' ? '#ef4444' : '#f59e0b');
+
+            document.getElementById("conn-last-sync").innerText = c.last_sync || "Never";
+            document.getElementById("conn-progress").innerText = c.sync_progress + "%";
+
+            const errorWrap = document.getElementById("conn-error-wrapper");
+            if (c.sync_error) {
+                errorWrap.style.display = "block";
+                document.getElementById("conn-error").innerText = c.sync_error;
+            } else {
+                errorWrap.style.display = "none";
+            }
+        }
+
+        async function triggerSync() {
+            try {
+                const res = await fetch(`/api/connectors/${activeConnId}/sync`, {
+                    method: "POST",
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("Synchronization job queued successfully!");
+                    // Poll progress
+                    const interval = setInterval(async () => {
+                        await loadConnectors();
+                        const activeC = connectors.find(item => item.id === activeConnId);
+                        if (activeC && (activeC.sync_status === 'completed' || activeC.sync_status === 'failed')) {
+                            clearInterval(interval);
+                        }
+                    }, 1000);
+                }
+            } catch (e) {
+                console.error("Sync error:", e);
+            }
+        }
+
+        function openCreateModal() { document.getElementById("create-modal").style.display = "flex"; }
+        function closeCreateModal() { document.getElementById("create-modal").style.display = "none"; }
+
+        async function createConnectorSubmit() {
+            const name = document.getElementById("new-name").value;
+            const type = document.getElementById("new-type").value;
+            const configVal = document.getElementById("new-config-val").value;
+
+            try {
+                const res = await fetch("/api/connectors", {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ name, type, config: { repo: configVal, page_id: configVal, folder_id: configVal } })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    closeCreateModal();
+                    loadConnectors();
+                }
+            } catch (e) {
+                console.error("Create connector error:", e);
+            }
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>

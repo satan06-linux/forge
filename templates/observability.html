@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pipeline Trace Observability — ForgePrompt</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body { display: none; overflow-y: auto; }
+        .main-content { flex: 1; padding: 2.5rem; overflow-y: auto; height: 100vh; }
+        .trace-timeline { display: flex; flex-direction: column; gap: 1.5rem; margin-top: 2rem; }
+        .trace-card {
+            background: rgba(26, 26, 46, 0.25);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .trace-card.failed { border-color: #ef4444; background: rgba(239, 68, 68, 0.02); }
+        .trace-header { display: flex; justify-content: space-between; align-items: center; }
+        .trace-data-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #d1d5db;
+            white-space: pre-wrap;
+        }
+    </style>
+    <script>
+        const token = localStorage.getItem("forge_token");
+        if (!token) {
+            window.location.href = "/auth";
+        } else {
+            document.documentElement.style.display = "block";
+            document.addEventListener("DOMContentLoaded", () => {
+                document.body.style.display = "block";
+                // Read run_id from url hash if present e.g. #run_id=5
+                const params = new URLSearchParams(window.location.hash.substring(1));
+                const runId = params.get("run_id") || "1";
+                document.getElementById("run-id-input").value = runId;
+                loadTraces();
+            });
+        }
+    </script>
+</head>
+<body class="fade-in">
+    <div class="starfield-bg"></div>
+    <div class="app-layout">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div>
+                <a href="/" class="sidebar-brand">
+                    <i data-lucide="wrench" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> ForgePrompt <span>Nexafian</span>
+                </a>
+                <ul class="sidebar-menu" style="list-style: none;">
+                    <li style="margin-bottom: 0.5rem;"><a href="/workbench" class="sidebar-link"><i data-lucide="rocket" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Builder</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/history" class="sidebar-link"><i data-lucide="folder" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Saved Ledger</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/workflows" class="sidebar-link">⛓️ Workflows & DAGs</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/prompts" class="sidebar-link"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Prompt Registry</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/knowledge" class="sidebar-link"><i data-lucide="brain" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Knowledge Bases</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/connectors" class="sidebar-link"><i data-lucide="plug" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Connectors</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/playground" class="sidebar-link"><i data-lucide="circle" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Playgrounds</a></li>
+                    <li style="margin-bottom: 0.5rem;"><a href="/analytics" class="sidebar-link"><i data-lucide="bar-chart-2" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Analytics</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-footer">
+                <button class="btn-logout-sidebar" onclick="localStorage.clear(); window.location.href='/auth';"><i data-lucide="log-out" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i> Log Out</button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1 style="font-family: 'Outfit'; font-size: 2.2rem; font-weight: 800;">Pipeline Trace Observability <i data-lucide="search" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle;"></i></h1>
+                    <p style="color: var(--text-secondary); margin-top: 0.25rem;">Inspect detailed timelines, inputs, outputs, and structured traces per node step.</p>
+                </div>
+                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                    <span style="font-weight: 700;">Workflow Run ID:</span>
+                    <input type="number" id="run-id-input" value="1" style="width: 80px; padding: 0.4rem; border-radius: 8px; background: rgba(0,0,0,0.3); border: 1px solid var(--border-color); color: #fff; text-align: center;">
+                    <button class="btn-cta" onclick="loadTraces()">Inspect Trace</button>
+                </div>
+            </div>
+
+            <!-- Trace Timeline -->
+            <div class="trace-timeline" id="traces-container">
+                <div class="glass-panel" style="padding: 2.5rem; text-align: center; color: var(--text-muted);">
+                    Enter a Workflow Run ID above and click Inspect Trace to load timeline data.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        async function loadTraces() {
+            const runId = document.getElementById("run-id-input").value;
+            if (!runId) return;
+            
+            // Set window hash to keep state
+            window.location.hash = `run_id=${runId}`;
+
+            const container = document.getElementById("traces-container");
+            container.innerHTML = `<div class="glass-panel" style="padding: 2.5rem; text-align: center; color: var(--text-muted);">Loading traces timeline...</div>`;
+
+            try {
+                const res = await fetch(`/api/observability/traces/${runId}`, {
+                    headers: { "Authorization": `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.traces.length === 0) {
+                        container.innerHTML = `<div class="glass-panel" style="padding: 2.5rem; text-align: center; color: var(--text-muted);">No trace logs recorded for Workflow Run ID ${runId}.</div>`;
+                        return;
+                    }
+                    container.innerHTML = data.traces.map(t => {
+                        const isFailed = t.status === "failed";
+                        let inputStr = t.input_data;
+                        let outputStr = t.output_data;
+                        try {
+                            // Beautify JSON if possible
+                            inputStr = JSON.stringify(jsonParse(t.input_data), null, 2);
+                            outputStr = JSON.stringify(jsonParse(t.output_data), null, 2);
+                        } catch (err) {}
+
+                        return `
+                            <div class="trace-card ${isFailed ? 'failed' : ''}">
+                                <div class="trace-header">
+                                    <div>
+                                        <span style="font-weight: 800; font-size: 1.15rem; color: var(--accent-light);">Node ID: ${t.node_id}</span>
+                                        <span style="margin-left: 0.75rem; font-size: 0.75rem; font-weight: 700; color: var(--text-muted);">${t.created_at}</span>
+                                    </div>
+                                    <div style="display: flex; gap: 0.75rem; align-items: center;">
+                                        <span style="font-weight: 700; font-size: 0.85rem; color: ${isFailed ? '#ef4444' : '#10b981'}">${t.status.toUpperCase()}</span>
+                                        <span style="background: rgba(255,255,255,0.05); padding: 0.25rem 0.5rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700;">${t.latency_ms}ms</span>
+                                    </div>
+                                </div>
+                                <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                                    <strong>Status Log:</strong> ${t.trace_logs || 'No log details.'}
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+                                    <div>
+                                        <span style="font-weight: 700; font-size: 0.8rem; color: var(--text-muted);">Step Inputs Context</span>
+                                        <div class="trace-data-box" style="height: 120px; overflow-y: auto;">${inputStr}</div>
+                                    </div>
+                                    <div>
+                                        <span style="font-weight: 700; font-size: 0.8rem; color: var(--text-muted);">Step Outputs / Result</span>
+                                        <div class="trace-data-box" style="height: 120px; overflow-y: auto;">${outputStr}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join("");
+                }
+            } catch (e) {
+                console.error("Load traces error:", e);
+                container.innerHTML = `<div class="glass-panel" style="padding: 2.5rem; text-align: center; color: #ef4444;">Failed to load traces: ${e}</div>`;
+            }
+        }
+
+        function jsonParse(str) {
+            try {
+                return JSON.parse(str);
+            } catch (e) {
+                return str;
+            }
+        }
+    </script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>lucide.createIcons();</script>
+</body>
+</html>
