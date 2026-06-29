@@ -655,16 +655,25 @@
                 // Heuristic: If it has business/monetization keywords, or is a long description and not a simple layout/color tweak, start fresh!
                 const keywords = ["want to", "build a", "create a", "generate a", "write a", "earn", "money", "income", "sell", "revenue", "business", "profit", "monetize"];
                 const hasNewTopicKeywords = keywords.some(k => lowText.includes(k));
-                const isTweak = lowText.length < 50 || 
-                                lowText.includes("change") || 
-                                lowText.includes("modify") || 
-                                lowText.includes("add") || 
-                                lowText.includes("remove") || 
-                                lowText.includes("make") || 
-                                lowText.includes("update") || 
-                                lowText.includes("fix") || 
-                                lowText.includes("color") || 
-                                lowText.includes("style");
+                
+                // Smarter heuristic: Treat as a tweak only if it explicitly uses refinement terms or starts with a refinement command,
+                // rather than blindly categorizing short messages (like "anti gravity bike") as tweaks.
+                const isTweak = (lowText.length < 25 && (
+                                    lowText.includes("change") || 
+                                    lowText.includes("modify") || 
+                                    lowText.includes("add") || 
+                                    lowText.includes("remove") || 
+                                    lowText.includes("make") || 
+                                    lowText.includes("update") || 
+                                    lowText.includes("fix") || 
+                                    lowText.includes("color") || 
+                                    lowText.includes("style") ||
+                                    lowText.includes("more") ||
+                                    lowText.includes("less") ||
+                                    lowText.includes("with")
+                                )) || (
+                                    /^(make|change|add|remove|update|use|with|more|less|adjust|tweak|fix|replace)\b/.test(lowText)
+                                );
                                 
                 if (isTweak && !hasNewTopicKeywords) {
                     conversationHistory.push({"role": "user", "content": text});
