@@ -4,6 +4,8 @@
 
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
 
 venv/
 env/
@@ -22,3 +24,21 @@ scratch/
 unsloth_compiled_cache/
 .agents/
 models/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# ML artifacts
+*.onnx
+*.pb
+.weights/
+checkpoint*/
+
+# Temporary files
+*.tmp
+*.log
