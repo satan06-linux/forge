@@ -1,5 +1,6 @@
 import os
 import json
+import re
 from flask import Blueprint, request, Response, jsonify, current_app
 import config
 from prometheus.engine import prometheus_engine
@@ -7,13 +8,53 @@ from services.llm_service import LLMService
 
 prompt_blueprint = Blueprint("prompt_blueprint", __name__)
 
+def is_tweak_prompt(text):
+    low = text.lower()
+    
+    # 1. Strong modification indicators anywhere in the text
+    strong_verbs = [
+        "change", "modify", "update", "adjust", "tweak", "fix", "replace", 
+        "remove", "delete", "make it", "make the", "instead of", "add a", 
+        "add some", "convert to", "put a", "put some", "include a", 
+        "include some", "insert a", "swap", "switch to", "turn it into", 
+        "turn the", "get rid of", "take out", "without", "render in", 
+        "render as", "too ", "not enough", "needs more", "should be", 
+        "looks a bit", "undo", "revert", "go back", "previous version", 
+        "what i had before", "for midjourney", "for runway", "for cursor", 
+        "for stablediffusion", "for dalle", "avoid", "exclude", "except",
+        "night", "sunset", "sunrise", "golden hour", "rainy", "snowy", 
+        "foggy", "cloudy", "sunny", "style to", "aspect ratio", "--ar"
+    ]
+    if any(verb in low for verb in strong_verbs):
+        return True
+
+    # 2. Comparative adjectives ending in -er (e.g. darker, brighter, softer)
+    if re.search(r'\b(dark|bright|soft|clean|warm|cool|fast|wide|sharp|small|large|simple|heavy|light)er\b', low):
+        return True
+
+    # 3. Starts with common action / preposition words
+    starts_with_verbs = r'^(make|change|add|remove|update|use|with|more|less|adjust|tweak|fix|replace|no|put|include|insert|swap|switch|turn|without)\b'
+    if re.search(starts_with_verbs, low):
+        return True
+
+    return False
+
 @prompt_blueprint.route("/api/clarify-prompt", methods=["POST"])
 def api_clarify_prompt():
     raw_prompt = request.json.get("prompt", "").strip()
     category = request.json.get("category", "").strip()
+    current_prompt = request.json.get("current_prompt", "").strip()
     
     if not raw_prompt:
         return jsonify({"success": False, "error": "Please describe what you want to forge."}), 400
+
+    # If there is a current prompt active and the input matches a tweak pattern,
+    # skip questions and tell the frontend to refine.
+    if current_prompt and is_tweak_prompt(raw_prompt):
+        return jsonify({
+            "success": True,
+            "intent": "refine"
+        })
 
     source = "groq"
     result = None
@@ -149,6 +190,7 @@ def api_clarify_prompt():
 
     return jsonify({
         "success": True,
+        "intent": "new",
         "type_detected": detected_category,
         "questions": result,
         "source": source

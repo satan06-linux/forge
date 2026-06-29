@@ -648,90 +648,48 @@
             appendUserBubble(text);
             showTypingIndicator();
 
-            // If we already have a generated prompt, check if this is a minor refinement or a completely new concept description
-            if (lastForgedPromptText) {
-                const lowText = text.toLowerCase();
-                
-                // Heuristic: If it has business/monetization keywords, or is a long description and not a simple layout/color tweak, start fresh!
-                const keywords = ["want to", "build a", "create a", "generate a", "write a", "earn", "money", "income", "sell", "revenue", "business", "profit", "monetize"];
-                const hasNewTopicKeywords = keywords.some(k => lowText.includes(k));
-                
-                // Smarter heuristic: Treat as a tweak only if it explicitly uses refinement terms or starts with a refinement command,
-                // rather than blindly categorizing short messages (like "anti gravity bike") as tweaks.
-                // Strong modification verbs are checked globally, while minor prepositions (with, more, less) 
-                // are matched at the beginning of the text to prevent false positives on new subject descriptions.
-                const isTweak = (
-                    lowText.includes("change") || 
-                    lowText.includes("modify") || 
-                    lowText.includes("update") || 
-                    lowText.includes("adjust") || 
-                    lowText.includes("tweak") || 
-                    lowText.includes("fix") || 
-                    lowText.includes("replace") || 
-                    lowText.includes("remove") || 
-                    lowText.includes("delete") ||
-                    lowText.includes("make it") ||
-                    lowText.includes("make the") ||
-                    lowText.includes("instead of") ||
-                    lowText.includes("add a") ||
-                    lowText.includes("add some") ||
-                    lowText.includes("convert to") ||
-                    lowText.includes("put a") ||
-                    lowText.includes("put some") ||
-                    lowText.includes("include a") ||
-                    lowText.includes("include some") ||
-                    lowText.includes("insert a") ||
-                    lowText.includes("swap") ||
-                    lowText.includes("switch to") ||
-                    lowText.includes("turn it into") ||
-                    lowText.includes("turn the") ||
-                    lowText.includes("get rid of") ||
-                    lowText.includes("take out") ||
-                    lowText.includes("without") ||
-                    lowText.includes("render in") ||
-                    lowText.includes("render as")
-                ) || (
-                    /^(make|change|add|remove|update|use|with|more|less|adjust|tweak|fix|replace|no|put|include|insert|swap|switch|turn|without)\b/.test(lowText)
-                );
-                                
-                if (isTweak && !hasNewTopicKeywords) {
-                    conversationHistory.push({"role": "user", "content": text});
-                    forgeMasterPromptStream();
-                    return;
-                } else {
-                    // Start a new session silently to clarify this brand new concept!
-                    resetChatSession(true);
-                }
-            }
-
-            // Otherwise, this is the initial concept submission
-            originalConceptText = text;
-            conversationHistory.push({"role": "user", "content": "Base idea: " + text});
-
+            // Submit to backend for intent analysis and clarification routing
             try {
                 const response = await fetch("/api/clarify-prompt", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ prompt: text, category: detectedType })
+                    body: JSON.stringify({ 
+                        prompt: text, 
+                        category: detectedType,
+                        current_prompt: lastForgedPromptText
+                    })
                 });
                 const data = await response.json();
 
                 removeTypingIndicator();
 
-                if (data.success && data.questions.length > 0) {
-                    activeQuestions = data.questions;
-                    detectedType = data.type_detected;
-                    currentQuestionIndex = 0;
-                    selectedAnswers = {};
-                    updateModelBadge(data.source || 'groq');
-                    
-                    // Auto-highlight category chip detected by backend
-                    selectCategoryByName(data.type_detected);
+                if (data.success) {
+                    if (data.intent === "refine") {
+                        // User is asking to refine the active prompt
+                        conversationHistory.push({"role": "user", "content": text});
+                        forgeMasterPromptStream();
+                    } else {
+                        // User is starting a new prompt concept
+                        if (lastForgedPromptText) {
+                            resetChatSession(true);
+                        }
+                        originalConceptText = text;
+                        conversationHistory.push({"role": "user", "content": "Base idea: " + text});
 
-                    // Trigger the MCQ refiner question series!
-                    setTimeout(() => {
-                        askNextMCQ();
-                    }, 300);
+                        activeQuestions = data.questions;
+                        detectedType = data.type_detected;
+                        currentQuestionIndex = 0;
+                        selectedAnswers = {};
+                        updateModelBadge(data.source || 'groq');
+                        
+                        // Auto-highlight category chip detected by backend
+                        selectCategoryByName(data.type_detected);
+
+                        // Trigger the MCQ refiner question series
+                        setTimeout(() => {
+                            askNextMCQ();
+                        }, 300);
+                    }
                 } else {
                     appendAIBubble("Error clarifying concept intent: " + (data.error || "Failed."));
                     toggleInputState(true);
