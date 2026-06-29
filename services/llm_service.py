@@ -3,8 +3,12 @@ import requests
 import json
 import logging
 import time
+import config
 
 logger = logging.getLogger(__name__)
+
+# Persistent connection pool session to optimize performance and prevent handshake overhead
+_session = requests.Session()
 
 # Cached local model objects to prevent reload latency spikes
 _local_model = None
@@ -44,7 +48,7 @@ class LLMService:
                     "temperature": temperature
                 }
 
-                res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload, timeout=30)
+                res = _session.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload, timeout=30)
                 if res.status_code == 200:
                     res_json = res.json()
                     text = res_json["choices"][0]["message"]["content"]
@@ -70,12 +74,8 @@ class LLMService:
                     "HTTP-Referer": "https://forgeprompt.com",
                     "X-Title": "ForgePrompt"
                 }
-                # Map models to OpenRouter equivalents
-                or_model = "meta-llama/llama-3-8b-instruct"
-                if "70b" in model_name.lower():
-                    or_model = "meta-llama/llama-3.3-70b-instruct"
-                elif "gpt" in model_name.lower():
-                    or_model = "openai/gpt-4o"
+                # Map models to OpenRouter equivalents from config
+                or_model = config.LLM_MODEL_MAPPING.get(model_name.lower(), "meta-llama/llama-3-8b-instruct")
                 
                 payload = {
                     "model": or_model,
@@ -84,7 +84,7 @@ class LLMService:
                     "temperature": temperature
                 }
 
-                res = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=45)
+                res = _session.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=45)
                 if res.status_code == 200:
                     res_json = res.json()
                     text = res_json["choices"][0]["message"]["content"]
@@ -173,7 +173,7 @@ Output ONLY the final polished prompt in markdown, no explanations, no wrappers.
                     "max_tokens": 1200,
                     "temperature": 0.3
                 }
-                res = requests.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload, timeout=30)
+                res = _session.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload, timeout=30)
                 if res.status_code == 200:
                     text = res.json()["choices"][0]["message"]["content"].strip()
                     usage = res.json().get("usage", {})
@@ -206,7 +206,7 @@ Output ONLY the final polished prompt in markdown, no explanations, no wrappers.
                     "max_tokens": 1200,
                     "temperature": 0.3
                 }
-                res = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=45)
+                res = _session.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload, timeout=45)
                 if res.status_code == 200:
                     text = res.json()["choices"][0]["message"]["content"].strip()
                     tokens = res.json().get("usage", {}).get("total_tokens", len(text)//4)
@@ -253,7 +253,7 @@ Output ONLY the final polished prompt in markdown, no explanations, no wrappers.
                     "temperature": temperature,
                     "stream": True
                 }
-                res = requests.post(
+                res = _session.post(
                     "https://api.groq.com/openai/v1/chat/completions",
                     headers=headers, json=payload, timeout=60, stream=True
                 )
@@ -285,7 +285,7 @@ Output ONLY the final polished prompt in markdown, no explanations, no wrappers.
         if or_key:
             try:
                 logger.info("LLMService Stream: Attempting OpenRouter fallback stream...")
-                or_model = "meta-llama/llama-3.3-70b-instruct" if "70b" in model_name.lower() else "meta-llama/llama-3-8b-instruct"
+                or_model = config.LLM_MODEL_MAPPING.get(model_name.lower(), "meta-llama/llama-3-8b-instruct")
                 headers = {
                     "Authorization": f"Bearer {or_key}",
                     "Content-Type": "application/json",
@@ -299,7 +299,7 @@ Output ONLY the final polished prompt in markdown, no explanations, no wrappers.
                     "temperature": temperature,
                     "stream": True
                 }
-                res = requests.post(
+                res = _session.post(
                     "https://openrouter.ai/api/v1/chat/completions",
                     headers=headers, json=payload, timeout=60, stream=True
                 )

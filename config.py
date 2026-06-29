@@ -26,6 +26,14 @@ OPEN_ROUTER_ACTIVE = os.getenv("OPEN_ROUTER_ACTIVE", "false").lower() == "true"
 # Token Efficiency Flag
 DEC_TOKEN_USAGE = os.getenv("DEC_TOKEN_USAGE", "false").lower() == "true"
 
+# LLM Model Mappings to map generic names to OpenRouter equivalents
+LLM_MODEL_MAPPING = {
+    "llama-3-8b": "meta-llama/llama-3-8b-instruct",
+    "llama-3.3-70b": "meta-llama/llama-3.3-70b-instruct",
+    "gpt-4o": "openai/gpt-4o",
+    "claude-3-5-sonnet": "anthropic/claude-3.5-sonnet",
+}
+
 # Flask Security
 SECRET_KEY = os.getenv("SECRET_KEY")
 if not SECRET_KEY:
