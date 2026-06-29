@@ -658,22 +658,27 @@
                 
                 // Smarter heuristic: Treat as a tweak only if it explicitly uses refinement terms or starts with a refinement command,
                 // rather than blindly categorizing short messages (like "anti gravity bike") as tweaks.
-                const isTweak = (lowText.length < 25 && (
-                                    lowText.includes("change") || 
-                                    lowText.includes("modify") || 
-                                    lowText.includes("add") || 
-                                    lowText.includes("remove") || 
-                                    lowText.includes("make") || 
-                                    lowText.includes("update") || 
-                                    lowText.includes("fix") || 
-                                    lowText.includes("color") || 
-                                    lowText.includes("style") ||
-                                    lowText.includes("more") ||
-                                    lowText.includes("less") ||
-                                    lowText.includes("with")
-                                )) || (
-                                    /^(make|change|add|remove|update|use|with|more|less|adjust|tweak|fix|replace)\b/.test(lowText)
-                                );
+                // Strong modification verbs are checked globally, while minor prepositions (with, more, less) 
+                // are matched at the beginning of the text to prevent false positives on new subject descriptions.
+                const isTweak = (
+                    lowText.includes("change") || 
+                    lowText.includes("modify") || 
+                    lowText.includes("update") || 
+                    lowText.includes("adjust") || 
+                    lowText.includes("tweak") || 
+                    lowText.includes("fix") || 
+                    lowText.includes("replace") || 
+                    lowText.includes("remove") || 
+                    lowText.includes("delete") ||
+                    lowText.includes("make it") ||
+                    lowText.includes("make the") ||
+                    lowText.includes("instead of") ||
+                    lowText.includes("add a") ||
+                    lowText.includes("add some") ||
+                    lowText.includes("convert to")
+                ) || (
+                    /^(make|change|add|remove|update|use|with|more|less|adjust|tweak|fix|replace)\b/.test(lowText)
+                );
                                 
                 if (isTweak && !hasNewTopicKeywords) {
                     conversationHistory.push({"role": "user", "content": text});
