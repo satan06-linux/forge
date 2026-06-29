@@ -675,9 +675,23 @@
                     lowText.includes("instead of") ||
                     lowText.includes("add a") ||
                     lowText.includes("add some") ||
-                    lowText.includes("convert to")
+                    lowText.includes("convert to") ||
+                    lowText.includes("put a") ||
+                    lowText.includes("put some") ||
+                    lowText.includes("include a") ||
+                    lowText.includes("include some") ||
+                    lowText.includes("insert a") ||
+                    lowText.includes("swap") ||
+                    lowText.includes("switch to") ||
+                    lowText.includes("turn it into") ||
+                    lowText.includes("turn the") ||
+                    lowText.includes("get rid of") ||
+                    lowText.includes("take out") ||
+                    lowText.includes("without") ||
+                    lowText.includes("render in") ||
+                    lowText.includes("render as")
                 ) || (
-                    /^(make|change|add|remove|update|use|with|more|less|adjust|tweak|fix|replace)\b/.test(lowText)
+                    /^(make|change|add|remove|update|use|with|more|less|adjust|tweak|fix|replace|no|put|include|insert|swap|switch|turn|without)\b/.test(lowText)
                 );
                                 
                 if (isTweak && !hasNewTopicKeywords) {
